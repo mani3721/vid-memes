@@ -118,7 +118,10 @@ export function useCategoryMemes({ category, mood, query, excludeCategory, limit
         .range(from, to)
 
       if (category) q = q.eq('category', category)
-      if (excludeCategory) q = q.neq('category', excludeCategory)
+      if (excludeCategory) {
+        const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
+        cats.forEach((c) => { q = q.neq('category', c) })
+      }
       if (mood) q = q.contains('mood_tags', [mood])
       if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
       return q
