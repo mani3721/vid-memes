@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111114" />
+    <meta name="color-scheme" content="dark light" />
+    <!-- Theme init: apply .dark before first paint to prevent flash -->
+    <script>
+      (function () {
+        var s = localStorage.getItem('videsaur-theme');
+        var dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches !== false;
+        if (dark) document.documentElement.classList.add('dark');
+      })();
+    </script>
+
+    <!-- Primary meta -->
+    <title>Videsaur — Free Meme Videos, GIFs, Templates &amp; Sound Effects</title>
+    <meta
+      name="description"
+      content="Videsaur is your home for free meme videos, GIFs, blank templates, and sound effects. No watermark, HD quality, updated daily for creators and comedy fans."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Videsaur" />
+    <meta property="og:title" content="Videsaur — Free Meme Videos, GIFs, Templates &amp; Sound Effects" />
+    <meta
+      property="og:description"
+      content="Videsaur is your home for free meme videos, GIFs, blank templates, and sound effects. No watermark, HD quality, updated daily for creators and comedy fans."
+    />
+    <meta property="og:url" content="https://videsaur.co.in" />
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@videsaur" />
+    <meta name="twitter:title" content="Videsaur — Free Meme Videos, GIFs, Templates &amp; Sound Effects" />
+    <meta
+      name="twitter:description"
+      content="Hunt down the freshest memes. Free downloads, no watermark, updated daily."
+    />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://videsaur.co.in" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://picsum.photos" />
+    <script type="module" crossorigin src="/assets/index-CPvnGrWj.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/createLucideIcon-EaLLHExr.js">
+    <link rel="modulepreload" crossorigin href="/assets/supabaseClient-CGsJT0LC.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-K6oOWt_m.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

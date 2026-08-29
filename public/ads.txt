@@ -1,0 +1,7 @@
+# AdSense requires an ads.txt listing every authorised seller of this
+# inventory. This file is a TEMPLATE — the site will NOT be approved until the
+# placeholder publisher ID below is replaced with the real one from your
+# AdSense account (Account -> Settings -> Account information).
+#
+# Format: <exchange domain>, <publisher ID>, <DIRECT|RESELLER>, <cert authority ID>
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

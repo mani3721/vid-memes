@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9061f9"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+  <!-- Heel pad -->
+  <ellipse cx="24" cy="41" rx="10" ry="5" fill="url(#g)"/>
+  <!-- Center toe: straight up, tallest -->
+  <rect x="21" y="7" width="6" height="33" rx="3" fill="url(#g)"/>
+  <!-- Left toe: fanned -28deg around heel pivot (24,40) -->
+  <rect x="21" y="11" width="5" height="28" rx="2.5" fill="url(#g)" transform="rotate(-28 24 40)"/>
+  <!-- Right toe: fanned +28deg around heel pivot (24,40) -->
+  <rect x="22" y="11" width="5" height="28" rx="2.5" fill="url(#g)" transform="rotate(28 24 40)"/>
+</svg>

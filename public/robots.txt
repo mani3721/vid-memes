@@ -1,0 +1,17 @@
+# Videsaur — https://videsaur.co.in/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /*?q=
+Disallow: /404
+
+# AdSense crawler needs full page access for ad targeting.
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+Sitemap: https://videsaur.co.in/sitemap.xml

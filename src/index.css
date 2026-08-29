@@ -1,0 +1,208 @@
+@import 'tailwindcss';
+
+/* ── Class-based dark mode (add/remove .dark on <html>) ── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Static tokens (backward-compat, dark-mode anchored) ── */
+@theme {
+  /* Background layers */
+  --color-char:   #0E0F11;
+  --color-char-2: #17181B;
+  --color-char-3: #1F2023;
+  --color-line-d: #2A2B2F;
+
+  /* Text */
+  --color-mist: #9A9BA1;
+  --color-ink:  #1A1A1C;
+
+  /* Accent — same in both themes */
+  --color-volt:    #6D5EF5;
+  --color-volt-hi: #5A4CE0;
+
+  /* Fonts */
+  --font-display: 'Anton', 'Oswald', 'Arial Narrow', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* Spacing */
+  --spacing-nav: 3.75rem;
+
+  /* Animations */
+  --animate-burst:    burst 0.45s ease-out;
+  --animate-ring:     ring 0.9s linear forwards;
+  --animate-rise:     rise 0.22s ease-out both;
+  --animate-slide-up: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-shimmer:  shimmer 1.4s ease-in-out infinite;
+}
+
+/* ── Semantic CSS custom properties (flip per theme) ─────── */
+:root {
+  /* Light mode defaults */
+  --bg-base:          #FAFAFA;
+  --bg-surface:       #FFFFFF;
+  --bg-surface-hover: #F0F0F1;
+  --border-subtle:    #E4E4E7;
+  --text-primary:     #1A1A1C;
+  --text-secondary:   #6B6C72;
+  --text-tertiary:    #9A9BA1;
+  --brand-col:        #6D5EF5;
+  --brand-col-2:      #5A4CE0;
+}
+
+html.dark {
+  /* Dark mode */
+  --bg-base:          #0E0F11;
+  --bg-surface:       #17181B;
+  --bg-surface-hover: #1F2023;
+  --border-subtle:    #2A2B2F;
+  --text-primary:     #F2F2F3;
+  --text-secondary:   #9A9BA1;
+  --text-tertiary:    #6B6C72;
+  --brand-col:        #6D5EF5;
+  --brand-col-2:      #5A4CE0;
+}
+
+/* ── Dynamic Tailwind tokens (resolved at runtime via var()) ─ */
+@theme inline {
+  --color-canvas:      var(--bg-base);
+  --color-panel:       var(--bg-surface);
+  --color-panel-hover: var(--bg-surface-hover);
+  --color-edge:        var(--border-subtle);
+  --color-hi:          var(--text-primary);
+  --color-mid:         var(--text-secondary);
+  --color-lo:          var(--text-tertiary);
+  --color-brand:       var(--brand-col);
+  --color-brand-2:     var(--brand-col-2);
+}
+
+/* ── Keyframes ───────────────────────────────────────────── */
+
+/* r=13 circle: circumference = 2*pi*13 ≈ 81.68 */
+@keyframes ring {
+  from {
+    stroke-dasharray: 81.68;
+    stroke-dashoffset: 81.68;
+  }
+  to {
+    stroke-dasharray: 81.68;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes burst {
+  0%   { transform: scale(0.4); opacity: 0; }
+  60%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.75; }
+}
+
+/*
+ * Torn-sticker clip-paths: GPU-cheap polygon masks, three variants
+ * so a grid never looks rubber-stamped.
+ */
+@utility torn {
+  clip-path: polygon(
+    0% 3%, 4% 0%, 38% 1.6%, 72% 0.3%, 97% 1.4%,
+    100% 5%, 98.6% 34%, 100% 68%, 98.8% 96%,
+    95% 100%, 62% 98.4%, 28% 99.7%, 3% 98.6%,
+    0% 95%, 1.4% 62%, 0.2% 32%
+  );
+}
+
+@utility torn-b {
+  clip-path: polygon(
+    0% 4%, 5% 0.4%, 44% 1.2%, 78% 0%, 98% 2.4%,
+    100% 6%, 98.4% 40%, 99.6% 72%, 97.6% 97%,
+    93% 99.6%, 56% 98%, 22% 99.4%, 2% 97.6%,
+    0.4% 93%, 1.8% 56%, 0% 26%
+  );
+}
+
+@utility torn-c {
+  clip-path: polygon(
+    0% 2.4%, 3% 0.2%, 33% 1.8%, 68% 0.6%, 96% 2%,
+    99.6% 4.4%, 98% 30%, 99.4% 64%, 97.4% 95%,
+    94% 99.8%, 58% 98.2%, 24% 99.4%, 4% 98%,
+    0.4% 94%, 2% 58%, 0.6% 28%
+  );
+}
+
+/* Drop-shadow that follows the torn silhouette (clip-path blocks box-shadow) */
+@utility paper-lift {
+  filter: drop-shadow(0 2px 3px rgb(0 0 0 / 0.35));
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+@utility paper-lift-hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 14px 20px rgb(0 0 0 / 0.5));
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
+
+/* ── Base styles ─────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-hi antialiased;
+    background-attachment: fixed;
+  }
+
+  /* Subtle brand gradient only in dark mode */
+  html.dark body {
+    background-image: radial-gradient(
+      ellipse 80% 50% at 50% -10%,
+      rgba(109, 94, 245, 0.06) 0%,
+      transparent 70%
+    );
+  }
+
+  * {
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand;
+  }
+
+  ::selection {
+    @apply bg-brand text-white;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
