@@ -5,7 +5,6 @@ import {
   Smile,
   AudioLines,
   LayoutGrid,
-  Upload,
   Heart,
   ShieldCheck,
   Info,
@@ -31,8 +30,7 @@ const NAV_ITEMS = [
 ]
 
 const YOU_ITEMS = [
-  { icon: Heart,  label: 'Favorites',      to: '/favorites' },
-  { icon: Upload, label: 'Upload Content', to: '/upload'    },
+  { icon: Heart, label: 'Favorites', to: '/favorites' },
 ]
 
 const RESOURCE_ITEMS = [
