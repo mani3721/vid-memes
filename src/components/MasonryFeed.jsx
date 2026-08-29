@@ -1,12 +1,12 @@
 import { Loader2 } from 'lucide-react'
 import MemeCard from './MemeCard'
 
-// Cycle through aspect ratios for the Pinterest-style variable-height effect.
+// Wide landscape mix: 16/9 and square alternating
 const CARD_ASPECTS = [
-  'aspect-[3/4]',
+  'aspect-video',
   'aspect-square',
-  'aspect-[4/5]',
-  'aspect-[2/3]',
+  'aspect-video',
+  'aspect-video',
   'aspect-square',
 ]
 
@@ -22,7 +22,7 @@ const CARD_ASPECTS = [
 export default function MasonryFeed({ assets, hasMore, onLoadMore, loadingMore }) {
   return (
     <div>
-      <div className="columns-2 gap-3 sm:columns-3 lg:columns-4 xl:columns-5">
+      <div className="columns-2 gap-3 sm:columns-4 xl:columns-6">
         {assets.map((asset, i) => (
           <div key={asset.id} className="mb-3 break-inside-avoid">
             <MemeCard

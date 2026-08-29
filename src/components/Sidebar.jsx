@@ -2,13 +2,10 @@ import { useState } from 'react'
 import {
   Home,
   TrendingUp,
-  Smile,
-  Film,
   AudioLines,
   LayoutGrid,
   Upload,
   Heart,
-  Crown,
   ShieldCheck,
   Info,
   Mail,
@@ -27,8 +24,6 @@ import { useAuth } from '../lib/authContext'
 const NAV_ITEMS = [
   { icon: Home,       label: 'Home',      to: '/'          },
   { icon: TrendingUp, label: 'Trending',  to: '/trending'  },
-  { icon: Smile,      label: 'Giggles',   to: '/gifs'      },
-  { icon: Film,       label: 'Videos',    to: '/videos'    },
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
 ]
@@ -36,7 +31,6 @@ const NAV_ITEMS = [
 const YOU_ITEMS = [
   { icon: Heart,  label: 'Favorites',      to: '/favorites' },
   { icon: Upload, label: 'Upload Content', to: '/upload'    },
-  { icon: Crown,  label: 'Premium',        to: '#'          },
 ]
 
 const RESOURCE_ITEMS = [
