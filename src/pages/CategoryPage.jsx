@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Loader2, AudioLines } from 'lucide-react'
 import { compact } from '../data/assets'
 import { SITE_NAME } from '../utils/seo'
@@ -96,17 +95,9 @@ export default function CategoryPage({ category }) {
       <div className="flex flex-col gap-6">
         {/* Page header */}
         <div>
-          <nav aria-label="Breadcrumb" className="mb-2 flex items-center gap-1.5 text-xs text-lo">
-            <Link to="/" className="transition-colors hover:text-mid">Home</Link>
-            <span aria-hidden>›</span>
-            <span className="text-mid">{meta.h1}</span>
-          </nav>
           <h1 className="font-display text-2xl tracking-wide text-hi sm:text-3xl">
             {meta.pageH1 ?? meta.h1}
           </h1>
-          <p className="mt-1.5 max-w-[65ch] text-sm leading-relaxed text-mid">
-            {meta.description}
-          </p>
         </div>
 
         {meta.hasMoodFilter && <MoodPicker />}

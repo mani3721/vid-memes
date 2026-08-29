@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Download, Heart } from 'lucide-react'
 import { compact } from '../data/assets'
@@ -12,6 +12,14 @@ const TORN = ['torn', 'torn-b', 'torn-c']
 export default function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
   const [showSignIn, setShowSignIn] = useState(false)
+  const videoRef = useRef(null)
+
+  function handleMouseEnter() {
+    if (videoRef.current) videoRef.current.play().catch(() => {})
+  }
+  function handleMouseLeave() {
+    if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 1 }
+  }
   const { isFav, toggle } = useFavorites()
   const faved = isFav(asset.id)
 
@@ -32,6 +40,8 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
       <Link to={memeUrl} tabIndex={-1} aria-hidden className="block">
         {/* Thumbnail */}
         <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           className={[
             TORN[index % 3],
             'paper-lift group-hover:paper-lift-hover',
@@ -49,9 +59,11 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
 
           {isVideo ? (
             <video
+              ref={videoRef}
               src={asset.publicUrl}
               preload="metadata"
               muted
+              loop
               playsInline
               onLoadedMetadata={(e) => { e.currentTarget.currentTime = 1; setLoaded(true) }}
               onError={() => setLoaded(true)}

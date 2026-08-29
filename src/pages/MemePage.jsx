@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import { Link, useParams, Navigate } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+import { useParams, Navigate } from 'react-router-dom'
 import { compact, MOODS } from '../data/assets'
 import { useMemeById, useCategoryMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
@@ -80,16 +79,6 @@ export default function MemePage() {
       />
 
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-1.5 text-xs text-mid">
-          <Link to="/" className="transition-colors hover:text-hi">Home</Link>
-          <ChevronRight className="size-3" />
-          <Link to={CAT_BREADCRUMB[asset.category] ?? '/'} className="transition-colors hover:text-hi">
-            {CAT_LABEL[asset.category] ?? 'Memes'}
-          </Link>
-          <ChevronRight className="size-3" />
-          <span className="line-clamp-1 text-hi">{asset.title}</span>
-        </nav>
-
         <article aria-labelledby="meme-title">
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="torn paper-lift relative overflow-hidden rounded-2xl bg-panel">
@@ -137,7 +126,7 @@ export default function MemePage() {
                   href={asset.publicUrl}
                   filename={asset.filename}
                   memeId={asset.id}
-                  className="gap-2 rounded-full px-6 py-2.5 text-sm font-semibold"
+                  className="gap-2 rounded-full py-2.5 text-sm font-semibold"
                 />
               </div>
 
@@ -159,7 +148,6 @@ export default function MemePage() {
                 </dl>
               </div>
 
-              <p className="text-xs leading-relaxed text-mid">{description}</p>
             </div>
           </div>
         </article>
