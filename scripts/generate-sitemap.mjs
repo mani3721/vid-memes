@@ -14,7 +14,7 @@ import { join, dirname } from 'node:path'
 const __dir = dirname(fileURLToPath(import.meta.url))
 
 // assets.js uses only ES module exports and plain JS — safe to import with Node
-const { ASSETS } = await import(join(__dir, '../src/data/assets.js'))
+const { ASSETS } = await import(join(__dir, '../src/data/assets.js')).catch(() => ({ ASSETS: undefined }))
 
 const BASE_URL = 'https://videsaur.co.in'
 const TODAY = new Date().toISOString().split('T')[0]
@@ -46,7 +46,7 @@ const STATIC_PAGES = [
   { path: '/content-policy', priority: '0.4', changefreq: 'monthly' },
 ]
 
-const memePages = ASSETS.map((asset) => ({
+const memePages = (ASSETS ?? []).map((asset) => ({
   path: `/meme/${toMemeSlug(asset)}`,
   priority: '0.7',
   changefreq: 'monthly',
