@@ -6,8 +6,6 @@ import SEO from './SEO'
 import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import PageHeading from './PageHeading'
-import FeedToggle from './FeedToggle'
-
 export default function BrowseFeed() {
   const { mood, query } = useStudio()
 
@@ -30,9 +28,6 @@ export default function BrowseFeed() {
       />
 
       <div className="flex flex-col gap-5">
-        {/* Browse / Trending toggle */}
-        <FeedToggle />
-
         {/* Page H1 — primary SEO signal, visually a tagline */}
         <div>
           <PageHeading

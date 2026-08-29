@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabaseClient'
 import { useTrendingMemes } from '../hooks/useMemes'
 import SEO from '../components/SEO'
 import PageHeading from '../components/PageHeading'
-import FeedToggle from '../components/FeedToggle'
 import TrendingCard from '../components/TrendingCard'
 import RankingList from '../components/RankingList'
 
@@ -38,9 +37,6 @@ export default function TrendingPage() {
       />
 
       <div className="flex flex-col gap-6">
-        {/* Browse / Trending toggle */}
-        <FeedToggle />
-
         {/* Page header */}
         <div>
           <PageHeading
