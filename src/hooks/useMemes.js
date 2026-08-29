@@ -33,7 +33,7 @@ function normalize(m) {
  * useTrendingMemes — home feed sorted by download_count DESC.
  * Supports "load more" via .range() pagination.
  */
-export function useTrendingMemes({ limit = PAGE_SIZE } = {}) {
+export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -44,12 +44,14 @@ export function useTrendingMemes({ limit = PAGE_SIZE } = {}) {
   const fetchPage = useCallback(
     async (from, replace) => {
       const to = from + limit - 1
-      const { data, error: err } = await supabase
+      let q = supabase
         .from('memes')
         .select('*')
         .eq('is_published', true)
         .order('download_count', { ascending: false })
         .range(from, to)
+      if (excludeCategory) q = q.neq('category', excludeCategory)
+      const { data, error: err } = await q
 
       if (err) throw new Error(err.message)
       const rows = (data ?? []).map(normalize)
@@ -59,7 +61,7 @@ export function useTrendingMemes({ limit = PAGE_SIZE } = {}) {
       offset.current = to + 1
       return rows
     },
-    [limit],
+    [limit, excludeCategory],
   )
 
   useEffect(() => {
@@ -97,7 +99,7 @@ export function useTrendingMemes({ limit = PAGE_SIZE } = {}) {
  * @param {string} [opts.query]     — partial title search (case-insensitive)
  * @param {number} [opts.limit]     — rows per page
  */
-export function useCategoryMemes({ category, mood, query, limit = PAGE_SIZE } = {}) {
+export function useCategoryMemes({ category, mood, query, excludeCategory, limit = PAGE_SIZE } = {}) {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadingMore, setLoadingMore] = useState(false)
@@ -116,11 +118,12 @@ export function useCategoryMemes({ category, mood, query, limit = PAGE_SIZE } = 
         .range(from, to)
 
       if (category) q = q.eq('category', category)
+      if (excludeCategory) q = q.neq('category', excludeCategory)
       if (mood) q = q.contains('mood_tags', [mood])
       if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
       return q
     },
-    [category, mood, query, limit],
+    [category, excludeCategory, mood, query, limit],
   )
 
   useEffect(() => {

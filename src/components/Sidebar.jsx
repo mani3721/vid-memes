@@ -29,7 +29,7 @@ const NAV_ITEMS = [
   { icon: TrendingUp, label: 'Trending',  to: '/trending'  },
   { icon: Smile,      label: 'Giggles',   to: '/gifs'      },
   { icon: Film,       label: 'Videos',    to: '/videos'    },
-  { icon: AudioLines, label: 'Sounds',    to: '/sounds'    },
+  { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
 ]
 

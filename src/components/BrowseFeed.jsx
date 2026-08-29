@@ -16,6 +16,7 @@ export default function BrowseFeed() {
   const { memes, loading, loadingMore, error, hasMore, loadMore } = useCategoryMemes({
     mood: mood ?? undefined,
     query: query || undefined,
+    excludeCategory: 'sounds',
   })
 
   return (

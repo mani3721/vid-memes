@@ -12,7 +12,7 @@ const GRID_COUNT = 8
 const RANK_COUNT = 20
 
 export default function TrendingPage() {
-  const { memes, loading } = useTrendingMemes({ limit: RANK_COUNT })
+  const { memes, loading } = useTrendingMemes({ limit: RANK_COUNT, excludeCategory: 'sounds' })
   const [totalCount, setTotalCount] = useState(null)
 
   useEffect(() => {
