@@ -6,6 +6,9 @@ import SEO from './SEO'
 import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import PageHeading from './PageHeading'
+
+const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
+
 export default function BrowseFeed() {
   const { mood, query } = useStudio()
 
@@ -14,7 +17,7 @@ export default function BrowseFeed() {
   const { memes, loading, loadingMore, error, hasMore, loadMore } = useCategoryMemes({
     mood: mood ?? undefined,
     query: query || undefined,
-    excludeCategory: ['sounds', 'images', 'gifs'],
+    excludeCategory: HOME_EXCLUDE,
   })
 
   return (

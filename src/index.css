@@ -15,9 +15,9 @@
   --color-mist: #9A9BA1;
   --color-ink:  #1A1A1C;
 
-  /* Accent — same in both themes */
-  --color-volt:    #6D5EF5;
-  --color-volt-hi: #5A4CE0;
+  /* Accent — brand green, same in both themes */
+  --color-volt:    #5FD65C;
+  --color-volt-hi: #4CC24A;
 
   /* Fonts */
   --font-display: 'Anton', 'Oswald', 'Arial Narrow', system-ui, sans-serif;
@@ -41,24 +41,24 @@
   --bg-surface:       #FFFFFF;
   --bg-surface-hover: #F0F0F1;
   --border-subtle:    #E4E4E7;
-  --text-primary:     #1A1A1C;
+  --text-primary:     #1A1D23;
   --text-secondary:   #6B6C72;
   --text-tertiary:    #9A9BA1;
-  --brand-col:        #6D5EF5;
-  --brand-col-2:      #5A4CE0;
+  --brand-col:        #5FD65C;
+  --brand-col-2:      #4CC24A;
 }
 
 html.dark {
   /* Dark mode */
-  --bg-base:          #0E0F11;
-  --bg-surface:       #17181B;
-  --bg-surface-hover: #1F2023;
-  --border-subtle:    #2A2B2F;
+  --bg-base:          #1A1D23;
+  --bg-surface:       #21242B;
+  --bg-surface-hover: #2A2E36;
+  --border-subtle:    #333740;
   --text-primary:     #F2F2F3;
   --text-secondary:   #9A9BA1;
   --text-tertiary:    #6B6C72;
-  --brand-col:        #6D5EF5;
-  --brand-col-2:      #5A4CE0;
+  --brand-col:        #5FD65C;
+  --brand-col-2:      #4CC24A;
 }
 
 /* ── Dynamic Tailwind tokens (resolved at runtime via var()) ─ */
@@ -162,6 +162,18 @@ html.dark {
   scrollbar-color: var(--border-subtle) transparent;
 }
 
+/* ── Brand gradient utilities ────────────────────────────── */
+@utility text-brand-gradient {
+  background: linear-gradient(135deg, #1E7A7A 0%, #2FA37A 50%, #5FD65C 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-brand-gradient {
+  background: linear-gradient(135deg, #1E7A7A 0%, #2FA37A 50%, #5FD65C 100%);
+}
+
 /* ── Base styles ─────────────────────────────────────────── */
 @layer base {
   html {
@@ -178,7 +190,7 @@ html.dark {
   html.dark body {
     background-image: radial-gradient(
       ellipse 80% 50% at 50% -10%,
-      rgba(109, 94, 245, 0.06) 0%,
+      rgba(95, 214, 92, 0.05) 0%,
       transparent 70%
     );
   }

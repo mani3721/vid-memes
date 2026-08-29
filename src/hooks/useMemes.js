@@ -61,7 +61,8 @@ export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
       offset.current = to + 1
       return rows
     },
-    [limit, excludeCategory],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [limit, JSON.stringify(excludeCategory)],
   )
 
   useEffect(() => {
@@ -126,7 +127,8 @@ export function useCategoryMemes({ category, mood, query, excludeCategory, limit
       if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
       return q
     },
-    [category, excludeCategory, mood, query, limit],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [category, JSON.stringify(excludeCategory), mood, query, limit],
   )
 
   useEffect(() => {

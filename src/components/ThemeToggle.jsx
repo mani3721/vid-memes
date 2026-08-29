@@ -6,7 +6,7 @@ const STORAGE_KEY = 'videsaur-theme'
 function getInitialDark() {
   const stored = localStorage.getItem(STORAGE_KEY)
   if (stored) return stored === 'dark'
-  return window.matchMedia('(prefers-color-scheme: dark)').matches !== false
+  return true
 }
 
 export default function ThemeToggle() {

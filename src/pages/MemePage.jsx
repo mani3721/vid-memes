@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useParams, Navigate } from 'react-router-dom'
-import { ChevronRight, Share2 } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { compact, MOODS } from '../data/assets'
 import { useMemeById, useCategoryMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
@@ -131,13 +131,7 @@ export default function MemePage() {
                 )}
               </div>
 
-              <div className="flex gap-4 text-sm text-mid">
-                <span>😂 {compact(asset.reactions.laugh)}</span>
-                <span>🔥 {compact(asset.reactions.fire)}</span>
-                <span>💀 {compact(asset.reactions.skull)}</span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
+              <div>
                 <DownloadButton
                   label={`Download ${asset.title} ${asset.format}`}
                   href={asset.publicUrl}
@@ -145,14 +139,6 @@ export default function MemePage() {
                   memeId={asset.id}
                   className="gap-2 rounded-full px-6 py-2.5 text-sm font-semibold"
                 />
-                <button
-                  type="button"
-                  aria-label="Share this meme"
-                  className="inline-flex items-center gap-2 rounded-full border border-edge bg-panel px-4 py-2.5 text-sm font-semibold text-hi transition-colors hover:border-volt hover:text-volt"
-                >
-                  <Share2 className="size-4" />
-                  Share
-                </button>
               </div>
 
               <div className="rounded-2xl border border-edge bg-panel p-4">

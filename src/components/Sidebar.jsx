@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   Home,
   TrendingUp,
+  Smile,
   AudioLines,
   LayoutGrid,
   Upload,
@@ -24,6 +25,7 @@ import { useAuth } from '../lib/authContext'
 const NAV_ITEMS = [
   { icon: Home,       label: 'Home',      to: '/'          },
   { icon: TrendingUp, label: 'Trending',  to: '/trending'  },
+  { icon: Smile,      label: 'GIFs',      to: '/gifs'      },
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
 ]

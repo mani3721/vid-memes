@@ -19,7 +19,7 @@ export default function PageHeading({ level = 1, text, keyword, id, className = 
     return (
       <Tag id={id} className={`${base} ${className}`}>
         {before}
-        <span className="text-brand">{keyword}</span>
+        <span className={level === 1 ? 'text-brand-gradient' : 'text-brand'}>{keyword}</span>
         {after}
       </Tag>
     )

@@ -13,8 +13,8 @@ export default function Logo({ hideText = false }) {
 
       {!hideText && (
         <span className="font-display text-xl tracking-wide">
-          <span className="text-brand">VID</span>
-          <span className="text-hi">SAUR</span>
+          <span className="text-brand-gradient">VID</span>
+          <span className="text-brand">SAUR</span>
         </span>
       )}
     </a>
