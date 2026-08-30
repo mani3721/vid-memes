@@ -34,7 +34,7 @@ export default function MemePage() {
   const { slug } = useParams()
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
-  const { user, isAdmin, session } = useAuth()
+  const { user, isAdmin } = useAuth()
   const [editingTitle, setEditingTitle] = useState(null) // null = view, string = editing
   const [titleSaving, setTitleSaving] = useState(false)
   const [displayTitle, setDisplayTitle] = useState(null) // override after save
@@ -61,9 +61,12 @@ export default function MemePage() {
     if (!title || title === (displayTitle ?? asset?.title)) { setEditingTitle(null); return }
     setTitleSaving(true)
     try {
+      const { data: { session: freshSession } } = await supabase.auth.getSession()
+      const token = freshSession?.access_token
+      if (!token) return
       const res = await fetch(`${API_BASE}/api/admin/rename/${asset.id}`, {
         method: 'PATCH',
-        headers: { Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ title }),
       })
       if (res.ok) { setDisplayTitle(title); setEditingTitle(null) }

@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
+import { supabase } from '../lib/supabaseClient'
 import { useNavigate } from 'react-router-dom'
 import SEO from '../components/SEO'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
-function authHeaders(session) {
-  return { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' }
+async function authHeaders() {
+  const { data: { session } } = await supabase.auth.getSession()
+  return { Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' }
 }
 
 export default function AdminDashboard() {
-  const { isAdmin, loading: authLoading, session } = useAuth()
+  const { isAdmin, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -30,7 +32,7 @@ export default function AdminDashboard() {
     setError(null)
     try {
       const res = await fetch(`${API_BASE}/api/admin/pending`, {
-        headers: authHeaders(session),
+        headers: await authHeaders(),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed to load')
       const data = await res.json()
@@ -47,7 +49,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_BASE}/api/admin/approve/${memeId}`, {
         method: 'POST',
-        headers: authHeaders(session),
+        headers: await authHeaders(),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
       setMemes((prev) => prev.filter((m) => m.id !== memeId))
@@ -63,7 +65,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_BASE}/api/admin/rename/${memeId}`, {
         method: 'PATCH',
-        headers: authHeaders(session),
+        headers: await authHeaders(),
         body: JSON.stringify({ title }),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
@@ -79,7 +81,7 @@ export default function AdminDashboard() {
     try {
       const res = await fetch(`${API_BASE}/api/admin/reject/${memeId}`, {
         method: 'DELETE',
-        headers: authHeaders(session),
+        headers: await authHeaders(),
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
       setMemes((prev) => prev.filter((m) => m.id !== memeId))
