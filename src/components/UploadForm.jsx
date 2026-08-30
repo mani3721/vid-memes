@@ -9,7 +9,7 @@ import { useAuth } from '../lib/authContext'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
-const ACCEPTED = '.mp4,.webm,.gif,.png,.jpg,.jpeg,.webp,.mp3,.wav'
+const ACCEPTED = '.mp4,.m4v,.mov,.webm,.gif,.png,.jpg,.jpeg,.webp,.mp3,.wav'
 const MAX_FILES = 20
 const MOOD_OPTIONS = [
   { id: 'laugh',     label: '😂 Funny'     },
