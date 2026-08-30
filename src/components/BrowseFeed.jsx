@@ -5,6 +5,7 @@ import { WEBSITE_SCHEMA } from '../utils/seo'
 import SEO from './SEO'
 import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
+import TrendingSoundsFeed from './TrendingSoundsFeed'
 import PageHeading from './PageHeading'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
@@ -97,6 +98,9 @@ export default function BrowseFeed() {
             />
           )}
         </section>
+
+        {/* Trending Sound Effects strip */}
+        <TrendingSoundsFeed />
 
         {/* SEO content block */}
         <section aria-labelledby="about-videsaur" className="mt-8 border-t border-edge pt-8">

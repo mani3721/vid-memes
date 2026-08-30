@@ -1,16 +1,13 @@
-import { useState } from 'react'
-import { Loader2, AudioLines } from 'lucide-react'
-import { compact } from '../data/assets'
+import { useEffect, useRef } from 'react'
+import { Loader2 } from 'lucide-react'
 import { SITE_NAME } from '../utils/seo'
 import { useTrendingMemes, useCategoryMemes } from '../hooks/useMemes'
 import SEO from '../components/SEO'
 import MasonryFeed from '../components/MasonryFeed'
-import DownloadButton from '../components/DownloadButton'
 import MoodPicker from '../components/MoodPicker'
 import EmptyGridState from '../components/EmptyGridState'
+import SoundCard from '../components/SoundCard'
 import { useStudio } from '../store/studioStore'
-
-const BARS = [5, 9, 14, 8, 17, 11, 6, 13, 9, 16, 7, 12, 5, 10, 15, 8]
 
 const DB_CATEGORY = { trending: null, videos: 'videos', gifs: 'gifs', templates: 'images', sounds: 'sounds' }
 
@@ -103,41 +100,7 @@ export default function CategoryPage({ category }) {
         {meta.hasMoodFilter && <MoodPicker />}
 
         {category === 'sounds' ? (
-          <section aria-labelledby="sfx-list-heading">
-            <h2 id="sfx-list-heading" className="sr-only">Sound effects list</h2>
-            {loading ? (
-              <p className="py-10 text-center text-sm text-lo">Loading sounds…</p>
-            ) : memes.length === 0 ? (
-              <EmptyGridState category="sounds" />
-            ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {memes.map((sfx) => (
-                  <div
-                    key={sfx.id}
-                    className="flex items-center gap-3 rounded-xl border border-edge bg-panel p-4 transition-colors hover:border-brand/40 hover:bg-panel-hover"
-                  >
-                    <AudioLines className="size-5 shrink-0 text-brand" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-hi">{sfx.title}</p>
-                      <div aria-hidden className="mt-1.5 flex h-5 items-center gap-0.5">
-                        {BARS.map((h, i) => (
-                          <span key={i} className="w-0.5 shrink-0 rounded-full bg-brand/60" style={{ height: `${h}px` }} />
-                        ))}
-                      </div>
-                      <p className="mt-1 text-xs text-lo">{sfx.sizeMB} MB · {compact(sfx.editorUses)} downloads</p>
-                    </div>
-                    <DownloadButton
-                      label={`Download ${sfx.title} sound effect`}
-                      href={sfx.publicUrl}
-                      filename={sfx.filename}
-                      memeId={sfx.id}
-                      size="sm"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
+          <SoundsGrid memes={memes} loading={loading} hasMore={hasMore} loadMore={loadMore} />
         ) : (
           <>
             {loading && memes.length === 0 ? (
@@ -146,8 +109,7 @@ export default function CategoryPage({ category }) {
               <EmptyGridState category={meta.h1.toLowerCase()} />
             ) : (
               <>
-                <MasonryFeed assets={memes} />
-                {/* Sparse grid note */}
+                <MasonryFeed assets={memes} hasMore={hasMore} onLoadMore={loadMore} loadingMore={false} />
                 {memes.length < 6 && !loading && (
                   <p className="text-center text-xs text-lo/60">
                     More {meta.h1.toLowerCase()} coming soon
@@ -155,22 +117,51 @@ export default function CategoryPage({ category }) {
                 )}
               </>
             )}
-
-            {hasMore && (
-              <div className="flex justify-center pt-4">
-                <button
-                  type="button"
-                  onClick={loadMore}
-                  className="inline-flex items-center gap-2 rounded-full border border-edge bg-panel px-5 py-2.5 text-sm font-medium text-mid transition-colors hover:border-brand/40 hover:text-hi"
-                >
-                  <Loader2 className="size-4" />
-                  Show more
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>
     </>
+  )
+}
+
+// ── Sounds grid with infinite scroll ─────────────────────────────────────────
+
+function SoundsGrid({ memes, loading, hasMore, loadMore }) {
+  const sentinelRef = useRef(null)
+
+  useEffect(() => {
+    const el = sentinelRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && hasMore) loadMore() },
+      { rootMargin: '200px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [hasMore, loadMore])
+
+  if (loading && memes.length === 0) {
+    return (
+      <div className="flex justify-center py-16" role="status">
+        <Loader2 className="size-6 animate-spin text-brand" />
+        <span className="sr-only">Loading sounds…</span>
+      </div>
+    )
+  }
+
+  if (!loading && memes.length === 0) {
+    return <EmptyGridState category="sounds" />
+  }
+
+  return (
+    <section aria-labelledby="sfx-list-heading">
+      <h2 id="sfx-list-heading" className="sr-only">Sound effects list</h2>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {memes.map(sfx => <SoundCard key={sfx.id} sfx={sfx} />)}
+      </div>
+      <div ref={sentinelRef} className="flex justify-center py-8" aria-hidden="true">
+        {hasMore && <Loader2 className="size-5 animate-spin text-brand" />}
+      </div>
+    </section>
   )
 }

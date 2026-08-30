@@ -109,6 +109,11 @@ html.dark {
   50%       { opacity: 0.75; }
 }
 
+@keyframes waveplay {
+  0%, 100% { transform: scaleY(0.55); }
+  50%       { transform: scaleY(1); }
+}
+
 /*
  * Torn-sticker clip-paths: GPU-cheap polygon masks, three variants
  * so a grid never looks rubber-stamped.

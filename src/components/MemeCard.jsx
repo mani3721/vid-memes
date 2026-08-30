@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Download, Heart } from 'lucide-react'
-import { compact } from '../data/assets'
+import { compact, timeAgo } from '../data/assets'
 import { toMemeUrl } from '../utils/seo'
 import DownloadButton from './DownloadButton'
 import SignInToFave from './SignInToFave'
@@ -122,10 +122,16 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
         </span>
       </div>
 
-      {/* Download count */}
+      {/* Download count + upload time */}
       <p className="mt-0.5 flex items-center gap-1 text-xs text-lo">
         <Download className="size-3 shrink-0" />
         {compact(asset.editorUses)} downloads
+        {timeAgo(asset.createdAt) && (
+          <>
+            <span className="mx-0.5 opacity-30">·</span>
+            {timeAgo(asset.createdAt)}
+          </>
+        )}
       </p>
     </article>
   )

@@ -18,6 +18,7 @@ function normalize(m) {
     greenScreen: m.green_screen ?? false,
     r2Key: m.r2_key,
     mood: m.mood_tags?.[0] ?? null,
+    createdAt: m.created_at ?? null,
     sizeMB: m.file_size_bytes
       ? (m.file_size_bytes / 1024 / 1024).toFixed(1)
       : '0.0',
