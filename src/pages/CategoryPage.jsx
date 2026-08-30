@@ -157,7 +157,9 @@ function SoundsGrid({ memes, loading, hasMore, loadMore }) {
     <section aria-labelledby="sfx-list-heading">
       <h2 id="sfx-list-heading" className="sr-only">Sound effects list</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {memes.map(sfx => <SoundCard key={sfx.id} sfx={sfx} />)}
+        {memes.map((sfx, i) => (
+          <SoundCard key={sfx.id} sfx={sfx} stagger={i % 3} />
+        ))}
       </div>
       <div ref={sentinelRef} className="flex justify-center py-8" aria-hidden="true">
         {hasMore && <Loader2 className="size-5 animate-spin text-brand" />}

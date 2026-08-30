@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
 import { useNavigate } from 'react-router-dom'
 import SEO from '../components/SEO'
@@ -16,7 +16,8 @@ export default function AdminDashboard() {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [busy, setBusy] = useState({}) // memeId → 'approve' | 'reject'
+  const [busy, setBusy] = useState({})      // memeId → 'approve' | 'reject' | 'rename'
+  const [editing, setEditing] = useState({}) // memeId → draft title string
 
   useEffect(() => {
     if (authLoading) return
@@ -50,6 +51,24 @@ export default function AdminDashboard() {
       })
       if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
       setMemes((prev) => prev.filter((m) => m.id !== memeId))
+    } finally {
+      setBusy((b) => { const n = { ...b }; delete n[memeId]; return n })
+    }
+  }
+
+  async function rename(memeId) {
+    const title = (editing[memeId] ?? '').trim()
+    if (!title) return
+    setBusy((b) => ({ ...b, [memeId]: 'rename' }))
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/rename/${memeId}`, {
+        method: 'PATCH',
+        headers: authHeaders(session),
+        body: JSON.stringify({ title }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error ?? 'Failed')
+      setMemes((prev) => prev.map((m) => m.id === memeId ? { ...m, title } : m))
+      setEditing((e) => { const n = { ...e }; delete n[memeId]; return n })
     } finally {
       setBusy((b) => { const n = { ...b }; delete n[memeId]; return n })
     }
@@ -111,7 +130,54 @@ export default function AdminDashboard() {
                   className="aspect-video w-full object-cover"
                 />
                 <div className="p-3">
-                  <p className="truncate font-semibold text-hi">{meme.title}</p>
+                  {/* Inline title editor */}
+                  {editing[meme.id] !== undefined ? (
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        autoFocus
+                        type="text"
+                        maxLength={200}
+                        value={editing[meme.id]}
+                        onChange={(e) => setEditing((prev) => ({ ...prev, [meme.id]: e.target.value }))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') rename(meme.id)
+                          if (e.key === 'Escape') setEditing((prev) => { const n = { ...prev }; delete n[meme.id]; return n })
+                        }}
+                        className="min-w-0 flex-1 rounded-lg border border-volt/50 bg-base px-2 py-1 text-sm font-semibold text-hi outline-none focus:border-volt"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => rename(meme.id)}
+                        disabled={busy[meme.id] === 'rename'}
+                        className="grid size-7 shrink-0 place-items-center rounded-lg bg-volt/15 text-volt hover:bg-volt/25 disabled:opacity-50"
+                        aria-label="Save title"
+                      >
+                        {busy[meme.id] === 'rename'
+                          ? <Loader2 className="size-3.5 animate-spin" />
+                          : <Check className="size-3.5" />}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditing((prev) => { const n = { ...prev }; delete n[meme.id]; return n })}
+                        className="grid size-7 shrink-0 place-items-center rounded-lg bg-panel-hover text-mid hover:text-hi"
+                        aria-label="Cancel"
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="group/title flex items-center gap-1.5">
+                      <p className="flex-1 truncate font-semibold text-hi">{meme.title}</p>
+                      <button
+                        type="button"
+                        onClick={() => setEditing((prev) => ({ ...prev, [meme.id]: meme.title }))}
+                        className="shrink-0 opacity-0 transition-opacity group-hover/title:opacity-100"
+                        aria-label="Edit title"
+                      >
+                        <Pencil className="size-3.5 text-mid hover:text-hi" />
+                      </button>
+                    </div>
+                  )}
                   <p className="mt-0.5 text-xs text-mid">
                     {meme.category} · {meme.format} · {(meme.file_size_bytes / 1024 / 1024).toFixed(1)} MB
                   </p>

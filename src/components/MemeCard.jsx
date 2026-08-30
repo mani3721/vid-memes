@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Download, Heart } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
@@ -13,7 +13,23 @@ const TORN = ['torn', 'torn-b', 'torn-c']
 export default function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
   const [showSignIn, setShowSignIn] = useState(false)
+  const [inView, setInView] = useState(priority) // priority cards load immediately
   const videoRef = useRef(null)
+  const articleRef = useRef(null)
+
+  // Only load video metadata once the card scrolls into view
+  useEffect(() => {
+    if (!isVideo || inView) return
+    const el = articleRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect() } },
+      { rootMargin: '200px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function handleMouseEnter() {
     if (videoRef.current) videoRef.current.play().catch(() => {})
@@ -37,7 +53,7 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
   }
 
   return (
-    <article className="group">
+    <article ref={articleRef} className="reveal-card group">
       <Link to={memeUrl} tabIndex={-1} aria-hidden className="block">
         {/* Thumbnail */}
         <div
@@ -61,8 +77,8 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
           {isVideo ? (
             <video
               ref={videoRef}
-              src={asset.publicUrl}
-              preload="metadata"
+              src={inView ? asset.publicUrl : undefined}
+              preload={inView ? 'metadata' : 'none'}
               muted
               loop
               playsInline

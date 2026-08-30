@@ -114,6 +114,50 @@ html.dark {
   50%       { transform: scaleY(1); }
 }
 
+/* ── Scroll-driven card reveal ───────────────────────────── */
+
+@keyframes card-item-in-view {
+  from { --in-view: false; }
+  to   { --in-view: true;  }
+}
+
+@keyframes card-reveal {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+    scale: 0.97;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+/*
+ * .reveal-item  — the scroll observer wrapper (sets --in-view via timeline)
+ * .reveal-card  — the animated child (reads --in-view via style query)
+ */
+@utility reveal-item {
+  --in-view: false;
+  animation: card-item-in-view both;
+  animation-timeline: view();
+  animation-range: entry 0% entry 40%;
+}
+
+@utility reveal-card {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      animation: card-reveal 0.55s cubic-bezier(0.22, 1, 0.36, 1) both paused;
+      animation-delay: calc(var(--stagger, 0) * 0.1s);
+
+      @container style(--in-view: true) {
+        animation-play-state: running;
+      }
+    }
+  }
+}
+
 /*
  * Torn-sticker clip-paths: GPU-cheap polygon masks, three variants
  * so a grid never looks rubber-stamped.

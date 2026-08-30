@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { compact, MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
+import { useAuth } from '../lib/authContext'
+import { Pencil, Check, X, Loader2 as EditLoader } from 'lucide-react'
 import {
   slugToId,
   toMemeUrl,
@@ -26,10 +28,16 @@ function MetaChip({ label }) {
   )
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
+
 export default function MemePage() {
   const { slug } = useParams()
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
+  const { user, isAdmin, session } = useAuth()
+  const [editingTitle, setEditingTitle] = useState(null) // null = view, string = editing
+  const [titleSaving, setTitleSaving] = useState(false)
+  const [displayTitle, setDisplayTitle] = useState(null) // override after save
   const { memes: similar, loading: similarLoading } = useSimilarMemes({
     category: asset?.category,
     moodTags: asset?.mood_tags ?? [],
@@ -48,11 +56,29 @@ export default function MemePage() {
       .then(({ error: err }) => { if (err) console.warn('[view]', err.message) })
   }, [id])
 
+  async function saveTitle() {
+    const title = (editingTitle ?? '').trim()
+    if (!title || title === (displayTitle ?? asset?.title)) { setEditingTitle(null); return }
+    setTitleSaving(true)
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/rename/${asset.id}`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title }),
+      })
+      if (res.ok) { setDisplayTitle(title); setEditingTitle(null) }
+    } finally {
+      setTitleSaving(false)
+    }
+  }
+
   if (loading) {
     return <div className="py-24 text-center text-sm text-mid">Loading…</div>
   }
   if (error || !asset) return <Navigate to="/" replace />
 
+  const canEditTitle = isAdmin || user?.id === asset.uploader_id
+  const shownTitle = displayTitle ?? asset.title
   const canonicalPath = toMemeUrl(asset)
   const isVideo = asset.format === 'MP4' || asset.format === 'WebM' || asset.format === 'GIF'
   const moodLabel = MOODS.find((m) => m.id === asset.mood)?.label ?? asset.mood ?? ''
@@ -115,9 +141,45 @@ export default function MemePage() {
                   {asset.greenScreen && <MetaChip label="Green Screen" />}
                 </div>
 
-                <h1 id="meme-title" className="font-display text-2xl leading-tight tracking-wide text-hi sm:text-3xl">
-                  {asset.title} — Download Free {asset.format}
-                </h1>
+                {editingTitle !== null ? (
+                  <div className="flex items-start gap-2">
+                    <input
+                      autoFocus
+                      type="text"
+                      maxLength={200}
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveTitle()
+                        if (e.key === 'Escape') setEditingTitle(null)
+                      }}
+                      className="flex-1 rounded-xl border border-volt/50 bg-base px-3 py-2 font-display text-xl tracking-wide text-hi outline-none focus:border-volt"
+                    />
+                    <button type="button" onClick={saveTitle} disabled={titleSaving}
+                      className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-volt/15 text-volt hover:bg-volt/25 disabled:opacity-50"
+                      aria-label="Save title">
+                      {titleSaving ? <EditLoader className="size-4 animate-spin" /> : <Check className="size-4" />}
+                    </button>
+                    <button type="button" onClick={() => setEditingTitle(null)}
+                      className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-panel-hover text-mid hover:text-hi"
+                      aria-label="Cancel">
+                      <X className="size-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="group/title flex items-start gap-2">
+                    <h1 id="meme-title" className="flex-1 font-display text-2xl leading-tight tracking-wide text-hi sm:text-3xl">
+                      {shownTitle} — Download Free {asset.format}
+                    </h1>
+                    {canEditTitle && (
+                      <button type="button" onClick={() => setEditingTitle(shownTitle)}
+                        className="mt-1 shrink-0 opacity-0 transition-opacity group-hover/title:opacity-100"
+                        aria-label="Edit title">
+                        <Pencil className="size-4 text-mid hover:text-hi" />
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {moodLabel && (
                   <p className="mt-1.5 text-sm text-mid">{moodLabel}</p>

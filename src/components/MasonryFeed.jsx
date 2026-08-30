@@ -35,7 +35,11 @@ export default function MasonryFeed({ assets, hasMore, onLoadMore, loadingMore }
     <div>
       <div className="columns-2 gap-3 sm:columns-4 xl:columns-6">
         {assets.map((asset, i) => (
-          <div key={asset.id} className="mb-3 break-inside-avoid">
+          <div
+            key={asset.id}
+            className="reveal-item mb-3 break-inside-avoid"
+            style={{ '--stagger': i % 4 }}
+          >
             <MemeCard
               asset={asset}
               index={i}

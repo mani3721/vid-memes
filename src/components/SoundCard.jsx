@@ -16,7 +16,7 @@ function waveformBars(id = '', count = 36) {
 // Module-level ref so pausing one card pauses any other currently playing
 let _activeAudio = null
 
-export default function SoundCard({ sfx }) {
+export default function SoundCard({ sfx, stagger = 0 }) {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const audioRef = useRef(null)
@@ -73,7 +73,8 @@ export default function SoundCard({ sfx }) {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-edge bg-panel p-4 transition-colors hover:border-brand/40 hover:bg-panel-hover">
+    <div className="reveal-item" style={{ '--stagger': stagger }}>
+    <div className="reveal-card flex flex-col gap-3 rounded-2xl border border-edge bg-panel p-4 transition-colors hover:border-brand/40 hover:bg-panel-hover">
       <audio
         ref={audioRef}
         src={sfx.publicUrl}
@@ -149,6 +150,7 @@ export default function SoundCard({ sfx }) {
           style={{ width: `${progress}%` }}
         />
       </div>
+    </div>
     </div>
   )
 }

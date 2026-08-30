@@ -29,7 +29,7 @@ export default function TrendingSoundsFeed() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {memes.map(sfx => <SoundCard key={sfx.id} sfx={sfx} />)}
+          {memes.map((sfx, i) => <SoundCard key={sfx.id} sfx={sfx} stagger={i % 3} />)}
         </div>
       )}
     </section>
