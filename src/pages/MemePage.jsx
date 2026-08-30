@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
 import { compact, MOODS } from '../data/assets'
-import { useMemeById, useCategoryMemes } from '../hooks/useMemes'
+import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
 import {
   slugToId,
@@ -12,7 +12,8 @@ import {
 } from '../utils/seo'
 import SEO from '../components/SEO'
 import DownloadButton from '../components/DownloadButton'
-import MasonryFeed from '../components/MasonryFeed'
+import ShareButton from '../components/ShareButton'
+import SimilarMemesRow from '../components/SimilarMemesRow'
 
 const FORMAT_LABELS = { MP4: 'Video · MP4', GIF: 'Animated · GIF', WebM: 'Video · WebM', PNG: 'Image · PNG', MP3: 'Audio · MP3', WAV: 'Audio · WAV' }
 
@@ -29,7 +30,12 @@ export default function MemePage() {
   const { slug } = useParams()
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
-  const { memes: related } = useCategoryMemes({ category: asset?.category, limit: 8 })
+  const { memes: similar, loading: similarLoading } = useSimilarMemes({
+    category: asset?.category,
+    moodTags: asset?.mood_tags ?? [],
+    excludeId: asset?.id,
+    limit: 14,
+  })
 
   // Track view — fire-and-forget RPC, once per session per meme
   useEffect(() => {
@@ -63,8 +69,6 @@ export default function MemePage() {
   ])
 
   const description = `Download ${asset.title} meme free in HD. ${asset.format} format, no watermark. Perfect for WhatsApp status, Reels, Shorts, and editing.`
-
-  const relatedFiltered = related.filter((a) => a.id !== asset.id)
 
   return (
     <>
@@ -120,13 +124,19 @@ export default function MemePage() {
                 )}
               </div>
 
-              <div>
+              <div className="flex items-center gap-2">
                 <DownloadButton
                   label={`Download ${asset.title} ${asset.format}`}
                   href={asset.publicUrl}
                   filename={asset.filename}
                   memeId={asset.id}
                   className="gap-2 rounded-full py-2.5 text-sm font-semibold"
+                />
+                <ShareButton
+                  url={window.location.href}
+                  title={asset.title}
+                  size="md"
+                  variant="solid"
                 />
               </div>
 
@@ -163,14 +173,12 @@ export default function MemePage() {
           )}
         </section>
 
-        {relatedFiltered.length > 0 && (
-          <section aria-labelledby="related-heading" className="mt-12">
-            <h2 id="related-heading" className="mb-4 font-display text-lg tracking-wide text-hi sm:text-xl">
-              Similar Memes You Might Like
-            </h2>
-            <MasonryFeed assets={relatedFiltered} />
-          </section>
-        )}
+        <section aria-labelledby="related-heading" className="mt-12">
+          <h2 id="related-heading" className="mb-4 font-display text-lg tracking-wide text-hi sm:text-xl">
+            You Might Also Like
+          </h2>
+          <SimilarMemesRow memes={similar} loading={similarLoading} />
+        </section>
 
         {/* FAQ */}
         <section aria-labelledby="faq-heading" className="mt-12">

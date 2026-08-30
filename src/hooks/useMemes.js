@@ -193,6 +193,128 @@ export function useMemesByIds(ids) {
 }
 
 /**
+ * useTodayTrending — ranks memes by downloads since midnight UTC.
+ * Falls back to all-time trending if today has fewer than 3 events.
+ * Auto-refreshes every 5 minutes.
+ */
+export function useTodayTrending({ limit = 10 } = {}) {
+  const [memes, setMemes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [lastUpdated, setLastUpdated] = useState(null)
+  const [isFallback, setIsFallback] = useState(false)
+
+  async function fetchTrending() {
+    const todayStart = new Date()
+    todayStart.setUTCHours(0, 0, 0, 0)
+
+    // Fetch today's download events (capped at 2000 to stay client-side)
+    const { data: events } = await supabase
+      .from('download_events')
+      .select('meme_id')
+      .gte('created_at', todayStart.toISOString())
+      .limit(2000)
+
+    const counts = {}
+    for (const { meme_id } of events ?? []) {
+      counts[meme_id] = (counts[meme_id] ?? 0) + 1
+    }
+
+    const topIds = Object.entries(counts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, limit)
+      .map(([id]) => id)
+
+    if (topIds.length >= 3) {
+      // Enough real today data
+      const { data } = await supabase
+        .from('memes')
+        .select('*')
+        .in('id', topIds)
+        .eq('is_published', true)
+
+      const sorted = (data ?? [])
+        .map((m) => ({ ...normalize(m), todayDownloads: counts[m.id] ?? 0 }))
+        .sort((a, b) => b.todayDownloads - a.todayDownloads)
+
+      setMemes(sorted)
+      setIsFallback(false)
+    } else {
+      // Too early in the day — fall back to all-time top
+      const { data } = await supabase
+        .from('memes')
+        .select('*')
+        .eq('is_published', true)
+        .order('download_count', { ascending: false })
+        .limit(limit)
+
+      setMemes((data ?? []).map(normalize))
+      setIsFallback(true)
+    }
+
+    setLastUpdated(new Date())
+  }
+
+  useEffect(() => {
+    setLoading(true)
+    fetchTrending().finally(() => setLoading(false))
+
+    const timer = setInterval(fetchTrending, 5 * 60 * 1000)
+    return () => clearInterval(timer)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [limit])
+
+  return { memes, loading, lastUpdated, isFallback }
+}
+
+/**
+ * useSimilarMemes — mood-aware "you might also like" query.
+ * Tries category + mood overlap first; falls back to category only if sparse.
+ */
+export function useSimilarMemes({ category, moodTags = [], excludeId, limit = 14 } = {}) {
+  const [memes, setMemes] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!category || !excludeId) return
+    setLoading(true)
+
+    async function fetch() {
+      const base = supabase
+        .from('memes')
+        .select('*')
+        .eq('is_published', true)
+        .eq('category', category)
+        .neq('id', excludeId)
+        .order('download_count', { ascending: false })
+
+      // Prefer memes that share at least one mood tag
+      let rows = []
+      if (moodTags.length > 0) {
+        const { data } = await base.overlaps('mood_tags', moodTags).limit(limit)
+        rows = (data ?? []).map(normalize)
+      }
+
+      // Fill remainder with any category match
+      if (rows.length < 6) {
+        const used = new Set(rows.map((r) => r.id))
+        const { data } = await base.limit(limit)
+        const extra = (data ?? []).map(normalize).filter((r) => !used.has(r.id))
+        rows = [...rows, ...extra].slice(0, limit)
+      }
+
+      setMemes(rows)
+    }
+
+    fetch()
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, excludeId, JSON.stringify(moodTags), limit])
+
+  return { memes, loading }
+}
+
+/**
  * useMemeById — single meme lookup for the detail page.
  */
 export function useMemeById(id) {

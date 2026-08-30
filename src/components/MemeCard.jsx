@@ -4,6 +4,7 @@ import { Download, Heart } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
 import { toMemeUrl } from '../utils/seo'
 import DownloadButton from './DownloadButton'
+import ShareButton from './ShareButton'
 import SignInToFave from './SignInToFave'
 import { useFavorites } from '../store/FavoritesProvider'
 
@@ -94,6 +95,12 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
             >
               <Heart className={`size-3.5 ${faved ? 'fill-current' : ''}`} />
             </button>
+            <ShareButton
+              url={`${window.location.origin}${memeUrl}`}
+              title={asset.title}
+              size="sm"
+              variant="ghost"
+            />
             <DownloadButton
               label={`Download ${asset.title} ${asset.format}`}
               href={asset.publicUrl}
