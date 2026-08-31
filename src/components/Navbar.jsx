@@ -38,7 +38,7 @@ export default function Navbar() {
               {isAdmin && (
                 <Link
                   to="/admin"
-                  className="hidden items-center gap-1.5 rounded-full border border-volt/40 px-3 py-2 text-xs font-semibold text-volt transition-colors hover:border-volt hover:bg-volt/10 sm:inline-flex"
+                  className="hidden items-center gap-1.5 rounded-full border border-brand/40 px-3 py-2 text-xs font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/10 sm:inline-flex"
                 >
                   <ShieldCheck className="size-3.5" />
                   Admin
@@ -47,7 +47,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2">
                 <div className="hidden flex-col items-end sm:flex">
                   <span className="max-w-30 truncate text-xs font-medium text-hi">{user.email}</span>
-                  {isAdmin && <span className="text-[10px] text-volt">Admin</span>}
+                  {isAdmin && <span className="text-[10px] text-brand">Admin</span>}
                 </div>
                 <button
                   type="button"
@@ -64,14 +64,14 @@ export default function Navbar() {
             <>
               <Link
                 to="/login?tab=signup"
-                className="hidden items-center gap-1.5 rounded-full border border-edge px-3.5 py-2 text-sm font-medium text-hi transition-colors duration-150 hover:border-volt hover:text-volt sm:inline-flex"
+                className="hidden items-center gap-1.5 rounded-full border border-edge px-3.5 py-2 text-sm font-medium text-hi transition-colors duration-150 hover:border-brand hover:text-brand sm:inline-flex"
               >
                 <UserPlus className="size-4" />
                 <span>Sign up</span>
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 rounded-full bg-volt px-3 py-2 text-sm font-semibold text-hi transition-colors duration-150 hover:bg-volt-hi sm:px-4"
+                className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-2 text-sm font-semibold text-ink transition-colors duration-150 hover:bg-brand-2 sm:px-4"
               >
                 <LogIn className="size-4" />
                 <span className="hidden sm:inline">Sign in</span>

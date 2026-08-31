@@ -78,8 +78,8 @@ export default function ShareButton({ url, title, size = 'md', variant = 'ghost'
   const iconSize = size === 'sm' ? 'size-3.5' : 'size-4'
   const tone =
     variant === 'ghost'
-      ? 'bg-black/50 text-white backdrop-blur-sm hover:bg-brand'
-      : 'bg-panel-hover text-mid hover:bg-brand hover:text-white'
+      ? 'bg-black/50 text-white backdrop-blur-sm hover:bg-brand hover:text-ink'
+      : 'bg-panel-hover text-mid hover:bg-brand hover:text-ink'
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
@@ -88,7 +88,7 @@ export default function ShareButton({ url, title, size = 'md', variant = 'ghost'
         onClick={handleClick}
         aria-label={copied ? 'Link copied!' : 'Share this meme'}
         aria-expanded={open}
-        className={`grid ${dims} shrink-0 place-items-center rounded-full transition-colors duration-150 ${tone} ${copied ? '!bg-brand !text-white' : ''}`}
+        className={`grid ${dims} shrink-0 place-items-center rounded-full transition-colors duration-150 ${tone} ${copied ? '!bg-brand !text-ink' : ''}`}
       >
         {copied
           ? <Check className={`${iconSize} animate-burst`} strokeWidth={3} />

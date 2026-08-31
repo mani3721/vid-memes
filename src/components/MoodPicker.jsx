@@ -25,7 +25,7 @@ export default function MoodPicker() {
               onClick={() => setMood(active ? null : m.id)}
               className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-sm transition-[background-color,border-color,color,transform] duration-150 active:scale-95 ${
                 active
-                  ? 'border-brand bg-brand text-white'
+                  ? 'border-brand bg-brand text-ink'
                   : 'border-edge bg-transparent text-mid hover:bg-panel-hover hover:text-hi'
               }`}
             >

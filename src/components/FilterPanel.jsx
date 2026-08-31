@@ -17,7 +17,7 @@ function Chip({ active, onClick, children }) {
       onClick={onClick}
       className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
         active
-          ? 'border-volt bg-volt text-white'
+          ? 'border-brand bg-brand text-ink'
           : 'border-edge text-mid hover:border-mist/50 hover:text-hi'
       }`}
     >
@@ -38,7 +38,7 @@ function Toggle({ checked, onChange, label }) {
       />
       <span
         aria-hidden
-        className="relative h-5 w-9 shrink-0 rounded-full bg-panel-hover transition-colors duration-150 peer-checked:bg-volt peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-volt"
+        className="relative h-5 w-9 shrink-0 rounded-full bg-panel-hover transition-colors duration-150 peer-checked:bg-brand peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand"
       >
         <span className="absolute left-0.5 top-0.5 size-4 rounded-full bg-white transition-transform duration-150 peer-checked:translate-x-4" />
       </span>
@@ -64,7 +64,7 @@ export default function FilterPanel({ filters, setFilters, onReset, resultCount 
         <button
           type="button"
           onClick={onReset}
-          className="text-xs font-semibold text-volt transition-opacity duration-150 hover:opacity-70"
+          className="text-xs font-semibold text-brand transition-opacity duration-150 hover:opacity-70"
         >
           Reset
         </button>
@@ -139,7 +139,7 @@ export default function FilterPanel({ filters, setFilters, onReset, resultCount 
             value={filters.maxDuration}
             onChange={(e) => setFilters((f) => ({ ...f, maxDuration: Number(e.target.value) }))}
             aria-label="Maximum duration in seconds"
-            className="w-full accent-volt"
+            className="w-full accent-brand"
           />
           <div className="mt-1 flex justify-between text-[11px] text-mid">
             <span>1s</span>

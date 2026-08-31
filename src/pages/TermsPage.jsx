@@ -77,11 +77,11 @@ export default function TermsPage() {
         <PolicySection heading="DMCA / Copyright Complaints">
           <p>
             If you believe content on the Site infringes your copyright, send a takedown notice to{' '}
-            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-brand">
               dmca@videsaur.co.in
             </a>
             . See our{' '}
-            <a href="/content-policy" className="text-hi underline underline-offset-2 hover:text-volt">
+            <a href="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
               Content &amp; DMCA Policy
             </a>{' '}
             for the full procedure and what information to include. We respond to valid notices
@@ -129,7 +129,7 @@ export default function TermsPage() {
         <PolicySection heading="Contact">
           <p>
             Questions about these Terms? Email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
               hello@videsaur.co.in
             </a>
             .

@@ -90,7 +90,7 @@ export default function SoundCard({ sfx, stagger = 0 }) {
           type="button"
           onClick={togglePlay}
           aria-label={playing ? `Pause ${sfx.title}` : `Play ${sfx.title}`}
-          className="grid size-10 shrink-0 place-items-center rounded-full bg-brand text-white transition-colors hover:bg-brand-2"
+          className="grid size-10 shrink-0 place-items-center rounded-full bg-brand text-ink transition-colors hover:bg-brand-2"
         >
           {playing
             ? <Pause className="size-4" />

@@ -17,6 +17,7 @@ import {
   X,
   ChevronRight,
   ChevronLeft,
+  Sparkles,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
   { icon: Smile,      label: 'GIFs',      to: '/gifs'      },
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
+  { icon: Sparkles,   label: 'AI Voice',  to: '/ai-sound', isNew: true },
 ]
 
 const YOU_ITEMS = [
@@ -131,7 +133,7 @@ export default function Sidebar({ open, onClose }) {
 
         {/* ── Main nav ─────────────────────────────────────── */}
         <nav aria-label="Main" className="px-2 pt-1">
-          {NAV_ITEMS.map(({ icon: Icon, label, to }) => (
+          {NAV_ITEMS.map(({ icon: Icon, label, to, isNew }) => (
             <NavLink
               key={label}
               to={to}
@@ -140,6 +142,11 @@ export default function Sidebar({ open, onClose }) {
             >
               <Icon className="size-4.5 shrink-0" />
               <span className={`truncate ${fullView ? '' : 'hidden lg:block'}`}>{label}</span>
+              {isNew && (
+                <span className={`ml-auto shrink-0 rounded-full bg-brand/15 px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-brand ${fullView ? '' : 'hidden lg:inline'}`}>
+                  New
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

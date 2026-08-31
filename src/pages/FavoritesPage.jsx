@@ -42,7 +42,7 @@ export default function FavoritesPage() {
             </div>
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-2"
+              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-brand-2"
             >
               <LogIn className="size-4" />
               Sign in

@@ -19,7 +19,7 @@ export default function ProjectKits() {
   return (
     <section aria-labelledby="kits-heading" className="rounded-2xl border border-edge bg-panel p-4">
       <div className="mb-3 flex items-center gap-2">
-        <FolderOpen className="size-4 text-volt" />
+        <FolderOpen className="size-4 text-brand" />
         <h2 id="kits-heading" className="font-display text-base tracking-wide text-hi">
           PROJECT KITS
         </h2>
@@ -66,12 +66,12 @@ export default function ProjectKits() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="New kit name…"
-          className="min-w-0 flex-1 rounded-lg border border-edge bg-canvas px-3 py-2 text-xs text-hi placeholder:text-mid focus:border-volt focus:outline-none"
+          className="min-w-0 flex-1 rounded-lg border border-edge bg-canvas px-3 py-2 text-xs text-hi placeholder:text-mid focus:border-brand focus:outline-none"
         />
         <button
           type="submit"
           aria-label="Create kit"
-          className="grid size-8 shrink-0 place-items-center rounded-lg bg-volt text-white transition-colors duration-150 hover:bg-volt-hi"
+          className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand text-ink transition-colors duration-150 hover:bg-brand-2"
         >
           <Plus className="size-4" />
         </button>

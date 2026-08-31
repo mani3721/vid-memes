@@ -79,7 +79,7 @@ export default function AboutPage() {
           <p>
             We respond to DMCA takedown requests within 24–48 hours. If you believe content on
             Videsaur infringes your copyright, please see our{' '}
-            <Link to="/content-policy" className="text-hi underline underline-offset-2 hover:text-volt">
+            <Link to="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
               Content &amp; DMCA Policy
             </Link>
             .
@@ -89,13 +89,13 @@ export default function AboutPage() {
         <PolicySection heading="Contact">
           <p>
             General questions:{' '}
-            <a href="mailto:hello@videsaur.com" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.com" className="text-hi hover:text-brand">
               hello@videsaur.com
             </a>
           </p>
           <p>
             Copyright / DMCA:{' '}
-            <a href="mailto:dmca@videsaur.com" className="text-hi hover:text-volt">
+            <a href="mailto:dmca@videsaur.com" className="text-hi hover:text-brand">
               dmca@videsaur.com
             </a>
           </p>

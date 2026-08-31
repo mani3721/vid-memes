@@ -42,7 +42,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
   return (
     <article
       className={`group flex h-full flex-col overflow-hidden rounded-xl border bg-panel transition-colors duration-150 ${
-        selected ? 'border-volt' : 'border-edge hover:border-mist/40'
+        selected ? 'border-brand' : 'border-edge hover:border-mist/40'
       }`}
     >
       <div className="relative aspect-square shrink-0 overflow-hidden bg-panel-hover">
@@ -64,8 +64,8 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
           />
           <span
             aria-hidden
-            className={`grid size-6 place-items-center rounded-md border-2 backdrop-blur-sm transition-colors duration-150 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-volt ${
-              selected ? 'border-volt bg-volt text-white' : 'border-white/70 bg-canvas/50'
+            className={`grid size-6 place-items-center rounded-md border-2 backdrop-blur-sm transition-colors duration-150 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand ${
+              selected ? 'border-brand bg-brand text-ink' : 'border-white/70 bg-canvas/50'
             }`}
           >
             {selected && <Check className="size-4" strokeWidth={3} />}
@@ -76,7 +76,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
           type="button"
           onClick={() => onStar(asset)}
           aria-label={`Save ${asset.title} to a Project Kit`}
-          className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-canvas/70 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-volt"
+          className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-canvas/70 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand"
         >
           <Star className="size-3.5" />
         </button>
@@ -88,7 +88,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
             </span>
           )}
           {asset.hasAlpha && (
-            <span className="rounded bg-volt px-1.5 py-0.5 text-[10px] font-bold uppercase text-hi">
+            <span className="rounded bg-brand px-1.5 py-0.5 text-[10px] font-bold uppercase text-hi">
               Alpha
             </span>
           )}
@@ -126,7 +126,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
             type="button"
             onClick={() => copy('link', link)}
             aria-label={`Copy direct link to ${asset.title}`}
-            className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-edge py-1.5 text-[11px] font-semibold text-mid transition-colors duration-150 hover:border-volt hover:text-hi"
+            className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-edge py-1.5 text-[11px] font-semibold text-mid transition-colors duration-150 hover:border-brand hover:text-hi"
           >
             <Link2 className="size-3" />
             {copied === 'link' ? 'Copied' : 'Link'}
@@ -135,7 +135,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
             type="button"
             onClick={() => copy('embed', embed)}
             aria-label={`Copy embed code for ${asset.title}`}
-            className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-edge py-1.5 text-[11px] font-semibold text-mid transition-colors duration-150 hover:border-volt hover:text-hi"
+            className="flex flex-1 items-center justify-center gap-1 rounded-lg border border-edge py-1.5 text-[11px] font-semibold text-mid transition-colors duration-150 hover:border-brand hover:text-hi"
           >
             <Code2 className="size-3" />
             {copied === 'embed' ? 'Copied' : 'Embed'}

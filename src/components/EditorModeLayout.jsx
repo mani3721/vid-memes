@@ -198,7 +198,7 @@ export default function EditorModeLayout() {
               <button
                 type="button"
                 onClick={() => selectMany(items.slice(0, 50).map((a) => a.id))}
-                className="inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-1.5 text-xs font-semibold text-mid transition-colors duration-150 hover:border-volt hover:text-hi"
+                className="inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-1.5 text-xs font-semibold text-mid transition-colors duration-150 hover:border-brand hover:text-hi"
               >
                 <CheckSquare className="size-3.5" />
                 Select first 50
@@ -209,7 +209,7 @@ export default function EditorModeLayout() {
           {/* Craft-side social proof, ranked by editor usage rather than views */}
           <div className="mt-3">
             <div className="mb-1.5 flex items-center gap-1.5">
-              <TrendingUp className="size-3.5 text-volt" />
+              <TrendingUp className="size-3.5 text-brand" />
               <h2 className="text-[11px] font-bold uppercase tracking-widest text-mid">
                 Most used this week by editors
               </h2>
@@ -222,7 +222,7 @@ export default function EditorModeLayout() {
                   onClick={() => toggleSelect(a.id)}
                   className={`flex shrink-0 items-center gap-2 rounded-lg border px-2 py-1.5 text-left transition-colors duration-150 ${
                     selected.has(a.id)
-                      ? 'border-volt bg-volt/10'
+                      ? 'border-brand bg-brand/10'
                       : 'border-edge hover:border-mist/50'
                   }`}
                 >

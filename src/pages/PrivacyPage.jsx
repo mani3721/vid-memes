@@ -15,7 +15,7 @@ export default function PrivacyPage() {
             Videsaur (&ldquo;we&rdquo;, &ldquo;us&rdquo;, or &ldquo;our&rdquo;) operates the website at{' '}
             <strong>videsaur.co.in</strong>. This policy explains what data we collect, why we
             collect it, and the rights you have over your data. If you have questions, email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
               hello@videsaur.co.in
             </a>
             .
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="text-hi">Cookie consent choice</strong> — stored locally in your
-              browser under the key <code className="text-volt">videsaur.consent.v1</code>. We do
+              browser under the key <code className="text-brand">videsaur.consent.v1</code>. We do
               not transmit this to our servers.
             </li>
             <li>
@@ -92,7 +92,7 @@ export default function PrivacyPage() {
               href="https://policies.google.com/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-hi hover:text-volt"
+              className="text-hi hover:text-brand"
             >
               Google Privacy Policy
             </a>
@@ -105,7 +105,7 @@ export default function PrivacyPage() {
               href="https://adssettings.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-hi hover:text-volt"
+              className="text-hi hover:text-brand"
             >
               Google Ad Settings
             </a>{' '}
@@ -114,7 +114,7 @@ export default function PrivacyPage() {
               href="https://optout.aboutads.info"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-hi hover:text-volt"
+              className="text-hi hover:text-brand"
             >
               AboutAds.info
             </a>
@@ -160,7 +160,7 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-3">
             To exercise any right, email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
               hello@videsaur.co.in
             </a>{' '}
             with &ldquo;GDPR Request&rdquo; in the subject line. We respond within 30 days.
@@ -179,7 +179,7 @@ export default function PrivacyPage() {
           </ul>
           <p className="mt-3">
             To submit a CCPA request, email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
               hello@videsaur.co.in
             </a>{' '}
             with &ldquo;CCPA Request&rdquo; in the subject line.

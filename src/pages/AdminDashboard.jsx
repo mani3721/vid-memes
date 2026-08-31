@@ -91,7 +91,7 @@ export default function AdminDashboard() {
   }
 
   if (authLoading) {
-    return <div className="flex min-h-[60vh] items-center justify-center"><Loader2 className="size-6 animate-spin text-volt" /></div>
+    return <div className="flex min-h-[60vh] items-center justify-center"><Loader2 className="size-6 animate-spin text-brand" /></div>
   }
 
   return (
@@ -100,9 +100,9 @@ export default function AdminDashboard() {
 
       <div className="mx-auto max-w-5xl space-y-6 pb-20">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="size-6 text-volt" />
+          <ShieldCheck className="size-6 text-brand" />
           <h1 className="font-display text-2xl tracking-wide text-hi">PENDING APPROVAL</h1>
-          <span className="ml-auto rounded-full bg-volt/15 px-3 py-1 text-xs font-semibold text-volt">
+          <span className="ml-auto rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">
             {memes.length} waiting
           </span>
         </div>
@@ -116,10 +116,10 @@ export default function AdminDashboard() {
         )}
 
         {loading ? (
-          <div className="flex justify-center py-20"><Loader2 className="size-6 animate-spin text-volt" /></div>
+          <div className="flex justify-center py-20"><Loader2 className="size-6 animate-spin text-brand" /></div>
         ) : memes.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-24 text-center">
-            <CheckCircle2 className="size-12 text-volt/50" />
+            <CheckCircle2 className="size-12 text-brand/50" />
             <p className="text-mid">All clear — no pending memes.</p>
           </div>
         ) : (
@@ -145,13 +145,13 @@ export default function AdminDashboard() {
                           if (e.key === 'Enter') rename(meme.id)
                           if (e.key === 'Escape') setEditing((prev) => { const n = { ...prev }; delete n[meme.id]; return n })
                         }}
-                        className="min-w-0 flex-1 rounded-lg border border-volt/50 bg-base px-2 py-1 text-sm font-semibold text-hi outline-none focus:border-volt"
+                        className="min-w-0 flex-1 rounded-lg border border-brand/50 bg-base px-2 py-1 text-sm font-semibold text-hi outline-none focus:border-brand"
                       />
                       <button
                         type="button"
                         onClick={() => rename(meme.id)}
                         disabled={busy[meme.id] === 'rename'}
-                        className="grid size-7 shrink-0 place-items-center rounded-lg bg-volt/15 text-volt hover:bg-volt/25 disabled:opacity-50"
+                        className="grid size-7 shrink-0 place-items-center rounded-lg bg-brand/15 text-brand hover:bg-brand/25 disabled:opacity-50"
                         aria-label="Save title"
                       >
                         {busy[meme.id] === 'rename'
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                       type="button"
                       disabled={!!busy[meme.id]}
                       onClick={() => approve(meme.id)}
-                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-volt/15 py-2 text-xs font-semibold text-volt transition-colors hover:bg-volt/25 disabled:opacity-50"
+                      className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-brand/15 py-2 text-xs font-semibold text-brand transition-colors hover:bg-brand/25 disabled:opacity-50"
                     >
                       {busy[meme.id] === 'approve'
                         ? <Loader2 className="size-3.5 animate-spin" />

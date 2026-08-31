@@ -22,10 +22,10 @@ export default function CookiePolicyPage() {
           <p>You can control cookies through your browser settings. Disabling cookies may affect site functionality such as favorites and sign-in. You can also withdraw your advertising consent at any time via the cookie banner at the bottom of the page.</p>
         </PolicySection>
         <PolicySection heading="Third-Party Cookies">
-          <p>We may use Google AdSense, which sets its own cookies. These are governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-volt hover:underline">Google's Privacy Policy</a>.</p>
+          <p>We may use Google AdSense, which sets its own cookies. These are governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-brand hover:underline">Google's Privacy Policy</a>.</p>
         </PolicySection>
         <PolicySection heading="Contact">
-          <p>Questions about our cookie use? Email <a href="mailto:hello@videsaur.co.in" className="text-volt hover:underline">hello@videsaur.co.in</a>.</p>
+          <p>Questions about our cookie use? Email <a href="mailto:hello@videsaur.co.in" className="text-brand hover:underline">hello@videsaur.co.in</a>.</p>
         </PolicySection>
       </PolicyLayout>
     </>

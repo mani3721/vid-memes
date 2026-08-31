@@ -6,7 +6,7 @@ import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 function HelpCard({ icon: Icon, title, children }) {
   return (
     <div className="flex gap-4 rounded-2xl border border-edge bg-panel p-4">
-      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-volt/15 text-volt">
+      <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-brand/15 text-brand">
         <Icon className="size-5" />
       </div>
       <div>
@@ -27,7 +27,7 @@ export default function HelpPage() {
             <p>Click the download button on any meme card or detail page. You need to be signed in to download. Files download instantly — no watermark, no redirect.</p>
           </HelpCard>
           <HelpCard icon={Upload} title="How to Upload">
-            <p>Go to <Link to="/upload" className="text-volt hover:underline">Upload</Link>. Supported formats: MP4, WebM (videos), GIF, PNG, JPEG, WebP (images), MP3, WAV (audio). Max file size is 50 MB for video.</p>
+            <p>Go to <Link to="/upload" className="text-brand hover:underline">Upload</Link>. Supported formats: MP4, WebM (videos), GIF, PNG, JPEG, WebP (images), MP3, WAV (audio). Max file size is 50 MB for video.</p>
           </HelpCard>
           <HelpCard icon={Heart} title="Favorites">
             <p>Tap the heart icon on any card to save it. Your favorites are stored in a session — they persist across visits on the same browser without needing an account.</p>
@@ -56,9 +56,9 @@ export default function HelpPage() {
 
         <PolicySection heading="Still Need Help?">
           <p className="flex items-center gap-2">
-            <Mail className="size-4 shrink-0 text-volt" />
+            <Mail className="size-4 shrink-0 text-brand" />
             Email us at{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-volt hover:underline">
+            <a href="mailto:hello@videsaur.co.in" className="text-brand hover:underline">
               hello@videsaur.co.in
             </a>{' '}
             — we typically reply within 24 hours.

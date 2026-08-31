@@ -13,7 +13,7 @@ export default function SoundGrabStrip() {
   return (
     <section aria-labelledby="sfx-heading">
       <div className="mb-2.5 flex items-center gap-2">
-        <AudioLines className="size-4 text-volt" />
+        <AudioLines className="size-4 text-brand" />
         <h2 id="sfx-heading" className="font-display text-lg tracking-wide text-hi">
           GRAB THE SOUND ONLY
         </h2>
@@ -23,14 +23,14 @@ export default function SoundGrabStrip() {
         {sounds.map((sfx) => (
           <div
             key={sfx.id}
-            className="flex w-52 shrink-0 items-center gap-3 rounded-2xl border border-edge bg-panel p-3 transition-colors duration-150 hover:border-volt/50"
+            className="flex w-52 shrink-0 items-center gap-3 rounded-2xl border border-edge bg-panel p-3 transition-colors duration-150 hover:border-brand/50"
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-hi">{sfx.title}</p>
 
               <div aria-hidden className="mt-1.5 flex h-5 items-center gap-[2px]">
                 {BARS.map((h, i) => (
-                  <span key={i} className="w-[2px] shrink-0 rounded-full bg-volt/70" style={{ height: `${h}px` }} />
+                  <span key={i} className="w-[2px] shrink-0 rounded-full bg-brand/70" style={{ height: `${h}px` }} />
                 ))}
               </div>
 

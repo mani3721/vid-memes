@@ -75,7 +75,7 @@ function BulkBar({ count, totalMB, onClear, onSaveToKit, selectedAssets }) {
         data-ad-unsafe="bulk-action"
         className="animate-slide-up pointer-events-auto flex w-full max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-edge bg-panel/95 p-3 shadow-2xl shadow-black/60 backdrop-blur-md"
       >
-        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-volt text-white">
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand text-ink">
           <Package className="size-4" />
         </span>
 
@@ -93,7 +93,7 @@ function BulkBar({ count, totalMB, onClear, onSaveToKit, selectedAssets }) {
         <button
           type="button"
           onClick={onSaveToKit}
-          className="inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-2 text-xs font-semibold text-hi transition-colors duration-150 hover:border-volt hover:text-volt"
+          className="inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-2 text-xs font-semibold text-hi transition-colors duration-150 hover:border-brand hover:text-brand"
         >
           <FolderPlus className="size-3.5" />
           <span className="hidden sm:inline">Save to Kit</span>
@@ -108,7 +108,7 @@ function BulkBar({ count, totalMB, onClear, onSaveToKit, selectedAssets }) {
             'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-colors duration-150',
             state === 'error'
               ? 'border border-red-500/60 text-red-400 hover:border-red-400'
-              : 'bg-volt text-white hover:bg-volt-hi disabled:opacity-60',
+              : 'bg-brand text-ink hover:bg-brand-2 disabled:opacity-60',
           ].join(' ')}
         >
           {state === 'loading' ? (

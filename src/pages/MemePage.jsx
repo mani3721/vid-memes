@@ -156,10 +156,10 @@ export default function MemePage() {
                         if (e.key === 'Enter') saveTitle()
                         if (e.key === 'Escape') setEditingTitle(null)
                       }}
-                      className="flex-1 rounded-xl border border-volt/50 bg-base px-3 py-2 font-display text-xl tracking-wide text-hi outline-none focus:border-volt"
+                      className="flex-1 rounded-xl border border-brand/50 bg-base px-3 py-2 font-display text-xl tracking-wide text-hi outline-none focus:border-brand"
                     />
                     <button type="button" onClick={saveTitle} disabled={titleSaving}
-                      className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-volt/15 text-volt hover:bg-volt/25 disabled:opacity-50"
+                      className="mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-brand/15 text-brand hover:bg-brand/25 disabled:opacity-50"
                       aria-label="Save title">
                       {titleSaving ? <EditLoader className="size-4 animate-spin" /> : <Check className="size-4" />}
                     </button>

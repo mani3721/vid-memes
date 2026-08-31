@@ -5,14 +5,12 @@ import { compact, timeAgo } from '../data/assets'
 import { toMemeUrl } from '../utils/seo'
 import DownloadButton from './DownloadButton'
 import ShareButton from './ShareButton'
-import SignInToFave from './SignInToFave'
 import { useFavorites } from '../store/FavoritesProvider'
 
 const TORN = ['torn', 'torn-b', 'torn-c']
 
 export default function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
-  const [showSignIn, setShowSignIn] = useState(false)
   const [inView, setInView] = useState(priority) // priority cards load immediately
   const videoRef = useRef(null)
   const articleRef = useRef(null)
@@ -44,12 +42,9 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
   const isVideo = asset.format === 'MP4' || asset.format === 'WebM'
   const cardAspect = isVideo ? 'aspect-video' : aspectClass
 
-  async function handleFaveClick(e) {
+  function handleFaveClick(e) {
     e.preventDefault()
-    const result = await toggle(asset.id)
-    if (result === 'unauthenticated') {
-      setShowSignIn(true)
-    }
+    toggle(asset.id)
   }
 
   return (
@@ -65,7 +60,7 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
             'relative overflow-hidden',
             cardAspect,
             'bg-panel border border-edge',
-            'transition-[border-color] duration-200 group-hover:border-brand/30',
+            'transition-[border-color] duration-200 group-hover:border-brand/50',
           ].join(' ')}
         >
           {/* Shimmer skeleton */}
@@ -127,8 +122,6 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
             />
           </div>
 
-          {/* Sign-in prompt for guests */}
-          {showSignIn && <SignInToFave onDismiss={() => setShowSignIn(false)} />}
         </div>
       </Link>
 

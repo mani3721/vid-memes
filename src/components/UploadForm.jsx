@@ -164,7 +164,7 @@ export default function UploadForm() {
         </div>
         <Link
           to="/login"
-          className="rounded-full bg-volt px-6 py-2.5 text-sm font-semibold text-hi transition-colors hover:bg-volt-hi"
+          className="rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-brand-2"
         >
           Sign in / Create account
         </Link>
@@ -197,7 +197,7 @@ export default function UploadForm() {
           onDrop={handleDrop}
           onClick={() => fileRef.current?.click()}
           onKeyDown={e => e.key === 'Enter' && fileRef.current?.click()}
-          className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-edge p-8 transition-colors hover:border-volt/50"
+          className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-edge p-8 transition-colors hover:border-brand/50"
         >
           <input
             ref={fileRef}
@@ -231,14 +231,14 @@ export default function UploadForm() {
                   className={[
                     'rounded-2xl border p-4 transition-colors',
                     done
-                      ? 'border-volt/40 bg-volt/5'
+                      ? 'border-brand/40 bg-brand/5'
                       : isErr
                       ? 'border-red-500/30 bg-red-500/5'
                       : 'border-edge bg-panel',
                   ].join(' ')}
                 >
                   <div className="flex items-start gap-3">
-                    <Icon className={['mt-0.5 size-5 shrink-0', done ? 'text-volt' : 'text-mid'].join(' ')} />
+                    <Icon className={['mt-0.5 size-5 shrink-0', done ? 'text-brand' : 'text-mid'].join(' ')} />
 
                     <div className="min-w-0 flex-1 space-y-2.5">
                       {/* Filename + size */}
@@ -259,7 +259,7 @@ export default function UploadForm() {
                           value={entry.title}
                           onChange={e => patchEntry(entry.id, { title: e.target.value })}
                           disabled={isUploading}
-                          className="w-full rounded-xl border border-edge bg-base px-3 py-2 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-volt disabled:opacity-60"
+                          className="w-full rounded-xl border border-edge bg-base px-3 py-2 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand disabled:opacity-60"
                           placeholder="Title"
                         />
                       )}
@@ -276,8 +276,8 @@ export default function UploadForm() {
                               className={[
                                 'rounded-full border px-2.5 py-1 text-xs font-semibold capitalize transition-colors disabled:opacity-60',
                                 entry.category === cat
-                                  ? 'border-volt bg-volt/10 text-hi'
-                                  : 'border-edge text-mid hover:border-volt/50 hover:text-hi',
+                                  ? 'border-brand bg-brand/10 text-hi'
+                                  : 'border-edge text-mid hover:border-brand/50 hover:text-hi',
                               ].join(' ')}
                             >
                               {cat}
@@ -295,7 +295,7 @@ export default function UploadForm() {
                           </div>
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-panel-hover">
                             <div
-                              className="h-full rounded-full bg-volt transition-all duration-200"
+                              className="h-full rounded-full bg-brand transition-all duration-200"
                               style={{ width: `${entry.progress}%` }}
                             />
                           </div>
@@ -310,7 +310,7 @@ export default function UploadForm() {
                         </p>
                       )}
                       {done && (
-                        <p className="flex items-center gap-1.5 text-xs text-volt">
+                        <p className="flex items-center gap-1.5 text-xs text-brand">
                           {entry.status === 'pending'
                             ? <><Clock className="size-3.5" /> Pending approval</>
                             : <><CheckCircle2 className="size-3.5" /> Live on Videsaur</>}
@@ -353,8 +353,8 @@ export default function UploadForm() {
                   className={[
                     'rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors',
                     sharedMoods.includes(id)
-                      ? 'border-volt bg-volt/10 text-hi'
-                      : 'border-edge text-mid hover:border-volt/50 hover:text-hi',
+                      ? 'border-brand bg-brand/10 text-hi'
+                      : 'border-edge text-mid hover:border-brand/50 hover:text-hi',
                   ].join(' ')}
                 >
                   {label}
@@ -375,7 +375,7 @@ export default function UploadForm() {
               id="upload-license"
               value={sharedLicense}
               onChange={e => setSharedLicense(e.target.value)}
-              className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi outline-none transition-colors focus:border-volt"
+              className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi outline-none transition-colors focus:border-brand"
             >
               {LICENSE_OPTIONS.map(({ value, label }) => (
                 <option key={value} value={value}>{label}</option>
@@ -390,7 +390,7 @@ export default function UploadForm() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full rounded-full bg-volt py-3 text-sm font-semibold text-hi transition-colors hover:bg-volt-hi disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-full bg-brand py-3 text-sm font-semibold text-ink transition-colors hover:bg-brand-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {uploading ? (
                 <span className="inline-flex items-center gap-2">

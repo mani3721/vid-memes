@@ -75,7 +75,7 @@ export default function TrendingCard({ meme, isHot = false }) {
         {/* Badges — top-left */}
         <div className="absolute left-2 top-2 flex items-center gap-1.5">
           {isHot && (
-            <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white shadow-sm">
+            <span className="rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-ink shadow-sm">
               🔥 Hot
             </span>
           )}

@@ -41,7 +41,7 @@ export default function DmcaPage() {
             <p className="font-semibold text-hi">DMCA Agent</p>
             <p className="mt-1 text-mid">
               Email:{' '}
-              <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-volt">
+              <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-brand">
                 dmca@videsaur.co.in
               </a>
             </p>
@@ -88,7 +88,7 @@ export default function DmcaPage() {
           <p className="mb-3">
             If you believe your content was removed in error or misidentification, you may send a
             counter-notice to{' '}
-            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-brand">
               dmca@videsaur.co.in
             </a>
             . Your counter-notice must include:
@@ -126,7 +126,7 @@ export default function DmcaPage() {
           <p>
             To report content that violates our community standards (hate speech, illegal material,
             privacy violations) rather than copyright, email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-volt">
+            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
               hello@videsaur.co.in
             </a>{' '}
             with &ldquo;Content Report&rdquo; in the subject line. Include the URL of the content

@@ -92,7 +92,7 @@ export default function StoryReel() {
               </div>
 
               <div className="flex min-w-0 flex-1 flex-col justify-center text-center sm:text-left">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-volt">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-brand">
                   Trending #{i + 1}
                 </p>
                 <h3 className="mt-1.5 font-display text-3xl leading-[0.95] tracking-wide text-hi sm:text-4xl lg:text-5xl">
@@ -118,11 +118,11 @@ export default function StoryReel() {
       </div>
 
       <button type="button" onClick={() => goTo(active - 1)} aria-label="Previous meme"
-        className="absolute left-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-volt">
+        className="absolute left-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand">
         <ChevronLeft className="size-5" />
       </button>
       <button type="button" onClick={() => goTo(active + 1)} aria-label="Next meme"
-        className="absolute right-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-volt">
+        className="absolute right-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand">
         <ChevronRight className="size-5" />
       </button>
 
@@ -136,7 +136,7 @@ export default function StoryReel() {
             <button key={item.id} type="button" onClick={() => goTo(i)} aria-label={`Go to slide ${i + 1}`}
               className="group h-1 flex-1 overflow-hidden rounded-full bg-white/15">
               <span className={`block h-full rounded-full transition-[width] duration-300 ${
-                i < active ? 'w-full bg-white/40' : i === active ? 'w-full bg-volt' : 'w-0'
+                i < active ? 'w-full bg-white/40' : i === active ? 'w-full bg-brand' : 'w-0'
               }`} />
             </button>
           ))}

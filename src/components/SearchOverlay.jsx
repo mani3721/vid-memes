@@ -55,8 +55,8 @@ export default function SearchOverlay({ open, onOpen, onClose }) {
       />
 
       <div className="animate-rise absolute inset-x-3 top-2.5 z-40 sm:inset-x-6">
-        <div className="flex h-10 items-center gap-2 rounded-full border border-volt/60 bg-panel px-4 shadow-2xl shadow-black/50">
-          <Search className="size-4 shrink-0 text-volt" />
+        <div className="flex h-10 items-center gap-2 rounded-full border border-brand/60 bg-panel px-4 shadow-2xl shadow-black/50">
+          <Search className="size-4 shrink-0 text-brand" />
           <label htmlFor="studio-search" className="sr-only">
             Search the library
           </label>
@@ -88,7 +88,7 @@ export default function SearchOverlay({ open, onOpen, onClose }) {
                 setQuery(s)
                 onClose()
               }}
-              className="rounded-full border border-edge bg-panel px-3 py-1.5 text-xs text-mid transition-colors duration-150 hover:border-volt hover:text-hi"
+              className="rounded-full border border-edge bg-panel px-3 py-1.5 text-xs text-mid transition-colors duration-150 hover:border-brand hover:text-hi"
             >
               {s}
             </button>

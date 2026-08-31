@@ -1,24 +1,47 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
+const LOCAL_KEY = 'videsaur_fav_ids'
+
+function readLocalIds() {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+function writeLocalIds(ids) {
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify([...ids]))
+  } catch {}
+}
+
 /**
- * Raw Supabase-backed favorites hook.
- * Accepts a userId; returns null-safe state for guests.
- * Used internally by FavoritesProvider — call useFavorites() from context instead.
+ * Supabase-backed favorites for authenticated users;
+ * localStorage-backed for guests. Works without sign-in.
+ * Used internally by FavoritesProvider.
  *
- * @param {string|null|undefined} userId — Supabase auth.users.id
+ * @param {string|null|undefined} userId — undefined while auth is loading
  */
 export function useFavorites(userId) {
   const [ids, setIds] = useState(new Set())
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Still waiting for auth to resolve
+    if (userId === undefined) return
+
     if (!userId) {
-      setIds(new Set())
+      // Guest: load from localStorage
+      setIds(new Set(readLocalIds()))
       setLoading(false)
       return
     }
 
+    // Authenticated: load from Supabase
     setLoading(true)
     supabase
       .from('favorites')
@@ -32,30 +55,26 @@ export function useFavorites(userId) {
 
   const isFav = useCallback((id) => ids.has(id), [ids])
 
-  /**
-   * Toggle a meme's favorite state.
-   * Returns 'unauthenticated' when called with no userId — callers
-   * should show a sign-in prompt rather than silently failing.
-   */
   const toggle = useCallback(
     async (memeId) => {
-      if (!userId) return 'unauthenticated'
-
       const wasFav = ids.has(memeId)
 
       // Optimistic UI update
       setIds((prev) => {
         const next = new Set(prev)
         wasFav ? next.delete(memeId) : next.add(memeId)
+        if (!userId) writeLocalIds(next)
         return next
       })
 
+      if (!userId) return // guest: localStorage already updated above
+
+      // Authenticated: sync to Supabase
       const { error } = wasFav
         ? await supabase.from('favorites').delete().eq('user_id', userId).eq('meme_id', memeId)
         : await supabase.from('favorites').insert({ user_id: userId, meme_id: memeId })
 
       if (error) {
-        // Rollback on failure
         setIds((prev) => {
           const next = new Set(prev)
           wasFav ? next.add(memeId) : next.delete(memeId)

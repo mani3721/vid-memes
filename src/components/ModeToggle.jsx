@@ -21,7 +21,7 @@ export default function ModeToggle() {
     >
       <span
         aria-hidden
-        className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-volt transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-brand transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           index === 1 ? 'translate-x-full' : 'translate-x-0'
         }`}
       />

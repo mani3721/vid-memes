@@ -26,11 +26,12 @@ const UploadForm        = lazy(() => import('./components/UploadForm'))
 const FavoritesPage     = lazy(() => import('./pages/FavoritesPage'))
 const LoginPage         = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
+const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
 
 function EditorFallback() {
   return (
     <div className="flex min-h-screen items-center justify-center" role="status" aria-live="polite">
-      <Loader2 className="size-6 animate-spin text-volt" />
+      <Loader2 className="size-6 animate-spin text-brand" />
       <span className="sr-only">Loading</span>
     </div>
   )
@@ -69,6 +70,7 @@ function Studio() {
         <Route path="/favorites"      element={<FavoritesPage />} />
         <Route path="/login"          element={<LoginPage />} />
         <Route path="/admin"          element={<AdminDashboard />} />
+        <Route path="/ai-sound"       element={<AISoundPage />} />
         <Route path="*"               element={<BrowseFeed />} />
       </Routes>
     </AppShell>

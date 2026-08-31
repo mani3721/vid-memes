@@ -17,7 +17,7 @@ export default function MemeOfTheDay() {
         </div>
 
         <div className="min-w-0 flex-1">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-volt px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-hi">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-hi">
             <Sparkles className="size-3" strokeWidth={2.5} />
             Meme of the day
           </span>

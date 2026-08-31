@@ -103,7 +103,7 @@ export default function LoginPage() {
               onClick={() => switchTab('signin')}
               className={[
                 'flex-1 rounded-lg py-2 text-sm font-semibold transition-colors',
-                tab === 'signin' ? 'bg-volt text-white' : 'text-mid hover:text-hi',
+                tab === 'signin' ? 'bg-brand text-ink' : 'text-mid hover:text-hi',
               ].join(' ')}
             >
               Sign in
@@ -113,7 +113,7 @@ export default function LoginPage() {
               onClick={() => switchTab('signup')}
               className={[
                 'flex-1 rounded-lg py-2 text-sm font-semibold transition-colors',
-                tab === 'signup' ? 'bg-volt text-white' : 'text-mid hover:text-hi',
+                tab === 'signup' ? 'bg-brand text-ink' : 'text-mid hover:text-hi',
               ].join(' ')}
             >
               Sign up
@@ -121,7 +121,7 @@ export default function LoginPage() {
           </div>
 
           {status === 'success' ? (
-            <div className="rounded-2xl border border-volt/30 bg-volt/10 p-5 text-center text-sm text-hi">
+            <div className="rounded-2xl border border-brand/30 bg-brand/10 p-5 text-center text-sm text-hi">
               <p className="font-semibold">Check your email!</p>
               <p className="mt-1 text-mid">
                 We sent a confirmation link to <span className="text-hi">{email}</span>.
@@ -130,7 +130,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => switchTab('signin')}
-                className="mt-3 text-xs font-semibold text-volt hover:underline"
+                className="mt-3 text-xs font-semibold text-brand hover:underline"
               >
                 Back to sign in
               </button>
@@ -172,7 +172,7 @@ export default function LoginPage() {
                     autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-volt"
+                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
                     placeholder="you@example.com"
                   />
                 </div>
@@ -189,7 +189,7 @@ export default function LoginPage() {
                     minLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-volt"
+                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
                     placeholder={tab === 'signup' ? 'At least 6 characters' : '••••••••'}
                   />
                 </div>
@@ -204,7 +204,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={status === 'loading' || status === 'google'}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-volt py-3 text-sm font-semibold text-white transition-colors hover:bg-volt-hi disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-ink transition-colors hover:bg-brand-2 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {status === 'loading' ? (
                     <Loader2 className="size-4 animate-spin" />

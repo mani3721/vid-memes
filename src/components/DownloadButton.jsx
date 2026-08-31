@@ -81,13 +81,13 @@ export default function DownloadButton({
   const dims = size === 'sm' ? 'size-8' : 'size-10'
   const tone =
     variant === 'solid'
-      ? 'bg-volt text-white hover:bg-volt-hi'
-      : 'bg-black/70 text-white backdrop-blur-sm hover:bg-volt'
+      ? 'bg-brand text-ink hover:bg-brand-2'
+      : 'bg-black/70 text-white backdrop-blur-sm hover:bg-brand hover:text-ink'
 
   // Guest-mode: muted style with lock hint
   const guestTone = variant === 'solid'
-    ? 'bg-panel-hover text-mid hover:bg-volt hover:text-white'
-    : 'bg-black/70 text-mid/60 backdrop-blur-sm hover:bg-volt hover:text-white'
+    ? 'bg-panel-hover text-mid hover:bg-brand hover:text-ink'
+    : 'bg-black/70 text-mid/60 backdrop-blur-sm hover:bg-brand hover:text-ink'
 
   return (
     <button

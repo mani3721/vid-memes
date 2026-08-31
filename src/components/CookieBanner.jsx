@@ -37,7 +37,7 @@ export default function CookieBanner() {
             analyse site traffic. Only essential cookies load without your consent. Read our{' '}
             <Link
               to="/privacy"
-              className="text-hi underline underline-offset-2 transition-colors hover:text-volt"
+              className="text-hi underline underline-offset-2 transition-colors hover:text-brand"
             >
               Privacy Policy
             </Link>{' '}
@@ -56,7 +56,7 @@ export default function CookieBanner() {
           <button
             type="button"
             onClick={acceptAll}
-            className="rounded-full bg-volt px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 hover:bg-volt-hi"
+            className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-ink transition-colors duration-150 hover:bg-brand-2"
           >
             Accept all
           </button>

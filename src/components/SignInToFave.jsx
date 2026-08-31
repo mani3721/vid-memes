@@ -19,7 +19,7 @@ export default function SignInToFave({ onDismiss }) {
       <div className="flex items-center gap-2">
         <Link
           to="/login"
-          className="rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-brand-2"
+          className="rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:bg-brand-2"
         >
           Sign in
         </Link>

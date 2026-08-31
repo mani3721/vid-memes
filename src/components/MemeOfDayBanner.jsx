@@ -14,7 +14,7 @@ export default function MemeOfDayBanner() {
         <img src={meme.thumb} alt={meme.title} loading="eager" decoding="async" className="size-full object-cover" />
       </div>
 
-      <span className="hidden shrink-0 items-center gap-1 rounded-full bg-volt px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-hi sm:inline-flex">
+      <span className="hidden shrink-0 items-center gap-1 rounded-full bg-brand px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-hi sm:inline-flex">
         <Sparkles className="size-2.5" strokeWidth={2.5} />
         Today
       </span>
