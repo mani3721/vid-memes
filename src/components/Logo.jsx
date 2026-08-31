@@ -6,7 +6,7 @@ export default function Logo({ hideText = false }) {
       className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-panel"
     >
       <img
-        src="/vidsour-logo.png"
+        src="/vidsour-logo.webp"
         alt="Vidsour logo"
         className="size-9 shrink-0 opacity-90"
       />
