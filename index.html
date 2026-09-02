@@ -25,8 +25,14 @@
       gtag('config', 'G-DBB84KYZET');
     </script>
 
-    <!-- Google Search Console verification -->
+    <!-- Search engine ownership verification.
+         These must live in the static HTML, not in SEO.jsx: the verification
+         bots fetch the raw document and do not execute JS, so a tag React
+         injects on hydration is never seen. -->
+    <!-- Google Search Console -->
     <meta name="google-site-verification" content="h8TU2N8NVV_xVEYZrOJZW9c5F3iwE0_uAV8YS3oz0xg" />
+    <!-- Bing Webmaster Tools -->
+    <meta name="msvalidate.01" content="3F8AA40E7B776E8B2E23D88CD887655A" />
 
     <!-- Primary meta -->
     <title>Videsaur — Free Meme Videos, GIFs, Templates &amp; Sound Effects</title>

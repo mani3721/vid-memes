@@ -8,8 +8,7 @@ import { Pencil, Check, X, Loader2 as EditLoader } from 'lucide-react'
 import {
   slugToId,
   toMemeUrl,
-  buildVideoSchema,
-  buildImageSchema,
+  buildMediaSchema,
   buildBreadcrumbSchema,
 } from '../utils/seo'
 import SEO from '../components/SEO'
@@ -90,7 +89,10 @@ export default function MemePage() {
     ? `${asset.width_px}×${asset.height_px}`
     : null
 
-  const schema = isVideo ? buildVideoSchema(asset, canonicalPath) : buildImageSchema(asset, canonicalPath)
+  // Dispatches on format, so MP3/WAV pages get AudioObject rather than being
+  // described as images. sitemap-audio.xml relies on this markup for context,
+  // since there is no audio sitemap extension to carry it.
+  const schema = buildMediaSchema(asset, canonicalPath)
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: 'Home', url: '/' },
     { name: CAT_LABEL[asset.category] ?? 'Memes', url: CAT_BREADCRUMB[asset.category] ?? '/' },

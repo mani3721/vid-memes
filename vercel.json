@@ -1,5 +1,17 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
-    { "source": "/((?!assets|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\..*).*)", "destination": "/index.html" }
+    {
+      "source": "/:file(sitemap(?:-[a-z]+(?:-[0-9]+)?)?\\.xml)",
+      "destination": "https://api-videsaur.onrender.com/:file"
+    },
+    {
+      "source": "/indexnow.txt",
+      "destination": "https://api-videsaur.onrender.com/indexnow.txt"
+    },
+    {
+      "source": "/((?!assets|favicon\\.ico|robots\\.txt|.*\\..*).*)",
+      "destination": "/index.html"
+    }
   ]
 }

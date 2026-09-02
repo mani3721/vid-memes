@@ -1,19 +1,33 @@
 export const SITE_NAME = 'Videsaur'
 export const BASE_URL = 'https://videsaur.co.in'
 
-/** "Cat Slams Laptop Shut" → "cat-slams-laptop-shut" */
+/**
+ * "Cat Slams Laptop Shut" → "cat-slams-laptop-shut"
+ *
+ * ⚠  Mirrored in server/lib/sitemap/urls.js, which builds the <loc> values for
+ *    the sitemap. The two must agree byte for byte: if a sitemap URL differs
+ *    from the canonical this file renders, Google treats the sitemap URL as a
+ *    duplicate and drops it. Change both together.
+ */
 export function toSlug(str) {
-  return str
+  return String(str ?? '')
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$/, '')
+    .replace(/^-+|-+$/g, '')
 }
 
-/** Produces the path segment for a meme asset: "cat-slams-laptop-shut-a1" */
+/**
+ * Path segment for a meme asset: "cat-slams-laptop-shut-a1".
+ *
+ * Titles with no latin characters (pure Devanagari, emoji-only) slugify to an
+ * empty string, so fall back to "meme" rather than emitting a bare "-<id>".
+ * slugToId resolves the asset from the trailing id, so the prefix is cosmetic.
+ */
 export function toMemeSlug(asset) {
-  return `${toSlug(asset.title)}-${asset.id}`
+  const slug = toSlug(asset.title)
+  return `${slug || 'meme'}-${asset.id}`
 }
 
 /** Full href for an asset's canonical meme page */
@@ -31,44 +45,162 @@ export function slugToId(slug) {
   return match ? match[1] : slug.split('-').pop()
 }
 
-/** Seconds → ISO 8601 duration: 87 → "PT1M27S" */
+/**
+ * Seconds → ISO 8601 duration: 87 → "PT1M27S".
+ * Returns null for an unknown duration so callers can omit the property
+ * entirely — "PT0S" would assert the asset is zero seconds long.
+ */
 export function toDuration(seconds) {
-  if (!seconds || seconds === 0) return 'PT0S'
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
+  // Round to whole seconds up front: rounding the remainder instead would turn
+  // a 0.4s clip into a bare "PT", which is not a valid ISO 8601 duration.
+  const total = Math.round(Number(seconds))
+  if (!Number.isFinite(total) || total <= 0) return null
+  const m = Math.floor(total / 60)
+  const s = total % 60
   return `PT${m > 0 ? `${m}M` : ''}${s > 0 ? `${s}S` : ''}`
 }
 
-/** VideoObject schema for a video/gif meme asset */
-export function buildVideoSchema(asset, canonicalUrl) {
+/** Drop undefined/null properties so they never reach the JSON-LD output. */
+function defined(obj) {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined && v !== null))
+}
+
+/** CC0 assets get a machine-readable licence URL; Editorial has no canonical one. */
+function licenseUrl(asset) {
+  return asset.license === 'CC0' ? 'https://creativecommons.org/publicdomain/zero/1.0/' : undefined
+}
+
+/** Supabase timestamps → date-only strings, which is what schema.org expects. */
+function toDate(value) {
+  if (!value) return undefined
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString().split('T')[0]
+}
+
+/** Shared description wording, kept identical to the sitemap's video:description. */
+function describe(asset) {
+  return `Download ${asset.title} meme free in HD. ${asset.format} format, no watermark. Perfect for WhatsApp status, Reels, Shorts, and editing.`
+}
+
+/** Uploader display name, falling back to the schema default. */
+function authorOf(asset) {
+  return { '@type': 'Person', name: asset.creator_name ?? asset.creator ?? 'anonymous' }
+}
+
+/** Formats that are genuinely audio-only, and those Google treats as video. */
+export const AUDIO_FORMATS = new Set(['MP3', 'WAV'])
+export const VIDEO_FORMATS = new Set(['MP4', 'WebM'])
+
+const MIME_BY_FORMAT = {
+  MP4: 'video/mp4',
+  WebM: 'video/webm',
+  GIF: 'image/gif',
+  PNG: 'image/png',
+  JPEG: 'image/jpeg',
+  MP3: 'audio/mpeg',
+  WAV: 'audio/wav',
+}
+
+/** Download count as a schema.org InteractionCounter, when there is one. */
+function downloadStat(asset) {
+  const count = asset.download_count ?? asset.editorUses
+  if (!count) return undefined
   return {
-    '@context': 'https://schema.org',
-    '@type': 'VideoObject',
-    name: asset.title,
-    description: `Download ${asset.title} meme video free in HD. ${asset.format} format, no watermark. Perfect for WhatsApp status, Reels, Shorts, and editing.`,
-    thumbnailUrl: asset.thumb,
-    uploadDate: '2026-08-27',
-    duration: toDuration(asset.duration),
-    contentUrl: `${BASE_URL}${canonicalUrl}`,
-    embedUrl: `${BASE_URL}${canonicalUrl}`,
-    author: { '@type': 'Person', name: asset.creator },
-    license: asset.license === 'CC0' ? 'https://creativecommons.org/publicdomain/zero/1.0/' : undefined,
+    '@type': 'InteractionCounter',
+    interactionType: { '@type': 'DownloadAction' },
+    userInteractionCount: count,
   }
 }
 
-/** ImageObject schema for still meme assets (PNG) */
+/**
+ * VideoObject schema for a video meme asset.
+ *
+ * contentUrl points at the media file, not the page: Google requires a
+ * directly fetchable stream there, and pointing it at the HTML page is the
+ * single most common reason video rich results fail to appear. uploadDate is
+ * likewise a required property, and it must be the asset's real upload date.
+ */
+export function buildVideoSchema(asset, canonicalUrl) {
+  return defined({
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: asset.title,
+    description: describe(asset),
+    thumbnailUrl: asset.thumbnail_url ?? asset.thumb,
+    uploadDate: toDate(asset.created_at),
+    dateModified: toDate(asset.updated_at),
+    duration: toDuration(asset.duration_seconds ?? asset.duration),
+    contentUrl: asset.publicUrl ?? asset.public_url,
+    url: `${BASE_URL}${canonicalUrl}`,
+    width: asset.width_px ?? undefined,
+    height: asset.height_px ?? undefined,
+    interactionStatistic: downloadStat(asset),
+    author: authorOf(asset),
+    license: licenseUrl(asset),
+  })
+}
+
+/** ImageObject schema for still meme assets (PNG/JPEG/WebP) and GIFs. */
 export function buildImageSchema(asset, canonicalUrl) {
-  return {
+  return defined({
     '@context': 'https://schema.org',
     '@type': 'ImageObject',
     name: asset.title,
     description: `Download ${asset.title} meme template free. ${asset.format} format, transparent background${asset.hasAlpha ? ' with alpha channel' : ''}, no watermark.`,
-    contentUrl: `${BASE_URL}${canonicalUrl}`,
-    thumbnailUrl: asset.thumb,
-    uploadDate: '2026-08-27',
-    author: { '@type': 'Person', name: asset.creator },
-    license: asset.license === 'CC0' ? 'https://creativecommons.org/publicdomain/zero/1.0/' : undefined,
-  }
+    contentUrl: asset.publicUrl ?? asset.public_url,
+    thumbnailUrl: asset.thumbnail_url ?? asset.thumb,
+    url: `${BASE_URL}${canonicalUrl}`,
+    uploadDate: toDate(asset.created_at),
+    dateModified: toDate(asset.updated_at),
+    width: asset.width_px ?? undefined,
+    height: asset.height_px ?? undefined,
+    encodingFormat: MIME_BY_FORMAT[asset.format],
+    interactionStatistic: downloadStat(asset),
+    author: authorOf(asset),
+    license: licenseUrl(asset),
+  })
+}
+
+/**
+ * AudioObject schema for sound assets (MP3/WAV).
+ *
+ * There is no audio equivalent of the video sitemap extension, so
+ * sitemap-audio.xml can only list the page URLs. This markup is what actually
+ * tells a crawler the page is about a downloadable sound, how long it runs and
+ * where the file lives — so for audio it is doing the job the video sitemap
+ * tags do for MP4s, and it is the reason those URLs are worth listing at all.
+ */
+export function buildAudioSchema(asset, canonicalUrl) {
+  return defined({
+    '@context': 'https://schema.org',
+    '@type': 'AudioObject',
+    name: asset.title,
+    description: `Download ${asset.title} meme sound effect free. ${asset.format} format, no watermark. Ready for Reels, Shorts, TikTok and video editing.`,
+    contentUrl: asset.publicUrl ?? asset.public_url,
+    thumbnailUrl: asset.thumbnail_url ?? asset.thumb,
+    url: `${BASE_URL}${canonicalUrl}`,
+    uploadDate: toDate(asset.created_at),
+    dateModified: toDate(asset.updated_at),
+    duration: toDuration(asset.duration_seconds ?? asset.duration),
+    encodingFormat: MIME_BY_FORMAT[asset.format],
+    contentSize: asset.file_size_bytes ? `${Math.round(asset.file_size_bytes / 1024)}KB` : undefined,
+    interactionStatistic: downloadStat(asset),
+    author: authorOf(asset),
+    license: licenseUrl(asset),
+  })
+}
+
+/**
+ * Picks the right schema for an asset's media type.
+ *
+ * Keep this as the single dispatch point — MemePage previously fell back to
+ * ImageObject for anything that was not MP4/WebM/GIF, which described MP3 and
+ * WAV downloads as images.
+ */
+export function buildMediaSchema(asset, canonicalUrl) {
+  if (AUDIO_FORMATS.has(asset.format)) return buildAudioSchema(asset, canonicalUrl)
+  if (VIDEO_FORMATS.has(asset.format)) return buildVideoSchema(asset, canonicalUrl)
+  return buildImageSchema(asset, canonicalUrl)
 }
 
 /** BreadcrumbList schema */

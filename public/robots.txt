@@ -2,8 +2,18 @@
 
 User-agent: *
 Allow: /
+
+# Admin surfaces and the API are not content.
 Disallow: /admin
 Disallow: /api
+
+# Auth and per-user pages: nothing here is indexable, and every visitor sees
+# something different.
+Disallow: /login
+Disallow: /upload
+Disallow: /favorites
+
+# Search result pages are thin duplicates of the category feeds.
 Disallow: /*?q=
 Disallow: /404
 
@@ -14,4 +24,6 @@ Allow: /
 User-agent: AdsBot-Google
 Allow: /
 
+# Sitemap index — generated live from the catalogue, lists one sub-sitemap per
+# content type plus the static pages. See server/routes/sitemap.js.
 Sitemap: https://videsaur.co.in/sitemap.xml
