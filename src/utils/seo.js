@@ -1,5 +1,5 @@
 export const SITE_NAME = 'Videsaur'
-export const BASE_URL = 'https://videsaur.co.in'
+export const BASE_URL = 'https://www.videsaur.co.in'
 
 /**
  * "Cat Slams Laptop Shut" → "cat-slams-laptop-shut"
@@ -77,9 +77,37 @@ function toDate(value) {
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString().split('T')[0]
 }
 
-/** Shared description wording, kept identical to the sitemap's video:description. */
-function describe(asset) {
+/** The spec-derived sentence used when no long description has been written. */
+export function templateDescription(asset) {
   return `Download ${asset.title} meme free in HD. ${asset.format} format, no watermark. Perfect for WhatsApp status, Reels, Shorts, and editing.`
+}
+
+/**
+ * Description for structured data and meta tags.
+ *
+ * Prefers the "what is this meme" subsection of the long description, because
+ * that is the only genuinely per-asset prose available — the template differs
+ * between assets only by title and format, which makes every page's
+ * description near-duplicate boilerplate.
+ *
+ * Kept identical to describe() in server/lib/sitemap/generator.js so a page's
+ * description and its sitemap <video:description> never disagree.
+ */
+function describe(asset, maxChars = 320) {
+  const authored = asset.description_long?.what
+  if (typeof authored === 'string' && authored.trim()) {
+    const text = authored.trim().replace(/\s+/g, ' ')
+    if (text.length <= maxChars) return text
+    const cut = text.slice(0, maxChars)
+    const stop = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf(' '))
+    return `${cut.slice(0, stop > maxChars * 0.5 ? stop : maxChars).trim()}…`
+  }
+  return templateDescription(asset)
+}
+
+/** Meta-description-length variant (search engines truncate around 160 chars). */
+export function metaDescription(asset) {
+  return describe(asset, 155)
 }
 
 /** Uploader display name, falling back to the schema default. */

@@ -2,7 +2,7 @@
 export const SITE = {
   name: 'Videsaur',
   shortName: 'Videsaur',
-  origin: 'https://videsaur.co.in',
+  origin: 'https://www.videsaur.co.in',
   contactEmail: 'hello@videsaur.co.in',
   dmcaEmail: 'dmca@videsaur.co.in',
 }
@@ -16,6 +16,7 @@ export const SITE = {
 export const ADSENSE_CLIENT = import.meta.env.VITE_ADSENSE_CLIENT ?? ''
 
 export const FOOTER_NAV = [
+  { label: 'Blog', to: '/blog' },
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
   { label: 'Content & DMCA Policy', to: '/content-policy' },

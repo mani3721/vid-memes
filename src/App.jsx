@@ -27,6 +27,8 @@ const FavoritesPage     = lazy(() => import('./pages/FavoritesPage'))
 const LoginPage         = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
 const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
+const BlogIndexPage     = lazy(() => import('./pages/BlogIndexPage'))
+const BlogPostPage      = lazy(() => import('./pages/BlogPostPage'))
 
 function EditorFallback() {
   return (
@@ -71,6 +73,8 @@ function Studio() {
         <Route path="/login"          element={<LoginPage />} />
         <Route path="/admin"          element={<AdminDashboard />} />
         <Route path="/ai-sound"       element={<AISoundPage />} />
+        <Route path="/blog"           element={<BlogIndexPage />} />
+        <Route path="/blog/:slug"     element={<BlogPostPage />} />
         <Route path="*"               element={<BrowseFeed />} />
       </Routes>
     </AppShell>

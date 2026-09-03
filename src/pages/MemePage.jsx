@@ -10,8 +10,13 @@ import {
   toMemeUrl,
   buildMediaSchema,
   buildBreadcrumbSchema,
+  metaDescription,
+  templateDescription,
 } from '../utils/seo'
 import SEO from '../components/SEO'
+import AdSlot from '../components/AdSlot'
+import Breadcrumbs from '../components/Breadcrumbs'
+import MemeDescription from '../components/MemeDescription'
 import DownloadButton from '../components/DownloadButton'
 import ShareButton from '../components/ShareButton'
 import SimilarMemesRow from '../components/SimilarMemesRow'
@@ -93,13 +98,21 @@ export default function MemePage() {
   // described as images. sitemap-audio.xml relies on this markup for context,
   // since there is no audio sitemap extension to carry it.
   const schema = buildMediaSchema(asset, canonicalPath)
-  const breadcrumbSchema = buildBreadcrumbSchema([
+
+  // One crumb list drives both <Breadcrumbs> and the BreadcrumbList JSON-LD,
+  // so the visible trail and the structured data cannot drift apart.
+  const crumbs = [
     { name: 'Home', url: '/' },
     { name: CAT_LABEL[asset.category] ?? 'Memes', url: CAT_BREADCRUMB[asset.category] ?? '/' },
-    { name: asset.title },
-  ])
+    { name: shownTitle },
+  ]
+  const breadcrumbSchema = buildBreadcrumbSchema(crumbs)
 
-  const description = `Download ${asset.title} meme free in HD. ${asset.format} format, no watermark. Perfect for WhatsApp status, Reels, Shorts, and editing.`
+  // The <meta> description prefers the authored long copy so pages stop sharing
+  // one near-identical boilerplate sentence; the template is the fallback shown
+  // in the About block when nothing has been written yet.
+  const description = metaDescription(asset)
+  const fallbackDescription = templateDescription(asset)
 
   return (
     <>
@@ -114,6 +127,8 @@ export default function MemePage() {
       />
 
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
+        <Breadcrumbs crumbs={crumbs} />
+
         <article aria-labelledby="meme-title">
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="torn paper-lift relative overflow-hidden rounded-2xl bg-panel">
@@ -229,16 +244,25 @@ export default function MemePage() {
           </div>
         </article>
 
-        {/* About this meme */}
-        <section aria-labelledby="about-meme-heading" className="mt-12">
-          <h2 id="about-meme-heading" className="mb-3 font-display text-lg tracking-wide text-hi sm:text-xl">
-            About This Meme
-          </h2>
-          <p className="max-w-prose text-sm leading-relaxed text-mid">{description}</p>
-          {moodLabel && (
-            <p className="mt-2 text-sm text-lo">Mood: {moodLabel}</p>
-          )}
-        </section>
+        {/* About this meme — long-form, structured, unique per asset */}
+        <div className="mt-12">
+          <MemeDescription asset={asset} fallbackText={fallbackDescription} isAdmin={isAdmin} />
+          {moodLabel && <p className="mt-4 text-sm text-lo">Mood: {moodLabel}</p>}
+        </div>
+
+        {/*
+          In-flow ad slot between "About This Meme" and "You Might Also Like".
+
+          Wrapped in its own container on purpose. AdSlot refuses to render if a
+          *direct sibling* contains a [data-ad-unsafe] control, and every
+          section here is a sibling of the <article> that holds the download
+          button. Its own wrapper gives it no siblings to trip that check, so
+          the precise 150px geometric check governs instead — and AdSlot's my-40
+          (160px) margin is what satisfies it.
+        */}
+        <div>
+          <AdSlot context="article" />
+        </div>
 
         <section aria-labelledby="related-heading" className="mt-12">
           <h2 id="related-heading" className="mb-4 font-display text-lg tracking-wide text-hi sm:text-xl">
@@ -276,6 +300,20 @@ export default function MemePage() {
             ))}
           </dl>
         </section>
+
+        {/*
+          Second in-flow slot, after the FAQ. The brief asked for one "below
+          About This Meme" and one "between About This Meme and You Might Also
+          Like" — the same position twice — so the second is placed here, at the
+          end of the content, which is the other natural in-flow position and
+          the one AdSlot already models as "pre-footer".
+
+          Both slots are ordinary block elements in the document flow: no
+          sticky, no floating, no interstitial.
+        */}
+        <div>
+          <AdSlot context="pre-footer" />
+        </div>
       </div>
     </>
   )

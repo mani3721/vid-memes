@@ -30,6 +30,11 @@ export default function SEO({
   ogType = 'website',
   /** Array of JSON-LD objects (schema.org) — rendered as inline scripts */
   schemas = [],
+  /**
+   * Keep the page out of search results. For admin and account surfaces that
+   * are behind a login but must never be indexed if a crawler reaches them.
+   */
+  noindex = false,
 }) {
   const fullTitle = title
     ? `${title} | ${SITE_NAME}`
@@ -43,7 +48,13 @@ export default function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <link rel="canonical" href={canonicalUrl} />
+      {/*
+        A canonical on a noindex page sends conflicting signals — one says
+        "this is the authoritative URL", the other "drop it" — so noindex
+        pages omit it.
+      */}
+      {!noindex && <link rel="canonical" href={canonicalUrl} />}
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
 
       {/* ── Open Graph ───────────────────────────────────────────── */}
       <meta property="og:site_name" content={SITE_NAME} />

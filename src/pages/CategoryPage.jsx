@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Loader2 } from 'lucide-react'
-import { SITE_NAME } from '../utils/seo'
+import { BASE_URL, SITE_NAME } from '../utils/seo'
 import { useTrendingMemes, useCategoryMemes } from '../hooks/useMemes'
 import SEO from '../components/SEO'
 import MasonryFeed from '../components/MasonryFeed'
@@ -84,7 +84,7 @@ export default function CategoryPage({ category }) {
             '@type': 'CollectionPage',
             name: `${meta.h1} | ${SITE_NAME}`,
             description: meta.description,
-            url: `https://videsaur.co.in${canonicalPath}`,
+            url: `${BASE_URL}${canonicalPath}`,
           },
         ]}
       />
