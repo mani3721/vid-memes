@@ -94,6 +94,13 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
             />
           )}
 
+          {/* Hot badge */}
+          {asset.isHot && (
+            <div className="absolute left-2 top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+              🔥 Hot
+            </div>
+          )}
+
           {/* Action overlay */}
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-end gap-1.5 bg-linear-to-t from-black/70 to-transparent p-2.5 pt-8 opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
             <button

@@ -66,6 +66,7 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
           title: loaded.title ?? '',
           category: loaded.category ?? 'videos',
           content_status: loaded.content_status ?? 'draft',
+          is_hot: Boolean(loaded.is_hot),
           needs_description: Boolean(loaded.needs_description),
           mood_tags: loaded.mood_tags ?? [],
           description_long: loaded.description_long ?? {},
@@ -249,15 +250,26 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-mid">
-        <input
-          type="checkbox"
-          checked={draft.needs_description}
-          onChange={(e) => setDraft((d) => ({ ...d, needs_description: e.target.checked }))}
-          className="size-4 accent-brand"
-        />
-        Flag as needing description work
-      </label>
+      <div className="flex flex-col gap-2">
+        <label className="flex items-center gap-2 text-sm text-mid">
+          <input
+            type="checkbox"
+            checked={draft.is_hot}
+            onChange={(e) => setDraft((d) => ({ ...d, is_hot: e.target.checked }))}
+            className="size-4 accent-brand"
+          />
+          🔥 Mark as <strong className="text-hi">Hot</strong> — pins this meme to the top of every feed
+        </label>
+        <label className="flex items-center gap-2 text-sm text-mid">
+          <input
+            type="checkbox"
+            checked={draft.needs_description}
+            onChange={(e) => setDraft((d) => ({ ...d, needs_description: e.target.checked }))}
+            className="size-4 accent-brand"
+          />
+          Flag as needing description work
+        </label>
+      </div>
 
       <div className="flex gap-2 border-t border-edge pt-4">
         <button

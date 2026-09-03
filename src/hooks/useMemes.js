@@ -16,6 +16,7 @@ function normalize(m) {
     editorUses: m.download_count ?? 0,
     hasAlpha: m.has_alpha ?? false,
     greenScreen: m.green_screen ?? false,
+    isHot: m.is_hot ?? false,
     r2Key: m.r2_key,
     mood: m.mood_tags?.[0] ?? null,
     createdAt: m.created_at ?? null,
@@ -49,6 +50,7 @@ export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
         .from('memes')
         .select('*')
         .eq('is_published', true)
+        .order('is_hot', { ascending: false })
         .order('download_count', { ascending: false })
         .range(from, to)
       if (excludeCategory) q = q.neq('category', excludeCategory)
@@ -116,6 +118,7 @@ export function useCategoryMemes({ category, mood, query, excludeCategory, limit
         .from('memes')
         .select('*')
         .eq('is_published', true)
+        .order('is_hot', { ascending: false })
         .order('download_count', { ascending: false })
         .range(from, to)
 
