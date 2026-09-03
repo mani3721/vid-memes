@@ -50,6 +50,7 @@ export const listContent = (params) => request('/api/admin/content', { params })
 export const getContent = (id) => request(`/api/admin/content/${id}`)
 export const saveContent = (id, patch) => request(`/api/admin/content/${id}`, { method: 'PATCH', body: patch })
 export const bulkEditContent = (body) => request('/api/admin/content/bulk', { method: 'POST', body })
+export const deleteMeme = (id) => request(`/api/admin/content/${id}`, { method: 'DELETE' })
 
 // ── Moderation queue (existing endpoints) ────────────────────────────────────
 

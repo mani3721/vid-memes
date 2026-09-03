@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  AlertCircle, ChevronLeft, ChevronRight, Loader2, Pencil, RefreshCw, Search, X,
+  AlertCircle, ChevronLeft, ChevronRight, Loader2, Pencil, RefreshCw, Search, Trash2, X,
 } from 'lucide-react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { CONTENT_STATUSES } from '../../utils/contentSections'
-import { bulkEditContent, listContent } from '../../lib/adminApi'
+import { bulkEditContent, deleteMeme, listContent } from '../../lib/adminApi'
 import StatusBadge from './StatusBadge'
 import ContentEditForm from './ContentEditForm'
 
@@ -27,6 +27,7 @@ export default function ContentEditor() {
   const [error, setError] = useState(null)
   const [selected, setSelected] = useState(new Set())
   const [editingId, setEditingId] = useState(null)
+  const [deletingId, setDeletingId] = useState(null)
   const [bulkBusy, setBulkBusy] = useState(false)
 
   const [reloadToken, setReloadToken] = useState(0)
@@ -114,6 +115,20 @@ export default function ContentEditor() {
       setError(err.message)
     } finally {
       setBulkBusy(false)
+    }
+  }
+
+  async function handleDelete(row) {
+    if (!window.confirm(`Permanently delete "${row.title}"? This cannot be undone.`)) return
+    setDeletingId(row.id)
+    setError(null)
+    try {
+      await deleteMeme(row.id)
+      setData((prev) => ({ ...prev, items: prev.items.filter((i) => i.id !== row.id), total: prev.total - 1 }))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDeletingId(null)
     }
   }
 
@@ -257,7 +272,7 @@ export default function ContentEditor() {
               <th scope="col" className="p-3 font-semibold">Status</th>
               <th scope="col" className="p-3 font-semibold">Description</th>
               <th scope="col" className="p-3 font-semibold">Uploaded</th>
-              <th scope="col" className="w-16 p-3" />
+              <th scope="col" className="w-28 p-3" />
             </tr>
           </thead>
           <tbody>
@@ -299,13 +314,26 @@ export default function ContentEditor() {
                   </td>
                   <td className="whitespace-nowrap p-3 text-mid">{new Date(row.created_at).toLocaleDateString()}</td>
                   <td className="p-3">
-                    <button
-                      type="button"
-                      onClick={() => setEditingId(row.id)}
-                      className="flex items-center gap-1 rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/25"
-                    >
-                      <Pencil className="size-3" /> Edit
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingId(row.id)}
+                        className="flex items-center gap-1 rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand hover:bg-brand/25"
+                      >
+                        <Pencil className="size-3" /> Edit
+                      </button>
+                      <button
+                        type="button"
+                        disabled={deletingId === row.id}
+                        onClick={() => handleDelete(row)}
+                        className="grid size-7 place-items-center rounded-full bg-red-500/10 text-red-400 hover:bg-red-500/25 disabled:opacity-50"
+                        aria-label={`Delete ${row.title}`}
+                      >
+                        {deletingId === row.id
+                          ? <Loader2 className="size-3.5 animate-spin" />
+                          : <Trash2 className="size-3.5" />}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
