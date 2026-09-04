@@ -11,11 +11,9 @@ const TORN = ['torn', 'torn-b', 'torn-c']
 
 function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
-  const [videoSrc, setVideoSrc] = useState(null)
   const videoRef = useRef(null)
 
   function handleMouseEnter() {
-    if (!videoSrc) setVideoSrc(asset.publicUrl)
     if (videoRef.current) videoRef.current.play().catch(() => {})
   }
   function handleMouseLeave() {
@@ -58,15 +56,14 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
           {isVideo ? (
             <video
               ref={videoRef}
-              src={videoSrc || undefined}
-              poster={asset.thumb}
-              preload="none"
+              src={asset.publicUrl}
+              preload="metadata"
               muted
               loop
               playsInline
               onLoadedMetadata={(e) => { e.currentTarget.currentTime = 1; setLoaded(true) }}
               onError={() => setLoaded(true)}
-              className="size-full object-cover"
+              className={`size-full object-cover transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
             />
           ) : (
             <img
