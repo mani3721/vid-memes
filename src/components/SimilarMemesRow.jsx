@@ -8,11 +8,13 @@ import SoundCard from './SoundCard'
 
 function SimilarVideoCard({ asset }) {
   const [loaded, setLoaded] = useState(false)
+  const [videoSrc, setVideoSrc] = useState(null)
   const videoRef = useRef(null)
   const memeUrl = toMemeUrl(asset)
   const isVideo = asset.format === 'MP4' || asset.format === 'WebM'
 
   function handleMouseEnter() {
+    if (!videoSrc) setVideoSrc(asset.publicUrl)
     if (videoRef.current) videoRef.current.play().catch(() => {})
   }
   function handleMouseLeave() {
@@ -36,14 +38,15 @@ function SimilarVideoCard({ asset }) {
           {isVideo ? (
             <video
               ref={videoRef}
-              src={asset.publicUrl}
-              preload="metadata"
+              src={videoSrc || undefined}
+              poster={asset.thumb}
+              preload="none"
               muted
               loop
               playsInline
               onLoadedMetadata={(e) => { e.currentTarget.currentTime = 0; setLoaded(true) }}
               onError={() => setLoaded(true)}
-              className={`size-full object-cover transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+              className="size-full object-cover"
             />
           ) : (
             <img

@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Download, Heart, BadgeCheck } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
@@ -11,25 +11,11 @@ const TORN = ['torn', 'torn-b', 'torn-c']
 
 function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
-  const [inView, setInView] = useState(priority) // priority cards load immediately
+  const [videoSrc, setVideoSrc] = useState(null)
   const videoRef = useRef(null)
-  const articleRef = useRef(null)
-
-  // Only load video metadata once the card scrolls into view
-  useEffect(() => {
-    if (!isVideo || inView) return
-    const el = articleRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect() } },
-      { rootMargin: '200px' },
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   function handleMouseEnter() {
+    if (!videoSrc) setVideoSrc(asset.publicUrl)
     if (videoRef.current) videoRef.current.play().catch(() => {})
   }
   function handleMouseLeave() {
@@ -48,7 +34,7 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
   }
 
   return (
-    <article ref={articleRef} className="reveal-card group">
+    <article className="reveal-card group">
       <Link to={memeUrl} tabIndex={-1} aria-hidden className="block">
         {/* Thumbnail */}
         <div
@@ -72,14 +58,15 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
           {isVideo ? (
             <video
               ref={videoRef}
-              src={inView ? asset.publicUrl : undefined}
-              preload={inView ? 'metadata' : 'none'}
+              src={videoSrc || undefined}
+              poster={asset.thumb}
+              preload="none"
               muted
               loop
               playsInline
               onLoadedMetadata={(e) => { e.currentTarget.currentTime = 1; setLoaded(true) }}
               onError={() => setLoaded(true)}
-              className={`size-full object-cover transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+              className="size-full object-cover"
             />
           ) : (
             <img

@@ -4,11 +4,13 @@ import { toMemeUrl } from '../utils/seo'
 
 export default function TrendingCard({ meme, isHot = false }) {
   const [loaded, setLoaded] = useState(false)
+  const [videoSrc, setVideoSrc] = useState(null)
   const videoRef = useRef(null)
   const memeUrl = toMemeUrl(meme)
   const isVideo = meme.format === 'MP4' || meme.format === 'WebM'
 
   function handleMouseEnter() {
+    if (!videoSrc) setVideoSrc(meme.publicUrl)
     videoRef.current?.play().catch(() => {})
   }
 
@@ -36,18 +38,18 @@ export default function TrendingCard({ meme, isHot = false }) {
         {isVideo ? (
           <video
             ref={videoRef}
-            src={meme.publicUrl}
-            preload="metadata"
+            src={videoSrc || undefined}
+            poster={meme.thumb}
+            preload="none"
             muted
             playsInline
             loop
             onLoadedMetadata={(e) => {
-              // Seek to 1 s so the poster frame isn't a black first frame
               e.currentTarget.currentTime = 1
               setLoaded(true)
             }}
             onError={() => setLoaded(true)}
-            className={`size-full object-cover transition-opacity duration-200 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+            className="size-full object-cover"
           />
         ) : (
           <img

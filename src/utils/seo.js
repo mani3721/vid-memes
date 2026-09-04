@@ -70,11 +70,11 @@ function licenseUrl(asset) {
   return asset.license === 'CC0' ? 'https://creativecommons.org/publicdomain/zero/1.0/' : undefined
 }
 
-/** Supabase timestamps → date-only strings, which is what schema.org expects. */
+/** Supabase timestamps → ISO 8601 datetime strings with UTC timezone. */
 function toDate(value) {
   if (!value) return undefined
   const d = new Date(value)
-  return Number.isNaN(d.getTime()) ? undefined : d.toISOString().split('T')[0]
+  return Number.isNaN(d.getTime()) ? undefined : d.toISOString()
 }
 
 /** The spec-derived sentence used when no long description has been written. */
