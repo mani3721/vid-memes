@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const PAGE_SIZE = 20
@@ -32,70 +32,60 @@ function normalize(m) {
 }
 
 /**
- * useTrendingMemes — home feed sorted by download_count DESC.
- * Supports "load more" via .range() pagination.
+ * useTrendingMemes — home feed sorted by download_count DESC, page-based.
  */
 export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(null)
-  const [hasMore, setHasMore] = useState(false)
-  const offset = useRef(0)
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
 
-  const fetchPage = useCallback(
-    async (from, replace) => {
-      const to = from + limit - 1
-      let q = supabase
-        .from('memes')
-        .select('*')
-        .eq('is_published', true)
-        .order('is_hot', { ascending: false })
-        .order('download_count', { ascending: false })
-        .range(from, to)
-      if (excludeCategory) q = q.neq('category', excludeCategory)
-      const { data, error: err } = await q
-
-      if (err) throw new Error(err.message)
-      const rows = (data ?? []).map(normalize)
-      if (replace) setMemes(rows)
-      else setMemes((prev) => [...prev, ...rows])
-      setHasMore(rows.length === limit)
-      offset.current = to + 1
-      return rows
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [limit, JSON.stringify(excludeCategory)],
-  )
+  const exCatKey = JSON.stringify(excludeCategory)
+  const prevFilters = useRef({ exCatKey, limit })
 
   useEffect(() => {
+    if (exCatKey !== prevFilters.current.exCatKey || limit !== prevFilters.current.limit) {
+      prevFilters.current = { exCatKey, limit }
+      setPage(1)
+    }
+  }, [exCatKey, limit])
+
+  useEffect(() => {
+    let cancelled = false
     setLoading(true)
     setError(null)
-    offset.current = 0
-    fetchPage(0, true)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
-  }, [fetchPage])
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+    let q = supabase
+      .from('memes')
+      .select('*', { count: 'exact' })
+      .eq('is_published', true)
+      .order('is_hot', { ascending: false })
+      .order('download_count', { ascending: false })
+      .range(from, to)
+    if (excludeCategory) q = q.neq('category', excludeCategory)
 
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return
-    setLoadingMore(true)
-    try {
-      await fetchPage(offset.current, false)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoadingMore(false)
-    }
-  }, [fetchPage, hasMore, loadingMore])
+    q.then(({ data, error: err, count }) => {
+      if (cancelled) return
+      if (err) setError(err.message)
+      else {
+        setMemes((data ?? []).map(normalize))
+        setTotalCount(count ?? 0)
+      }
+      setLoading(false)
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, exCatKey])
 
-  return { memes, loading, loadingMore, error, hasMore, loadMore }
+  const totalPages = Math.ceil(totalCount / limit) || 1
+  return { memes, loading, error, page, totalPages, setPage }
 }
 
 /**
  * useCategoryMemes — filtered by category, mood array, and/or title search.
- * Re-queries automatically when any filter changes.
- * Supports "load more" via .range() pagination.
+ * Re-queries automatically when any filter changes. Page-based pagination.
  *
  * @param {object} opts
  * @param {string} [opts.category]  — 'videos' | 'gifs' | 'images' | 'sounds'
@@ -106,70 +96,58 @@ export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
 export function useCategoryMemes({ category, mood, query, excludeCategory, limit = PAGE_SIZE } = {}) {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
-  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(null)
-  const [hasMore, setHasMore] = useState(false)
-  const offset = useRef(0)
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
 
-  const buildQuery = useCallback(
-    (from) => {
-      const to = from + limit - 1
-      let q = supabase
-        .from('memes')
-        .select('*')
-        .eq('is_published', true)
-        .order('is_hot', { ascending: false })
-        .order('download_count', { ascending: false })
-        .range(from, to)
-
-      if (category) q = q.eq('category', category)
-      if (excludeCategory) {
-        const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
-        cats.forEach((c) => { q = q.neq('category', c) })
-      }
-      if (mood) q = q.contains('mood_tags', [mood])
-      if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
-      return q
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [category, JSON.stringify(excludeCategory), mood, query, limit],
-  )
+  const filterKey = JSON.stringify({ category, excludeCategory, mood, query, limit })
+  const prevFilterKey = useRef(filterKey)
 
   useEffect(() => {
+    if (filterKey !== prevFilterKey.current) {
+      prevFilterKey.current = filterKey
+      setPage(1)
+    }
+  }, [filterKey])
+
+  useEffect(() => {
+    let cancelled = false
     setLoading(true)
     setError(null)
-    offset.current = 0
+    const from = (page - 1) * limit
+    const to = from + limit - 1
 
-    buildQuery(0)
-      .then(({ data, error: err }) => {
-        if (err) throw new Error(err.message)
-        const rows = (data ?? []).map(normalize)
-        setMemes(rows)
-        setHasMore(rows.length === limit)
-        offset.current = limit
-      })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
-  }, [buildQuery, limit])
+    let q = supabase
+      .from('memes')
+      .select('*', { count: 'exact' })
+      .eq('is_published', true)
+      .order('is_hot', { ascending: false })
+      .order('download_count', { ascending: false })
+      .range(from, to)
 
-  const loadMore = useCallback(async () => {
-    if (loadingMore || !hasMore) return
-    setLoadingMore(true)
-    try {
-      const { data, error: err } = await buildQuery(offset.current)
-      if (err) throw new Error(err.message)
-      const rows = (data ?? []).map(normalize)
-      setMemes((prev) => [...prev, ...rows])
-      setHasMore(rows.length === limit)
-      offset.current += limit
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoadingMore(false)
+    if (category) q = q.eq('category', category)
+    if (excludeCategory) {
+      const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
+      cats.forEach((c) => { q = q.neq('category', c) })
     }
-  }, [buildQuery, hasMore, limit, loadingMore])
+    if (mood) q = q.contains('mood_tags', [mood])
+    if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
 
-  return { memes, loading, loadingMore, error, hasMore, loadMore }
+    q.then(({ data, error: err, count }) => {
+      if (cancelled) return
+      if (err) setError(err.message)
+      else {
+        setMemes((data ?? []).map(normalize))
+        setTotalCount(count ?? 0)
+      }
+      setLoading(false)
+    })
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filterKey])
+
+  const totalPages = Math.ceil(totalCount / limit) || 1
+  return { memes, loading, error, page, totalPages, setPage }
 }
 
 /**

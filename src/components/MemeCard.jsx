@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { memo, useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Download, Heart } from 'lucide-react'
+import { Download, Heart, BadgeCheck } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
 import { toMemeUrl } from '../utils/seo'
 import DownloadButton from './DownloadButton'
@@ -9,7 +9,7 @@ import { useFavorites } from '../store/FavoritesProvider'
 
 const TORN = ['torn', 'torn-b', 'torn-c']
 
-export default function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
+function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = false }) {
   const [loaded, setLoaded] = useState(false)
   const [inView, setInView] = useState(priority) // priority cards load immediately
   const videoRef = useRef(null)
@@ -156,6 +156,22 @@ export default function MemeCard({ asset, index, aspectClass = 'aspect-square', 
           </>
         )}
       </p>
+
+      {/* Vidsaur branding row */}
+      <div className="mt-1.5 flex items-center gap-1.5">
+        <img
+          src="/vidsour-logo.webp"
+          alt=""
+          aria-hidden
+          className="size-4 shrink-0 rounded-full opacity-75"
+        />
+        <span className="text-[11px] text-mid">Vidsaur</span>
+        <BadgeCheck className="size-3.5 shrink-0 text-brand" />
+      </div>
     </article>
   )
 }
+
+// Props are primitives plus a stable `asset` reference from hook state, so shallow
+// comparison lets the whole grid skip re-rendering on unrelated parent updates.
+export default memo(MemeCard)

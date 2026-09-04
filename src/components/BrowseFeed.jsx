@@ -15,7 +15,7 @@ export default function BrowseFeed() {
 
   // Filtering is done server-side via Supabase — mood and query are sent as
   // query params, so the hook re-fetches automatically when they change.
-  const { memes, loading, loadingMore, error, hasMore, loadMore } = useCategoryMemes({
+  const { memes, loading, error, page, totalPages, setPage } = useCategoryMemes({
     mood: mood ?? undefined,
     query: query || undefined,
     excludeCategory: HOME_EXCLUDE,
@@ -60,7 +60,7 @@ export default function BrowseFeed() {
             </h2>
             {!loading && (
               <span className="text-xs text-lo">
-                {memes.length}{hasMore ? '+' : ''} memes
+                {memes.length} memes
               </span>
             )}
           </div>
@@ -92,9 +92,9 @@ export default function BrowseFeed() {
           {!loading && !error && memes.length > 0 && (
             <MasonryFeed
               assets={memes}
-              hasMore={hasMore}
-              onLoadMore={loadMore}
-              loadingMore={loadingMore}
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
             />
           )}
         </section>

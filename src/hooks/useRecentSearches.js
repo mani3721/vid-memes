@@ -14,7 +14,11 @@ function load() {
 }
 
 function persist(items) {
-  try { localStorage.setItem(KEY, JSON.stringify(items)) } catch {}
+  try {
+    localStorage.setItem(KEY, JSON.stringify(items))
+  } catch {
+    // Ignore quota/private-mode write failures — recent searches are best-effort.
+  }
 }
 
 export function useRecentSearches() {

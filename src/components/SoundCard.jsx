@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { Play, Pause } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
 import DownloadButton from './DownloadButton'
@@ -20,7 +20,8 @@ export default function SoundCard({ sfx, stagger = 0 }) {
   const [playing, setPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const audioRef = useRef(null)
-  const bars = waveformBars(sfx.id)
+  // Deterministic from sfx.id — memoized so playback progress ticks don't recompute it
+  const bars = useMemo(() => waveformBars(sfx.id), [sfx.id])
   const age = timeAgo(sfx.createdAt)
 
   function togglePlay() {

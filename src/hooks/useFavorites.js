@@ -16,7 +16,9 @@ function readLocalIds() {
 function writeLocalIds(ids) {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify([...ids]))
-  } catch {}
+  } catch {
+    // Ignore quota/private-mode write failures — favorites are best-effort locally.
+  }
 }
 
 /**

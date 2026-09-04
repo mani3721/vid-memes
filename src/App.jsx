@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import AppShell from './components/AppShell'
 import StreakToast from './components/StreakToast'
-import CookieBanner from './components/CookieBanner'
 import { StudioProvider } from './store/StudioProvider'
 import { useStudio } from './store/studioStore'
 import { FavoritesProvider } from './store/FavoritesProvider'
@@ -88,7 +87,6 @@ export default function App() {
         <StudioProvider>
           <Studio />
           <StreakToast />
-          <CookieBanner />
         </StudioProvider>
       </FavoritesProvider>
     </AuthProvider>

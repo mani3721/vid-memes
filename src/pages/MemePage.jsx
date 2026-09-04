@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Navigate } from 'react-router-dom'
-import { compact, MOODS } from '../data/assets'
+import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
 import { useAuth } from '../lib/authContext'
