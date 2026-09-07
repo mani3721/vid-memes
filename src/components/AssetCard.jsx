@@ -65,7 +65,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
           <span
             aria-hidden
             className={`grid size-6 place-items-center rounded-md border-2 backdrop-blur-sm transition-colors duration-150 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand ${
-              selected ? 'border-brand bg-brand text-ink' : 'border-white/70 bg-canvas/50'
+              selected ? 'border-brand bg-brand-fill text-ink' : 'border-white/70 bg-canvas/50'
             }`}
           >
             {selected && <Check className="size-4" strokeWidth={3} />}
@@ -76,7 +76,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
           type="button"
           onClick={() => onStar(asset)}
           aria-label={`Save ${asset.title} to a Project Kit`}
-          className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-canvas/70 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand"
+          className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-canvas/70 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand-fill hover:text-ink"
         >
           <Star className="size-3.5" />
         </button>
@@ -88,7 +88,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
             </span>
           )}
           {asset.hasAlpha && (
-            <span className="rounded bg-brand px-1.5 py-0.5 text-[10px] font-bold uppercase text-hi">
+            <span className="rounded bg-brand-fill px-1.5 py-0.5 text-[10px] font-bold uppercase text-ink">
               Alpha
             </span>
           )}

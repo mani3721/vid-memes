@@ -71,7 +71,7 @@ export default function ProjectKits() {
         <button
           type="submit"
           aria-label="Create kit"
-          className="grid size-8 shrink-0 place-items-center rounded-lg bg-brand text-ink transition-colors duration-150 hover:bg-brand-2"
+          className="btn-primary grid size-8 shrink-0 place-items-center rounded-lg transition-colors duration-150"
         >
           <Plus className="size-4" />
         </button>

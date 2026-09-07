@@ -40,7 +40,7 @@ export default function GuestPrompt({
       <div className="flex shrink-0 items-center gap-2">
         <Link
           to="/login"
-          className="rounded-full bg-brand px-3 py-1 text-xs font-medium text-ink transition-colors hover:bg-brand-2"
+          className="btn-primary rounded-full px-3 py-1 text-xs font-medium transition-colors"
         >
           {cta}
         </Link>

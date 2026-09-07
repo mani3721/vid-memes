@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Mail, Clock, Shield } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Mail, Clock, HelpCircle } from 'lucide-react'
 import SEO from '../components/SEO'
 import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 
@@ -34,29 +35,33 @@ export default function ContactPage() {
   return (
     <>
       <SEO
-        title="Contact Videsaur"
-        description="Get in touch with the Videsaur team. General enquiries, copyright requests, or partnership questions — we respond within 2–3 business days."
+        title="Contact Videsaur.co.in"
+        description="Get in touch with the Videsaur.co.in team. General enquiries, support, feedback, or copyright requests — we respond within 24–48 hours."
         canonicalPath="/contact"
       />
       <PolicyLayout title="Contact Us" breadcrumb="Contact">
         <PolicySection heading="Get in Touch">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <p>
+            We&rsquo;d love to hear from you! Whether you have a question, feedback, suggestion,
+            or need support, our team is here to help. Please use the contact information below
+            to reach out to us.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <ContactCard
               icon={Mail}
-              label="General enquiries"
-              value="hello@videsaur.co.in"
-              href="mailto:hello@videsaur.co.in"
-            />
-            <ContactCard
-              icon={Shield}
-              label="Copyright / DMCA"
-              value="dmca@videsaur.co.in"
-              href="mailto:dmca@videsaur.co.in"
+              label="Email Us"
+              value="support@videsaur.co.in"
+              href="mailto:support@videsaur.co.in"
             />
             <ContactCard
               icon={Clock}
-              label="Response time"
-              value="2–3 business days (DMCA: 24–48 h)"
+              label="Response Time"
+              value="24–48 hours (business days)"
+            />
+            <ContactCard
+              icon={HelpCircle}
+              label="Support"
+              value="Technical, content &amp; general"
             />
           </div>
         </PolicySection>
@@ -65,7 +70,7 @@ export default function ContactPage() {
           {sent ? (
             <div className="rounded-2xl border border-brand/30 bg-brand/10 p-6 text-center">
               <p className="text-sm font-semibold text-hi">Message received!</p>
-              <p className="mt-1 text-xs text-mid">We&rsquo;ll reply to your email within 2–3 business days.</p>
+              <p className="mt-1 text-xs text-mid">We&rsquo;ll reply to your email within 24–48 hours on business days.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -110,7 +115,7 @@ export default function ContactPage() {
                   value={form.subject}
                   onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
                   className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
-                  placeholder="General enquiry / Partnership / Other"
+                  placeholder="Technical support / Feedback / Partnership / Other"
                 />
               </div>
               <div>
@@ -129,7 +134,7 @@ export default function ContactPage() {
               </div>
               <button
                 type="submit"
-                className="rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-hi transition-colors hover:bg-brand-2"
+                className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold"
               >
                 Send message
               </button>
@@ -137,18 +142,40 @@ export default function ContactPage() {
           )}
         </PolicySection>
 
-        <PolicySection heading="For Copyright & DMCA Notices">
+        <PolicySection heading="What We Can Help With">
+          <ul className="list-disc space-y-1.5 pl-5">
+            <li>Technical support and troubleshooting</li>
+            <li>Content-related questions</li>
+            <li>Account and profile assistance</li>
+            <li>Feedback and suggestions</li>
+            <li>Copyright and DMCA inquiries</li>
+            <li>Partnership and collaboration opportunities</li>
+            <li>General questions about our platform</li>
+          </ul>
+        </PolicySection>
+
+        <PolicySection heading="Before Contacting Us">
           <p>
-            For copyright takedown requests, please email{' '}
-            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-brand">
-              dmca@videsaur.co.in
-            </a>{' '}
-            directly rather than using the form above. Include all required DMCA information —
-            see our{' '}
-            <a href="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
-              Content &amp; DMCA Policy
-            </a>{' '}
-            for exactly what to include. We process copyright notices within 24–48 hours.
+            Before reaching out, you might find answers to common questions in our:
+          </p>
+          <ul className="mt-2 list-disc space-y-1.5 pl-5">
+            <li>
+              <Link to="/privacy-policy" className="text-hi underline underline-offset-2 hover:text-brand">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className="text-hi underline underline-offset-2 hover:text-brand">
+                Terms and Conditions
+              </Link>
+            </li>
+          </ul>
+        </PolicySection>
+
+        <PolicySection heading="Follow Us">
+          <p>
+            Stay connected with us for the latest updates, new content, and announcements.
+            Follow us on our social media platforms to be part of our growing community!
           </p>
         </PolicySection>
       </PolicyLayout>

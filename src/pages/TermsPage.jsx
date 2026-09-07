@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
 import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 
@@ -5,134 +6,139 @@ export default function TermsPage() {
   return (
     <>
       <SEO
-        title="Terms of Service — Videsaur"
-        description="Videsaur Terms of Service. Understand the license terms, acceptable use policy, DMCA procedure, and limitations of liability for using our meme download service."
+        title="Terms and Conditions — Videsaur.co.in"
+        description="Videsaur.co.in Terms and Conditions. Understand the license terms, acceptable use policy, and limitations of liability for using our service."
         canonicalPath="/terms"
       />
-      <PolicyLayout title="Terms of Service" breadcrumb="Terms of Service" lastUpdated="27 August 2026">
-        <PolicySection heading="Acceptance of Terms">
+      <PolicyLayout title="Terms and Conditions" breadcrumb="Terms and Conditions" lastUpdated="7 September 2026">
+        <PolicySection heading="1. Acceptance of Terms">
           <p>
-            By accessing or using <strong>videsaur.co.in</strong> (&ldquo;the Site&rdquo;), you
-            agree to be bound by these Terms of Service (&ldquo;Terms&rdquo;). If you do not agree,
-            do not use the Site. We may revise these Terms at any time; your continued use
-            constitutes acceptance of any changes.
+            By accessing and using Videsaur.co.in, you accept and agree to be bound by the
+            terms and provision of this agreement. If you do not agree to abide by the above,
+            please do not use this service.
           </p>
         </PolicySection>
 
-        <PolicySection heading="Content Licences">
+        <PolicySection heading="2. Use License">
           <p className="mb-3">
-            Assets on the Site are available under one of two licence types, clearly labelled on
-            each asset page:
+            Permission is granted to temporarily access the materials on Videsaur.co.in for
+            personal, non-commercial transitory viewing only. This is the grant of a license,
+            not a transfer of title, and under this license you may not:
           </p>
-          <div className="space-y-3">
-            <div className="rounded-xl border border-edge bg-panel p-4">
-              <p className="font-semibold text-hi">CC0 — Public Domain</p>
-              <p className="mt-1 text-sm text-mid">
-                The creator has waived all copyright and related rights worldwide. You may copy,
-                modify, distribute, and perform the work, even for commercial purposes, without
-                asking permission or giving attribution (though attribution is appreciated).
-              </p>
-            </div>
-            <div className="rounded-xl border border-edge bg-panel p-4">
-              <p className="font-semibold text-hi">Editorial — Non-Commercial / Transformative Use</p>
-              <p className="mt-1 text-sm text-mid">
-                These assets are shared for commentary, criticism, parody, and fan use under fair
-                dealing / fair use principles. Commercial reproduction, resale, or use in monetised
-                content without transformation is not permitted. When in doubt, use CC0 assets.
-              </p>
-            </div>
-          </div>
-          <p className="mt-3">
-            Videsaur does not own or guarantee the underlying intellectual property of any
-            user-submitted asset. It is your responsibility to verify the licence before any
-            commercial or monetised use.
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Acceptable Use">
-          <p className="mb-3">You agree not to use the Site to:</p>
-          <ul className="list-inside list-disc space-y-1.5 text-mid">
-            <li>Upload, share, or distribute content you do not have the right to distribute.</li>
-            <li>Infringe any copyright, trade mark, patent, or other intellectual property right.</li>
-            <li>Upload sexually explicit, hateful, harassing, or illegal content.</li>
-            <li>Attempt to access any part of the service through automated means (scraping, bots) that place unreasonable load on our servers.</li>
-            <li>Circumvent any technical measures designed to restrict access or protect content.</li>
-            <li>Engage in any conduct that violates applicable law.</li>
+          <ul className="list-disc space-y-1.5 pl-5 text-mid">
+            <li>Modify or copy the materials</li>
+            <li>Use the materials for any commercial purpose or for any public display</li>
+            <li>Attempt to reverse engineer any software contained on the website</li>
+            <li>Remove any copyright or other proprietary notations from the materials</li>
+            <li>Transfer the materials to another person or &ldquo;mirror&rdquo; the materials on any other server</li>
           </ul>
-          <p className="mt-3">
-            We reserve the right to remove content and suspend accounts that violate these rules,
-            without prior notice.
+        </PolicySection>
+
+        <PolicySection heading="3. User Accounts">
+          <p className="mb-3">
+            When you create an account with us, you must provide information that is:
+          </p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>Accurate, complete, and current</li>
+            <li>Not misleading or fraudulent</li>
+            <li>In compliance with all applicable laws</li>
+          </ul>
+          <p>
+            You are responsible for maintaining the confidentiality of your account credentials
+            and for all activities that occur under your account.
           </p>
         </PolicySection>
 
-        <PolicySection heading="User-Submitted Content">
+        <PolicySection heading="4. User Content">
+          <p className="mb-3">
+            You retain ownership of any content you submit, post, or display on our platform.
+            By submitting content, you grant us:
+          </p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>A worldwide, non-exclusive, royalty-free license to use, reproduce, and distribute your content</li>
+            <li>The right to modify, adapt, and create derivative works from your content</li>
+            <li>The right to use your content for promotional purposes</li>
+          </ul>
           <p>
-            When you upload content to Videsaur, you represent and warrant that you own the
-            necessary rights or have obtained all required permissions. By submitting content, you
-            grant Videsaur a worldwide, royalty-free, non-exclusive licence to display, distribute,
-            and promote that content on the Site and in associated marketing.
+            You are solely responsible for your content and represent that you have all necessary
+            rights to grant us these licenses.
           </p>
         </PolicySection>
 
-        <PolicySection heading="DMCA / Copyright Complaints">
+        <PolicySection heading="5. Prohibited Activities">
+          <p className="mb-3">You agree not to:</p>
+          <ul className="list-disc space-y-1.5 pl-5 text-mid">
+            <li>Upload, post, or transmit any content that is illegal, harmful, or violates any rights</li>
+            <li>Impersonate any person or entity or falsely state your affiliation</li>
+            <li>Interfere with or disrupt the service or servers</li>
+            <li>Use automated systems to access the service without permission</li>
+            <li>Attempt to gain unauthorized access to any portion of the service</li>
+            <li>Collect or store personal data about other users without their consent</li>
+          </ul>
+        </PolicySection>
+
+        <PolicySection heading="6. Intellectual Property">
           <p>
-            If you believe content on the Site infringes your copyright, send a takedown notice to{' '}
-            <a href="mailto:dmca@videsaur.co.in" className="text-hi hover:text-brand">
-              dmca@videsaur.co.in
-            </a>
-            . See our{' '}
-            <a href="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
-              Content &amp; DMCA Policy
+            The service and its original content, features, and functionality are owned by
+            Videsaur.co.in and are protected by international copyright, trademark, patent,
+            trade secret, and other intellectual property laws.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="7. Disclaimer">
+          <p className="mb-3">
+            The materials on Videsaur.co.in are provided on an &lsquo;as is&rsquo; basis.
+            Videsaur.co.in makes no warranties, expressed or implied, and hereby disclaims and
+            negates all other warranties including, without limitation, implied warranties or
+            conditions of merchantability, fitness for a particular purpose, or non-infringement
+            of intellectual property or other violation of rights.
+          </p>
+          <p>
+            For more information, please see our{' '}
+            <Link to="/disclaimer" className="text-hi underline underline-offset-2 hover:text-brand">
+              Disclaimer
+            </Link>{' '}
+            page.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="8. Limitation of Liability">
+          <p>
+            In no event shall Videsaur.co.in or its suppliers be liable for any damages
+            (including, without limitation, damages for loss of data or profit, or due to
+            business interruption) arising out of the use or inability to use the materials on
+            Videsaur.co.in, even if Videsaur.co.in or an authorized representative has been
+            notified orally or in writing of the possibility of such damage.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="9. Termination">
+          <p>
+            We may terminate or suspend your account and access to the service immediately,
+            without prior notice or liability, for any reason whatsoever, including without
+            limitation if you breach the Terms.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="10. Changes to Terms">
+          <p>
+            We reserve the right, at our sole discretion, to modify or replace these Terms at
+            any time. If a revision is material, we will try to provide at least 30 days notice
+            prior to any new terms taking effect.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="11. Contact Information">
+          <p>
+            If you have any questions about these Terms and Conditions, please contact us at{' '}
+            <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
+              support@videsaur.co.in
             </a>{' '}
-            for the full procedure and what information to include. We respond to valid notices
-            within 24–48 hours.
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Advertising">
-          <p>
-            The Site displays advertisements provided by Google AdSense and possibly other ad
-            networks. Advertisements are clearly labelled &ldquo;Advertisement&rdquo;. We are not
-            responsible for the content of third-party advertisements. AdSense interest-based
-            advertising requires your consent, which you can grant or withdraw via our cookie banner.
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Disclaimer of Warranties">
-          <p>
-            The Site and all content are provided &ldquo;as is&rdquo; and &ldquo;as
-            available&rdquo; without warranty of any kind, express or implied, including warranties
-            of merchantability, fitness for a particular purpose, or non-infringement. We do not
-            warrant that the Site will be uninterrupted or error-free.
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Limitation of Liability">
-          <p>
-            To the maximum extent permitted by applicable law, Videsaur and its operators shall not
-            be liable for any indirect, incidental, special, consequential, or punitive damages
-            arising from your use of or inability to use the Site, even if we have been advised of
-            the possibility of such damages. Our total liability for any claim shall not exceed
-            ₹1,000 INR (or the equivalent in your local currency).
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Governing Law & Dispute Resolution">
-          <p>
-            These Terms are governed by the laws of India. Any disputes arising under these Terms
-            shall first be addressed through good-faith negotiation. If unresolved within 30 days,
-            disputes shall be submitted to the courts of Chennai, Tamil Nadu, India. If you are
-            located in the EU or UK, you may also contact your local data protection authority.
-          </p>
-        </PolicySection>
-
-        <PolicySection heading="Contact">
-          <p>
-            Questions about these Terms? Email{' '}
-            <a href="mailto:hello@videsaur.co.in" className="text-hi hover:text-brand">
-              hello@videsaur.co.in
-            </a>
-            .
+            or visit our{' '}
+            <Link to="/contact" className="text-hi underline underline-offset-2 hover:text-brand">
+              Contact Us
+            </Link>{' '}
+            page.
           </p>
         </PolicySection>
       </PolicyLayout>

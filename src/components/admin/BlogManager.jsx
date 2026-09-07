@@ -191,7 +191,7 @@ export default function BlogManager() {
         <div className="flex gap-2 border-t border-edge pt-4">
           <button
             type="submit" disabled={saving}
-            className="flex items-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+            className="btn-primary flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold"
           >
             {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
             {draft.id ? 'Save post' : 'Create post'}
@@ -215,7 +215,7 @@ export default function BlogManager() {
         <button
           type="button"
           onClick={() => setDraft({ ...EMPTY })}
-          className="flex items-center gap-1.5 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
+          className="btn-primary flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold"
         >
           <Plus className="size-4" /> New post
         </button>

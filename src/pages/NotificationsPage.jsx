@@ -61,7 +61,7 @@ export default function NotificationsPage() {
             </div>
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-brand-2"
+              className="btn-primary inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors"
             >
               <LogIn className="size-4" />
               Sign in
@@ -80,7 +80,7 @@ export default function NotificationsPage() {
                   onClick={() => setType(id)}
                   className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                     type === id
-                      ? 'border-brand bg-brand text-ink'
+                      ? 'btn-primary border-brand'
                       : 'border-edge bg-panel text-mid hover:border-mist/50 hover:text-hi'
                   }`}
                 >

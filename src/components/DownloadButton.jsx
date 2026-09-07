@@ -85,8 +85,8 @@ export default function DownloadButton({
   const dims = size === 'sm' ? 'size-8' : 'size-10'
   const tone =
     variant === 'solid'
-      ? 'bg-brand text-ink hover:bg-brand-2'
-      : 'bg-black/70 text-white backdrop-blur-sm hover:bg-brand hover:text-ink'
+      ? 'btn-primary'
+      : 'bg-black/70 text-white backdrop-blur-sm hover:bg-brand-fill hover:text-ink'
 
   if (layout === 'block') {
     return (

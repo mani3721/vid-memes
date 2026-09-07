@@ -103,7 +103,7 @@ export default function LoginPage() {
               onClick={() => switchTab('signin')}
               className={[
                 'flex-1 rounded-lg py-2 text-sm font-semibold transition-colors',
-                tab === 'signin' ? 'bg-brand text-ink' : 'text-mid hover:text-hi',
+                tab === 'signin' ? 'btn-primary' : 'text-mid hover:text-hi',
               ].join(' ')}
             >
               Sign in
@@ -113,7 +113,7 @@ export default function LoginPage() {
               onClick={() => switchTab('signup')}
               className={[
                 'flex-1 rounded-lg py-2 text-sm font-semibold transition-colors',
-                tab === 'signup' ? 'bg-brand text-ink' : 'text-mid hover:text-hi',
+                tab === 'signup' ? 'btn-primary' : 'text-mid hover:text-hi',
               ].join(' ')}
             >
               Sign up
@@ -155,7 +155,7 @@ export default function LoginPage() {
               {/* Divider */}
               <div className="flex items-center gap-3">
                 <div className="flex-1 border-t border-edge" />
-                <span className="text-xs text-mid/60">or continue with email</span>
+                <span className="text-xs text-mid">or continue with email</span>
                 <div className="flex-1 border-t border-edge" />
               </div>
 
@@ -204,7 +204,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={status === 'loading' || status === 'google'}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-brand py-3 text-sm font-semibold text-ink transition-colors hover:bg-brand-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="btn-primary flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
                 >
                   {status === 'loading' ? (
                     <Loader2 className="size-4 animate-spin" />

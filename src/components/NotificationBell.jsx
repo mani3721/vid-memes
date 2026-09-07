@@ -104,7 +104,7 @@ export default function NotificationBell() {
             // aria-hidden because the count is already in the button's label;
             // announcing it twice is noise.
             aria-hidden
-            className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-brand px-1 text-[10px] font-bold leading-4 text-white ring-2 ring-canvas"
+            className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-brand-fill px-1 text-[10px] font-bold leading-4 text-ink ring-2 ring-canvas"
           >
             {badge}
           </span>

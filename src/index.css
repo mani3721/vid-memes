@@ -19,6 +19,15 @@
   --color-status-hot: #FFB13E;
   --color-status-info: #3EC6FF;
 
+  /* Primary-button fill. Pinned to one value across both themes, unlike
+     --color-brand, because this token is only ever a *background* under the
+     #0F0F13 label (5.86:1). --color-brand cannot be reused here: it is also
+     used as foreground (text-brand), where light mode needs the darker
+     #E8197A — and #0F0F13 on #E8197A is only 4.42:1, under AA. */
+  --color-brand-fill:          #FF3E9E;
+  --color-brand-fill-hover:    #FF74B8;  /* 7.69:1 with #0F0F13 */
+  --color-brand-fill-disabled: #C98BA8;  /* 7.05:1 — solid, not opacity */
+
   /* Fonts */
   --font-display: 'Anton', 'Oswald', 'Arial Narrow', system-ui, sans-serif;
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -43,8 +52,12 @@
   --border-subtle:    #E2E2E8;
   --text-primary:     #1A1D23;
   --text-secondary:   #6B6C78;
-  --text-tertiary:    #9A9AA8;
-  --brand-col:        #E8197A;
+  /* 4.53:1 on --bg-base. #9A9AA8 was 2.62:1 and failed WCAG AA. */
+  --text-tertiary:    #71717F;
+  /* Serves text-brand/border-brand, not button fills (those use
+     --color-brand-fill). #E8197A gave the wordmark only 4.33:1 on white;
+     #C2185B is 5.87:1 there and 5.03:1 on the bg-brand/15 tint. */
+  --brand-col:        #C2185B;
   --brand-col-2:      #FF3E9E;
 }
 
@@ -56,7 +69,8 @@ html.dark {
   --border-subtle:    #2E2E3A;
   --text-primary:     #F5F5F7;
   --text-secondary:   #A0A0AC;
-  --text-tertiary:    #6B6B76;
+  /* 5.19:1 on --bg-surface. #6B6B76 was 3.35:1 and failed WCAG AA. */
+  --text-tertiary:    #8A8A99;
   --brand-col:        #FF3E9E;
   --brand-col-2:      #FF74B8;
 }
@@ -217,6 +231,58 @@ html.dark {
 
 @utility bg-brand-gradient {
   background: linear-gradient(135deg, #FF3E9E 0%, #7B3EFF 100%);
+}
+
+/* ── Primary button ──────────────────────────────────────────
+   Single source of truth for every solid-pink control. Sets colour only:
+   callers keep their own padding/radius/layout classes, so adopting this
+   never moves a button.
+
+   Every state is measured against WCAG 2.1 AA:
+     base      #0F0F13 on #FF3E9E          5.86:1  (AA, needs 4.5)
+     hover     #0F0F13 on #FF74B8          7.69:1  (AA)
+     disabled  #0F0F13 on #C98BA8          7.05:1  (AA)
+     focus     ring #F5F5F7/#1A1D23 vs the canvas seen through
+               outline-offset               17.6:1 dark / 15.9:1 light
+
+   Do NOT dim this with opacity-50 for the disabled state. `opacity` composites
+   the whole button — label included — against the page, which collapses the
+   label/fill ratio to 2.24:1 dark and 1.90:1 light. The solid muted fill above
+   reads as inactive while keeping the label legible. */
+@utility btn-primary {
+  background-color: var(--color-brand-fill);
+  color: var(--color-ink);
+
+  /* Icons inherit the same #0F0F13 via currentColor — a meaningful icon needs
+     the same 3:1 floor as large text, and gets the full 5.86:1 here. */
+  & svg {
+    color: currentColor;
+  }
+
+  &:hover:not(:disabled):not([aria-disabled='true']) {
+    background-color: var(--color-brand-fill-hover);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    background-color: var(--color-brand-fill-disabled);
+    color: var(--color-ink);
+    cursor: not-allowed;
+    /* !important because a `disabled:opacity-50` on a call site is the same
+       specificity and wins on source order. Group opacity composites the label
+       with the fill against the page (2.24:1 dark / 1.90:1 light), so allowing
+       it would silently undo this block — the one thing this utility exists to
+       prevent. The solid fill above is what makes the button read as inactive. */
+    opacity: 1 !important;
+  }
+
+  /* Overrides the global pink :focus-visible outline. A pink ring around a pink
+     button is only 3.08:1 against the light canvas; this one is 17.6:1 dark and
+     15.9:1 light, measured against the canvas showing through outline-offset. */
+  &:focus-visible {
+    outline: 2px solid var(--color-hi);
+    outline-offset: 2px;
+  }
 }
 
 /* ── Base styles ─────────────────────────────────────────── */

@@ -41,7 +41,7 @@ export default function PreviewPlayer({ duration, compact: dense = false }) {
         onClick={() => setPlaying((v) => !v)}
         data-ad-unsafe="play"
         aria-label={playing ? 'Pause preview' : 'Play preview'}
-        className="grid size-6 shrink-0 place-items-center rounded-full bg-panel-hover text-hi transition-colors duration-150 hover:bg-brand"
+        className="grid size-6 shrink-0 place-items-center rounded-full bg-panel-hover text-hi transition-colors duration-150 hover:bg-brand-fill hover:text-ink"
       >
         {playing ? <Pause className="size-3" /> : <Play className="size-3 translate-x-px" />}
       </button>

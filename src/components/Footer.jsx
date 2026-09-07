@@ -10,7 +10,6 @@ const LINKS = [
   ['Privacy', '/privacy'],
   ['Terms', '/terms'],
   ['DMCA', '/content-policy'],
-  ['Help', '/help'],
 ]
 
 export default function Footer() {

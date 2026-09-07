@@ -204,8 +204,8 @@ export default function ShareButton({
   const iconSize = size === 'sm' ? 'size-3.5' : 'size-4'
   const tone =
     variant === 'ghost'
-      ? 'bg-black/50 text-white backdrop-blur-sm hover:bg-brand hover:text-ink'
-      : 'bg-panel-hover text-mid hover:bg-brand hover:text-ink'
+      ? 'bg-black/50 text-white backdrop-blur-sm hover:bg-brand-fill hover:text-ink'
+      : 'bg-panel-hover text-mid hover:bg-brand-fill hover:text-ink'
 
   const rowClass =
     'flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-hi transition-colors hover:bg-panel-hover'
@@ -244,7 +244,7 @@ export default function ShareButton({
           aria-label={copied ? 'Link copied' : 'Share this meme'}
           aria-haspopup="menu"
           aria-expanded={open}
-          className={`grid ${dims} shrink-0 place-items-center rounded-full transition-colors duration-150 ${tone} ${copied ? '!bg-brand !text-ink' : ''} ${className}`}
+          className={`grid ${dims} shrink-0 place-items-center rounded-full transition-colors duration-150 ${tone} ${copied ? '!bg-brand-fill !text-ink' : ''} ${className}`}
         >
           {copied
             ? <Check className={`${iconSize} animate-burst`} strokeWidth={3} />

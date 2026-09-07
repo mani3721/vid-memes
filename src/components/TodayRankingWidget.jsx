@@ -94,7 +94,7 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
             </Link>
           ))}
         </div>
-        <p className="text-[10px] text-lo/60 tabular-nums">
+        <p className="text-[10px] text-lo tabular-nums">
           {isFallback ? 'All-time ranking' : `Resets in ${countdown}`}
           {lastUpdated && (
             <span className="ml-2 opacity-60">

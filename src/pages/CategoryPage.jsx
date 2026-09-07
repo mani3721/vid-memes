@@ -103,7 +103,7 @@ export default function CategoryPage({ category }) {
               <>
                 <MasonryFeed assets={memes} page={page} totalPages={totalPages} onPageChange={setPage} />
                 {memes.length < 6 && !loading && (
-                  <p className="text-center text-xs text-lo/60">
+                  <p className="text-center text-xs text-lo">
                     More {meta.h1.toLowerCase()} coming soon
                   </p>
                 )}

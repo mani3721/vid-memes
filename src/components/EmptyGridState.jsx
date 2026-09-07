@@ -16,7 +16,7 @@ export default function EmptyGridState({ category = 'content', message }) {
 
       <p className="text-center text-sm text-lo">{label}</p>
 
-      <p className="text-center text-xs text-lo/60">
+      <p className="text-center text-xs text-lo">
         More {category} coming soon
       </p>
     </div>

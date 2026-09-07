@@ -17,11 +17,21 @@ Disallow: /favorites
 Disallow: /*?q=
 Disallow: /404
 
-# AdSense crawler needs full page access for ad targeting.
+# /feed proxies third-party Reddit RSS content — not our IP, not indexable.
+# Blocking all crawlers keeps it out of search indices and AdSense evaluation.
+Disallow: /feed
+
+# AdSense evaluation crawler: allow full site access for ad targeting EXCEPT
+# /feed, which contains Reddit-syndicated content outside our AdSense policy
+# scope. Longest-path rule means Disallow: /feed wins over Allow: /.
 User-agent: Mediapartners-Google
+Disallow: /feed
 Allow: /
 
+# AdsBot-Google audits landing pages linked from ads.
+# /feed will never be an ad destination, so exclude it here too.
 User-agent: AdsBot-Google
+Disallow: /feed
 Allow: /
 
 # Sitemap index — generated live from the catalogue, lists one sub-sitemap per

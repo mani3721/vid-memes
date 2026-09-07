@@ -30,7 +30,7 @@ export default function SignInToFave({ onDismiss }) {
       <Link
         to="/login"
         onClick={(e) => e.stopPropagation()}
-        className="shrink-0 whitespace-nowrap rounded-full bg-brand px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:bg-brand-2"
+        className="btn-primary shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium transition-colors"
       >
         Sign in
       </Link>

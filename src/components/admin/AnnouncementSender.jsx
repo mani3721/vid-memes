@@ -170,7 +170,7 @@ export default function AnnouncementSender() {
         <button
           type="submit"
           disabled={!canSend}
-          className="inline-flex items-center justify-center gap-2 self-start rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-brand-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="btn-primary inline-flex items-center justify-center gap-2 self-start rounded-full px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
         >
           {sending ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
           {sending ? 'Sending…' : 'Send to all users'}

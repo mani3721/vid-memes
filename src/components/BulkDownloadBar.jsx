@@ -75,7 +75,7 @@ function BulkBar({ count, totalMB, onClear, onSaveToKit, selectedAssets }) {
         data-ad-unsafe="bulk-action"
         className="animate-slide-up pointer-events-auto flex w-full max-w-2xl flex-wrap items-center gap-3 rounded-2xl border border-edge bg-panel/95 p-3 shadow-2xl shadow-black/60 backdrop-blur-md"
       >
-        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand text-ink">
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-fill text-ink">
           <Package className="size-4" />
         </span>
 
@@ -108,7 +108,7 @@ function BulkBar({ count, totalMB, onClear, onSaveToKit, selectedAssets }) {
             'inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-semibold transition-colors duration-150',
             state === 'error'
               ? 'border border-red-500/60 text-red-400 hover:border-red-400'
-              : 'bg-brand text-ink hover:bg-brand-2 disabled:opacity-60',
+              : 'btn-primary',
           ].join(' ')}
         >
           {state === 'loading' ? (

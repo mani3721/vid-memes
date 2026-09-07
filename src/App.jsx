@@ -20,7 +20,6 @@ const TermsPage         = lazy(() => import('./pages/TermsPage'))
 const DmcaPage          = lazy(() => import('./pages/DmcaPage'))
 const DisclaimerPage    = lazy(() => import('./pages/DisclaimerPage'))
 const CookiePolicyPage  = lazy(() => import('./pages/CookiePolicyPage'))
-const HelpPage          = lazy(() => import('./pages/HelpPage'))
 const UploadForm        = lazy(() => import('./components/UploadForm'))
 const FavoritesPage     = lazy(() => import('./pages/FavoritesPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
@@ -29,6 +28,7 @@ const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
 const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
 const BlogIndexPage     = lazy(() => import('./pages/BlogIndexPage'))
 const BlogPostPage      = lazy(() => import('./pages/BlogPostPage'))
+const FeedPage          = lazy(() => import('./pages/FeedPage'))
 
 function EditorFallback() {
   return (
@@ -75,7 +75,6 @@ function Studio() {
         <Route path="/content-policy" element={<DmcaPage />} />
         <Route path="/disclaimer"     element={<DisclaimerPage />} />
         <Route path="/cookie-policy"  element={<CookiePolicyPage />} />
-        <Route path="/help"           element={<HelpPage />} />
         <Route path="/upload"         element={<UploadForm />} />
         <Route path="/favorites"      element={<FavoritesPage />} />
         <Route path="/notifications"  element={<NotificationsPage />} />
@@ -84,6 +83,7 @@ function Studio() {
         <Route path="/ai-sound"       element={<AISoundPage />} />
         <Route path="/blog"           element={<BlogIndexPage />} />
         <Route path="/blog/:slug"     element={<BlogPostPage />} />
+        <Route path="/feed"           element={<FeedPage />} />
         <Route path="*"               element={<BrowseFeed />} />
       </Routes>
     </AppShell>

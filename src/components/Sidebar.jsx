@@ -13,12 +13,12 @@ import {
   FileText,
   AlertTriangle,
   Cookie,
-  HelpCircle,
   X,
   ChevronRight,
   ChevronLeft,
   Sparkles,
   Bell,
+  Rss,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
@@ -29,7 +29,7 @@ const NAV_ITEMS = [
   { icon: Smile,      label: 'GIFs',      to: '/gifs'      },
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
-  { icon: Sparkles,   label: 'AI Voice',  to: '/ai-sound', isNew: true },
+  { icon: Sparkles,   label: 'AI Voice',  to: '/ai-sound'  },
 ]
 
 const YOU_ITEMS = [
@@ -45,7 +45,6 @@ const RESOURCE_ITEMS = [
   { icon: AlertTriangle, label: 'Disclaimer',         to: '/disclaimer'     },
   { icon: ShieldCheck,   label: 'DMCA Policy',        to: '/content-policy' },
   { icon: Cookie,        label: 'Cookie Policy',      to: '/cookie-policy'  },
-  { icon: HelpCircle,    label: 'Help & Support',     to: '/help'           },
 ]
 
 /* Active nav: left accent bar + panel-hover bg. Inactive: ghost on hover. */
@@ -172,6 +171,18 @@ export default function Sidebar({ open, onClose }) {
           ))}
           {isAdmin && (
             <NavLink
+              to="/feed"
+              className={({ isActive }) => navClass(isActive)}
+            >
+              <Rss className="size-4.5 shrink-0" />
+              <span className="truncate">Feed</span>
+              <span className={`ml-auto shrink-0 rounded-full bg-brand/15 px-1.5 py-px text-[9px] font-bold uppercase tracking-wide text-brand ${fullView ? '' : 'hidden lg:inline'}`}>
+                Admin
+              </span>
+            </NavLink>
+          )}
+          {isAdmin && (
+            <NavLink
               to="/admin"
               className={({ isActive }) => navClass(isActive)}
             >
@@ -233,7 +244,7 @@ export default function Sidebar({ open, onClose }) {
 
         {/* ── Tagline ──────────────────────────────────────── */}
         <div className={`mt-auto border-t border-edge px-4 py-4 ${fullView ? '' : 'hidden lg:block'}`}>
-          <p className="text-[11px] leading-snug text-lo/60">
+          <p className="text-[11px] leading-snug text-lo">
             Bite-sized content,<br />mega-sized laughs.
           </p>
         </div>

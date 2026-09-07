@@ -71,7 +71,7 @@ export default function Navbar() {
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-2 text-sm font-semibold text-ink transition-colors duration-150 hover:bg-brand-2 sm:px-4"
+                className="btn-primary inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-colors duration-150 sm:px-4"
               >
                 <LogIn className="size-4" />
                 <span className="hidden sm:inline">Sign in</span>

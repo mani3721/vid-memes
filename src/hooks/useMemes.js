@@ -152,6 +152,143 @@ export function useCategoryMemes({ category, mood, query, excludeCategory, limit
 }
 
 /**
+ * useMixedFeed — home feed with pluggable sort modes:
+ *
+ *  'mixed'    (default) — recent uploads (last 7 days) fill the page first;
+ *             popular memes backfill any remaining slots and take over once the
+ *             recent pool is exhausted.
+ *  'recent'   — all memes, newest upload first (created_at DESC).
+ *  'popular'  — all memes, most downloaded first (download_count DESC).
+ *  'hot'      — hot-flagged first, then most downloaded (is_hot + download_count).
+ */
+export function useMixedFeed({ mood, query, excludeCategory, sort = 'mixed' } = {}) {
+  const [memes, setMemes]           = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [error, setError]           = useState(null)
+  const [page, setPage]             = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+
+  const filterKey = JSON.stringify({ mood, query, excludeCategory, sort })
+  const prevFilterKey = useRef(filterKey)
+
+  useEffect(() => {
+    if (filterKey !== prevFilterKey.current) {
+      prevFilterKey.current = filterKey
+      setPage(1)
+    }
+  }, [filterKey])
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    const from = (page - 1) * PAGE_SIZE
+    const to   = from + PAGE_SIZE - 1
+
+    function applyFilters(q) {
+      if (mood) q = q.contains('mood_tags', [mood])
+      if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
+      if (excludeCategory) {
+        const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
+        cats.forEach((c) => { q = q.neq('category', c) })
+      }
+      return q
+    }
+
+    // ── Simple single-query modes ──────────────────────────────────────────
+    if (sort === 'recent') {
+      applyFilters(
+        supabase.from('memes').select('*', { count: 'exact' })
+          .eq('is_published', true)
+          .order('created_at', { ascending: false })
+          .range(from, to)
+      ).then(({ data, error: err, count }) => {
+        if (cancelled) return
+        if (err) { setError(err.message); setLoading(false); return }
+        setMemes((data ?? []).map(normalize))
+        setTotalPages(Math.ceil((count ?? 0) / PAGE_SIZE) || 1)
+        setLoading(false)
+      })
+      return () => { cancelled = true }
+    }
+
+    if (sort === 'popular' || sort === 'hot') {
+      applyFilters(
+        supabase.from('memes').select('*', { count: 'exact' })
+          .eq('is_published', true)
+          .order('is_hot', { ascending: false })
+          .order('download_count', { ascending: false })
+          .range(from, to)
+      ).then(({ data, error: err, count }) => {
+        if (cancelled) return
+        if (err) { setError(err.message); setLoading(false); return }
+        setMemes((data ?? []).map(normalize))
+        setTotalPages(Math.ceil((count ?? 0) / PAGE_SIZE) || 1)
+        setLoading(false)
+      })
+      return () => { cancelled = true }
+    }
+
+    // ── Mixed mode: recent first, popular backfill ─────────────────────────
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+
+    applyFilters(
+      supabase.from('memes').select('*', { count: 'exact' })
+        .eq('is_published', true)
+        .gte('created_at', sevenDaysAgo)
+        .order('created_at', { ascending: false })
+        .range(from, to)
+    ).then(({ data: rData, error: rErr, count: rCount }) => {
+      if (cancelled) return
+      if (rErr) { setError(rErr.message); setLoading(false); return }
+
+      const recentItems = (rData ?? []).map(normalize)
+      const totalRecent = rCount ?? 0
+      const recentPages = Math.ceil(totalRecent / PAGE_SIZE) || 1
+      const need        = PAGE_SIZE - recentItems.length
+
+      if (need <= 0) {
+        setMemes(recentItems)
+        setTotalPages(recentPages + 1)
+        setLoading(false)
+        return
+      }
+
+      const recentShownSoFar   = Math.min(totalRecent, from)
+      const backfillUsedBefore = Math.max(0, (page - 1) * PAGE_SIZE - recentShownSoFar)
+      const popularFrom        = backfillUsedBefore
+      const recentIds          = new Set(recentItems.map((m) => m.id))
+
+      applyFilters(
+        supabase.from('memes').select('*', { count: 'exact' })
+          .eq('is_published', true)
+          .order('is_hot', { ascending: false })
+          .order('download_count', { ascending: false })
+          .range(popularFrom, popularFrom + need + 4)
+      ).then(({ data: pData, error: pErr, count: pCount }) => {
+        if (cancelled) return
+        if (pErr) { setError(pErr.message); setLoading(false); return }
+
+        const uniquePopular = (pData ?? [])
+          .map(normalize)
+          .filter((m) => !recentIds.has(m.id))
+          .slice(0, need)
+
+        setMemes([...recentItems, ...uniquePopular])
+        setTotalPages(recentPages + (Math.ceil((pCount ?? 0) / PAGE_SIZE) || 1))
+        setLoading(false)
+      })
+    })
+
+    return () => { cancelled = true }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, filterKey])
+
+  return { memes, loading, error, page, totalPages, setPage }
+}
+
+/**
  * useMemesByIds — fetch a batch of memes by their UUIDs (for FavoritesPage).
  */
 export function useMemesByIds(ids) {

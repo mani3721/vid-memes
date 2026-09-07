@@ -118,11 +118,11 @@ export default function StoryReel() {
       </div>
 
       <button type="button" onClick={() => goTo(active - 1)} aria-label="Previous meme"
-        className="absolute left-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand">
+        className="absolute left-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand-fill hover:text-ink">
         <ChevronLeft className="size-5" />
       </button>
       <button type="button" onClick={() => goTo(active + 1)} aria-label="Next meme"
-        className="absolute right-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand">
+        className="absolute right-2 top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center rounded-full bg-canvas/80 text-hi backdrop-blur-sm transition-colors duration-150 hover:bg-brand-fill hover:text-ink">
         <ChevronRight className="size-5" />
       </button>
 

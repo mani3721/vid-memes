@@ -275,7 +275,7 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex items-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="btn-primary flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold"
         >
           {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
           Save changes

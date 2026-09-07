@@ -21,7 +21,7 @@ export default function ModeToggle() {
     >
       <span
         aria-hidden
-        className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-brand transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-brand-fill transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           index === 1 ? 'translate-x-full' : 'translate-x-0'
         }`}
       />
@@ -36,7 +36,9 @@ export default function ModeToggle() {
             aria-checked={active}
             onClick={() => setMode(m.id)}
             className={`relative z-10 flex w-1/2 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors duration-200 sm:px-4 ${
-              active ? 'text-hi' : 'text-mid hover:text-hi'
+              // The active label sits on top of the pink pill span above, so it
+              // needs text-ink (5.86:1) — text-hi over pink is only 3.00:1.
+              active ? 'text-ink' : 'text-mid hover:text-hi'
             }`}
           >
             {/* Icon morph: the outgoing glyph shrinks out as the new one scales in */}

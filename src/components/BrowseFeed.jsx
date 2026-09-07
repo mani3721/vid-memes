@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useStudio } from '../store/studioStore'
-import { useCategoryMemes } from '../hooks/useMemes'
+import { useMixedFeed } from '../hooks/useMemes'
 import { WEBSITE_SCHEMA } from '../utils/seo'
 import SEO from './SEO'
 import MasonryFeed from './MasonryFeed'
@@ -10,15 +11,20 @@ import PageHeading from './PageHeading'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
 
+const SORT_OPTIONS = [
+  { value: 'popular', label: '⬇️ Most Downloaded' },
+  { value: 'mixed',   label: '🔥 Fresh Mix' },
+]
+
 export default function BrowseFeed() {
   const { mood, query } = useStudio()
+  const [sort, setSort] = useState('popular')
 
-  // Filtering is done server-side via Supabase — mood and query are sent as
-  // query params, so the hook re-fetches automatically when they change.
-  const { memes, loading, error, page, totalPages, setPage } = useCategoryMemes({
+  const { memes, loading, error, page, totalPages, setPage } = useMixedFeed({
     mood: mood ?? undefined,
     query: query || undefined,
     excludeCategory: HOME_EXCLUDE,
+    sort,
   })
 
   return (
@@ -54,15 +60,22 @@ export default function BrowseFeed() {
         </section>
 
         <section aria-labelledby="feed-heading">
-          <div className="mb-3 flex items-baseline justify-between gap-3">
-            <h2 id="feed-heading" className="font-display text-lg tracking-wide text-hi">
-              🔥 FRESH OFF THE INTERNET
-            </h2>
-            {!loading && (
-              <span className="text-xs text-lo">
-                {memes.length} memes
-              </span>
-            )}
+
+          {/* Sort filter pills */}
+          <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Sort by">
+            {SORT_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setSort(opt.value)}
+                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                  sort === opt.value
+                    ? 'border-brand bg-brand/10 text-brand'
+                    : 'border-edge bg-panel text-mid hover:border-brand/50 hover:text-hi'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
 
           {/* Initial load spinner */}

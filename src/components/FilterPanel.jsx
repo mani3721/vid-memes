@@ -17,7 +17,7 @@ function Chip({ active, onClick, children }) {
       onClick={onClick}
       className={`rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors duration-150 ${
         active
-          ? 'border-brand bg-brand text-ink'
+          ? 'btn-primary border-brand'
           : 'border-edge text-mid hover:border-mist/50 hover:text-hi'
       }`}
     >

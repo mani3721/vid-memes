@@ -164,7 +164,7 @@ export default function UploadForm() {
         </div>
         <Link
           to="/login"
-          className="rounded-full bg-brand px-6 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-brand-2"
+          className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold transition-colors"
         >
           Sign in / Create account
         </Link>
@@ -390,7 +390,7 @@ export default function UploadForm() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full rounded-full bg-brand py-3 text-sm font-semibold text-ink transition-colors hover:bg-brand-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary w-full rounded-full py-3 text-sm font-semibold transition-colors disabled:cursor-not-allowed"
             >
               {uploading ? (
                 <span className="inline-flex items-center gap-2">

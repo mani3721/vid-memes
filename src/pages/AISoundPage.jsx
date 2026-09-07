@@ -94,7 +94,7 @@ function SliderField({ label, value, onChange, min, max, step, tip }) {
         className="h-1.5 w-full cursor-pointer appearance-none rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-canvas"
         style={{ background: `linear-gradient(to right,var(--brand-col) 0%,var(--brand-col) ${pct}%,var(--bg-surface-hover) ${pct}%)` }}
       />
-      <div className="mt-0.5 flex justify-between text-[9px] text-lo/70">
+      <div className="mt-0.5 flex justify-between text-[9px] text-lo">
         <span>{min}</span><span>{max}</span>
       </div>
     </div>
@@ -231,7 +231,7 @@ export default function AISoundPage() {
           {/* ═══ LEFT: Text input ══════════════════════════ */}
           <section className="flex flex-col gap-2.5 rounded-2xl border border-edge bg-panel p-4">
             <div className="flex items-center gap-2">
-              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-[10px] font-bold text-ink">1</span>
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand-fill text-[10px] font-bold text-ink">1</span>
               <label htmlFor="tts-prompt" className="text-xs font-semibold text-hi">Write your text</label>
             </div>
 
@@ -412,7 +412,7 @@ export default function AISoundPage() {
                           className={[
                             'rounded-lg py-1.5 text-[10px] font-medium capitalize transition-all',
                             settings.latency === opt
-                              ? 'bg-brand text-ink shadow-sm shadow-brand/30'
+                              ? 'btn-primary shadow-sm shadow-brand/30'
                               : 'border border-edge bg-panel text-mid hover:bg-panel-hover hover:text-hi',
                           ].join(' ')}
                         >
@@ -446,7 +446,7 @@ export default function AISoundPage() {
               </div>
               <Link
                 to="/login"
-                className="shrink-0 rounded-xl bg-brand px-5 py-2 text-sm font-semibold text-ink shadow-md shadow-brand/25 hover:brightness-110"
+                className="btn-primary shrink-0 rounded-xl px-5 py-2 text-sm font-semibold shadow-md shadow-brand/25"
               >
                 Sign in / Sign up
               </Link>
@@ -455,8 +455,8 @@ export default function AISoundPage() {
             /* Audio player state */
             <>
               <div className="flex items-center gap-2 shrink-0">
-                <div className="grid size-7 place-items-center rounded-full bg-brand shadow-sm shadow-brand/30">
-                  <Volume2 className="size-3.5 text-white" />
+                <div className="grid size-7 place-items-center rounded-full bg-brand-fill shadow-sm shadow-brand/30">
+                  <Volume2 className="size-3.5 text-ink" />
                 </div>
                 <span className="text-xs font-semibold text-hi">Ready</span>
                 <span className="text-[10px] text-lo">{VOICES.find(v => v.name === selectedVoice.name)?.emoji} {selectedVoice.name} · {settings.format.toUpperCase()}</span>
@@ -477,7 +477,7 @@ export default function AISoundPage() {
                 </button>
                 <button
                   type="button" onClick={handleGenerate} disabled={isDisabled}
-                  className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-ink shadow-md shadow-brand/30 hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="btn-primary flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold shadow-md shadow-brand/30 disabled:cursor-not-allowed"
                 >
                   <Sparkles className="size-3.5" />New
                 </button>
@@ -502,7 +502,7 @@ export default function AISoundPage() {
               </div>
               <button
                 type="button" onClick={handleGenerate} disabled={isDisabled}
-                className="flex shrink-0 items-center gap-2 rounded-xl bg-brand px-6 py-2 text-sm font-semibold text-ink shadow-lg shadow-brand/30 hover:brightness-110 hover:shadow-brand/50 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                className="btn-primary flex shrink-0 items-center gap-2 rounded-xl px-6 py-2 text-sm font-semibold shadow-lg shadow-brand/30 hover:shadow-brand/50 disabled:cursor-not-allowed transition-all"
               >
                 {loading ? (
                   <>

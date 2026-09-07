@@ -108,7 +108,7 @@ export default function AudioHero({ asset }) {
           type="button"
           onClick={toggle}
           aria-label={playing ? `Pause ${asset.title}` : `Play ${asset.title}`}
-          className="grid size-20 place-items-center rounded-full bg-brand text-ink shadow-lg shadow-brand/30 transition-transform duration-150 hover:scale-105 hover:bg-brand-2"
+          className="btn-primary grid size-20 place-items-center rounded-full shadow-lg shadow-brand/30 transition-transform duration-150 hover:scale-105"
         >
           {playing
             ? <Pause className="size-8" strokeWidth={2.5} />
