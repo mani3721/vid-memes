@@ -101,7 +101,8 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
         <p className="text-[10px] text-lo tabular-nums">
           {isFallback ? 'All-time ranking' : `Resets in ${countdown}`}
           {lastUpdated && (
-            <span className="ml-2 opacity-60">
+            // No opacity-60 here: it composites text-lo back down to 2.3:1.
+            <span className="ml-2">
               · updated {minutesAgo}m ago
             </span>
           )}

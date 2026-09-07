@@ -140,6 +140,12 @@ export default function Sidebar({ open, onClose }) {
               to={to}
               end={to === '/'}
               className={({ isActive }) => navClass(isActive)}
+              // The label below is display:none in the collapsed rail, which
+              // takes it out of the accessibility tree and leaves the link with
+              // only an unlabelled icon — six nav links announcing as just
+              // "link". The off-canvas drawer is still reachable by AT when
+              // closed, so this is the state screen readers hit on mobile.
+              aria-label={label}
             >
               <Icon className="size-4.5 shrink-0" />
               <span className={`truncate ${fullView ? '' : 'hidden lg:block'}`}>{label}</span>
