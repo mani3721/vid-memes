@@ -27,7 +27,13 @@ export default function AssetThumb({ asset, className = '' }) {
   const isAudio = asset.format === 'MP3' || asset.format === 'WAV'
   const bars = useMemo(() => (isAudio ? waveformBars(asset.id, 14) : []), [isAudio, asset.id])
 
-  const base = `shrink-0 overflow-hidden rounded-lg border border-edge bg-panel-hover ${className}`
+  // `block` is load-bearing: width/height do not apply to a non-replaced inline
+  // element, so without it the size-* in `className` is silently dropped and the
+  // <video>/<img> lays out at its intrinsic size. Callers that place this inside
+  // a flex row got away with it (flex blockifies its children), but the mobile
+  // ranking strip wraps it in a plain <div>, where the box collapsed to 1px wide
+  // and tall videos overflowed the card and covered the title.
+  const base = `block shrink-0 overflow-hidden rounded-lg border border-edge bg-panel-hover ${className}`
 
   if (isAudio) {
     return (

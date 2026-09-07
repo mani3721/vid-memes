@@ -86,8 +86,12 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
                 </span>
               </div>
               <p className="line-clamp-2 text-[10px] font-semibold leading-tight text-hi">{asset.title}</p>
+              {/* mt-auto pins the badge to the card floor. The cards are flex
+                  siblings so they already stretch to a common height; without
+                  this, a one-line title leaves the badge floating mid-card and
+                  the row of badges reads as ragged. */}
               {!isFallback && asset.todayDownloads != null && (
-                <span className="rounded-full bg-brand/10 px-1.5 py-0.5 text-[9px] font-semibold text-brand">
+                <span className="mt-auto rounded-full bg-brand/10 px-1.5 py-0.5 text-[9px] font-semibold text-brand">
                   🔥 {asset.todayDownloads} today
                 </span>
               )}
