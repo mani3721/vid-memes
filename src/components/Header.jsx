@@ -5,6 +5,7 @@ import { useStudio } from '../store/studioStore'
 import { useAuth } from '../lib/authContext'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
+import NotificationBell from './NotificationBell'
 import { useRecentSearches } from '../hooks/useRecentSearches'
 
 export default function Header({ onOpenSidebar }) {
@@ -239,6 +240,9 @@ export default function Header({ onOpenSidebar }) {
             <Search className="size-4" />
           </button>
         )}
+
+        {/* Renders nothing for guests — see NotificationBell. */}
+        <NotificationBell />
 
         <ThemeToggle />
 

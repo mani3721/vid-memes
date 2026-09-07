@@ -1,20 +1,9 @@
 import { useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Play, Pause } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
-import DownloadButton from './DownloadButton'
-
-// LCG-based deterministic bar heights so every sound has a unique waveform
-function waveformBars(id = '', count = 36) {
-  let seed = 0
-  for (let i = 0; i < id.length; i++) seed = (seed * 31 + id.charCodeAt(i)) >>> 0
-  return Array.from({ length: count }, () => {
-    seed = (seed * 1664525 + 1013904223) >>> 0
-    return 18 + (seed % 64) // 18–82 % height
-  })
-}
-
-// Module-level ref so pausing one card pauses any other currently playing
-let _activeAudio = null
+import { toMemeUrl } from '../utils/seo'
+import { waveformBars, claimPlayback, releasePlayback } from '../utils/audioPreview'
 
 export default function SoundCard({ sfx, stagger = 0 }) {
   const [playing, setPlaying] = useState(false)
@@ -23,6 +12,8 @@ export default function SoundCard({ sfx, stagger = 0 }) {
   // Deterministic from sfx.id — memoized so playback progress ticks don't recompute it
   const bars = useMemo(() => waveformBars(sfx.id), [sfx.id])
   const age = timeAgo(sfx.createdAt)
+  // toMemeUrl dispatches on category, so a sound resolves to /sound/<slug>.
+  const detailUrl = toMemeUrl(sfx)
 
   function togglePlay() {
     const audio = audioRef.current
@@ -31,11 +22,7 @@ export default function SoundCard({ sfx, stagger = 0 }) {
     if (playing) {
       audio.pause()
     } else {
-      if (_activeAudio && _activeAudio !== audio) {
-        _activeAudio.pause()
-        _activeAudio.currentTime = 0
-      }
-      _activeAudio = audio
+      claimPlayback(audio)
       audio.play().catch(() => {})
       setPlaying(true)
     }
@@ -54,7 +41,7 @@ export default function SoundCard({ sfx, stagger = 0 }) {
   function handleEnded() {
     setPlaying(false)
     setProgress(0)
-    if (_activeAudio === audioRef.current) _activeAudio = null
+    releasePlayback(audioRef.current)
   }
 
   function handleSeek(e) {
@@ -63,11 +50,7 @@ export default function SoundCard({ sfx, stagger = 0 }) {
     const rect = e.currentTarget.getBoundingClientRect()
     a.currentTime = ((e.clientX - rect.left) / rect.width) * a.duration
     if (!playing) {
-      if (_activeAudio && _activeAudio !== a) {
-        _activeAudio.pause()
-        _activeAudio.currentTime = 0
-      }
-      _activeAudio = a
+      claimPlayback(a)
       a.play().catch(() => {})
       setPlaying(true)
     }
@@ -99,20 +82,24 @@ export default function SoundCard({ sfx, stagger = 0 }) {
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-hi">{sfx.title}</p>
+          {/*
+            The title is the route into the detail page, which is where the
+            download button now lives. Previously the row carried its own
+            download control, which meant a list of sounds was a wall of
+            download buttons sitting next to ad slots with no page of their
+            own behind them.
+          */}
+          <Link
+            to={detailUrl}
+            className="block truncate text-sm font-semibold text-hi transition-colors hover:text-brand"
+          >
+            {sfx.title}
+          </Link>
           <p className="mt-0.5 text-xs text-lo">
             {sfx.format} · {sfx.sizeMB} MB · {compact(sfx.editorUses)} downloads
             {age && <> · {age}</>}
           </p>
         </div>
-
-        <DownloadButton
-          label={`Download ${sfx.title} sound effect`}
-          href={sfx.publicUrl}
-          filename={sfx.filename}
-          memeId={sfx.id}
-          size="sm"
-        />
       </div>
 
       {/* Waveform / seek bar */}

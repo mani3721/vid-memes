@@ -32,9 +32,17 @@ export function useFavorites(userId) {
   const [ids, setIds] = useState(new Set())
   const [loading, setLoading] = useState(true)
 
+  // Bumping this re-runs the load. FavoritesProvider bumps it once the
+  // guest → account merge has finished, so the merged rows appear immediately
+  // rather than on the next page load.
+  const [refreshKey, setRefreshKey] = useState(0)
+  const reload = useCallback(() => setRefreshKey((n) => n + 1), [])
+
   useEffect(() => {
     // Still waiting for auth to resolve
     if (userId === undefined) return
+
+    let cancelled = false
 
     if (!userId) {
       // Guest: load from localStorage
@@ -50,10 +58,13 @@ export function useFavorites(userId) {
       .select('meme_id')
       .eq('user_id', userId)
       .then(({ data, error }) => {
+        if (cancelled) return
         if (!error && data) setIds(new Set(data.map((f) => f.meme_id)))
         setLoading(false)
       })
-  }, [userId])
+
+    return () => { cancelled = true }
+  }, [userId, refreshKey])
 
   const isFav = useCallback((id) => ids.has(id), [ids])
 
@@ -87,5 +98,5 @@ export function useFavorites(userId) {
     [userId, ids],
   )
 
-  return { ids: [...ids], isFav, toggle, loading }
+  return { ids: [...ids], isFav, toggle, loading, reload }
 }

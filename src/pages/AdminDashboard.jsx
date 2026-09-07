@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X, FileText, Newspaper, Inbox } from 'lucide-react'
+import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X, FileText, Newspaper, Inbox, Megaphone } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
 import { useNavigate } from 'react-router-dom'
 import SEO from '../components/SEO'
 import ContentEditor from '../components/admin/ContentEditor'
 import BlogManager from '../components/admin/BlogManager'
+import AnnouncementSender from '../components/admin/AnnouncementSender'
 import { approveMeme, listPending, rejectMeme, renameMeme } from '../lib/adminApi'
 
 const TABS = [
   { id: 'pending', label: 'Pending Approval', icon: Inbox },
   { id: 'content', label: 'Content Editor', icon: FileText },
   { id: 'blog', label: 'Blog', icon: Newspaper },
+  { id: 'announce', label: 'Announcements', icon: Megaphone },
 ]
 
 /** The original moderation queue, unchanged in behaviour. */
@@ -272,6 +274,7 @@ export default function AdminDashboard() {
           {tab === 'pending' && <PendingQueue />}
           {tab === 'content' && <ContentEditor />}
           {tab === 'blog' && <BlogManager />}
+          {tab === 'announce' && <AnnouncementSender />}
         </div>
       </div>
     </>

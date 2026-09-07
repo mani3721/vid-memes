@@ -30,9 +30,26 @@ export function toMemeSlug(asset) {
   return `${slug || 'meme'}-${asset.id}`
 }
 
-/** Full href for an asset's canonical meme page */
+/**
+ * Route prefix for an asset's detail page.
+ *
+ * Sound effects live under /sound/ and everything else under /meme/. They need
+ * separate prefixes because a sound's list row no longer carries a download
+ * button — the download lives only on the detail page — so that page has to be
+ * a real, linkable destination rather than a modal.
+ *
+ * The dispatch lives here, in the single URL builder every call site already
+ * uses, rather than being sprinkled through components. That also means the
+ * canonical tag, the sitemap <loc> and every internal <Link> agree by
+ * construction: a sound has exactly ONE indexable URL, not one per prefix.
+ */
+export function assetPathPrefix(asset) {
+  return asset?.category === 'sounds' ? '/sound' : '/meme'
+}
+
+/** Full href for an asset's canonical detail page */
 export function toMemeUrl(asset) {
-  return `/meme/${toMemeSlug(asset)}`
+  return `${assetPathPrefix(asset)}/${toMemeSlug(asset)}`
 }
 
 /**

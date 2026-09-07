@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
+  Bell,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
@@ -33,6 +34,7 @@ const NAV_ITEMS = [
 
 const YOU_ITEMS = [
   { icon: Heart, label: 'Favorites', to: '/favorites' },
+  { icon: Bell,  label: 'Notifications', to: '/notifications' },
 ]
 
 const RESOURCE_ITEMS = [

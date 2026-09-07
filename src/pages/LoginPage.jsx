@@ -85,7 +85,7 @@ export default function LoginPage() {
     <>
       <SEO
         title="Sign in — Videsaur"
-        description="Sign in or create a Videsaur account to download memes and manage content."
+        description="Create a free Videsaur account to sync your favorites across devices. Browsing, searching and downloading never require an account."
         canonicalPath="/login"
       />
 

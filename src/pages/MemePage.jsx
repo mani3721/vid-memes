@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Navigate } from 'react-router-dom'
+import { useParams, Navigate, useLocation } from 'react-router-dom'
 import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
 import { supabase } from '../lib/supabaseClient'
@@ -19,6 +19,8 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import MemeDescription from '../components/MemeDescription'
 import DownloadButton from '../components/DownloadButton'
 import ShareButton from '../components/ShareButton'
+import ReactionBar from '../components/ReactionBar'
+import AudioHero from '../components/AudioHero'
 import SimilarMemesRow from '../components/SimilarMemesRow'
 
 const FORMAT_LABELS = { MP4: 'Video · MP4', GIF: 'Animated · GIF', WebM: 'Video · WebM', PNG: 'Image · PNG', MP3: 'Audio · MP3', WAV: 'Audio · WAV' }
@@ -36,6 +38,7 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 export default function MemePage() {
   const { slug } = useParams()
+  const { pathname } = useLocation()
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
   const { user, isAdmin } = useAuth()
@@ -87,7 +90,25 @@ export default function MemePage() {
   const canEditTitle = isAdmin || user?.id === asset.uploader_id
   const shownTitle = displayTitle ?? asset.title
   const canonicalPath = toMemeUrl(asset)
+
+  // Serve each asset from exactly one URL.
+  //
+  // This page answers on both /meme/:slug and /sound/:slug, and the slug's
+  // title prefix is cosmetic — the asset is resolved from the trailing UUID
+  // alone. So a sound reached at /meme/..., or any asset reached with a stale
+  // title in the slug after an admin retitle, would otherwise render full
+  // content on a non-canonical URL. Redirecting collapses those variants
+  // instead of leaving duplicates for a crawler to find.
+  //
+  // Terminates after one hop: canonicalPath is derived from the fetched row,
+  // so once pathname matches it, it keeps matching.
+  if (pathname !== canonicalPath) {
+    return <Navigate to={canonicalPath} replace />
+  }
   const isVideo = asset.format === 'MP4' || asset.format === 'WebM' || asset.format === 'GIF'
+  // Format, not category: the "sounds" category also holds a few MP4s, which
+  // should keep the video player.
+  const isAudio = asset.format === 'MP3' || asset.format === 'WAV'
   const moodLabel = MOODS.find((m) => m.id === asset.mood)?.label ?? asset.mood ?? ''
 
   const resolution = asset.width_px && asset.height_px
@@ -132,7 +153,17 @@ export default function MemePage() {
         <article aria-labelledby="meme-title">
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
             <div className="torn paper-lift relative overflow-hidden rounded-2xl bg-panel">
-              {isVideo && (asset.format === 'MP4' || asset.format === 'WebM') ? (
+              {isAudio ? (
+                /*
+                  Audio gets a generated hero rather than its thumbnail.
+                  generateThumbnail() in server/routes/upload.js has no frame to
+                  extract from an MP3, so it stores a flat rgb(18,16,28) square —
+                  a real image, which is why this panel rendered as a large empty
+                  black rectangle instead of visibly failing. AudioHero also
+                  supplies the player the page was missing entirely.
+                */
+                <AudioHero asset={asset} />
+              ) : isVideo && (asset.format === 'MP4' || asset.format === 'WebM') ? (
                 <video
                   src={asset.publicUrl}
                   controls
@@ -206,38 +237,71 @@ export default function MemePage() {
                 )}
               </div>
 
-              <div className="flex items-center gap-2">
-                <DownloadButton
-                  label={`Download ${asset.title} ${asset.format}`}
-                  href={asset.publicUrl}
-                  filename={asset.filename}
-                  memeId={asset.id}
-                  className="gap-2 rounded-full py-2.5 text-sm font-semibold"
-                />
-                <ShareButton
-                  url={window.location.href}
-                  title={asset.title}
-                  size="md"
-                  variant="solid"
-                />
-              </div>
+              {/*
+                The download and share triggers used to sit here, as a pair of
+                circles directly beneath the H1. They now live at the bottom of
+                the File Details card below — see the note there.
+              */}
 
-              <div className="rounded-2xl border border-edge bg-panel p-4">
-                <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-mid">File Details</h2>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                  {[
-                    ['Format', asset.format],
-                    resolution && ['Resolution', resolution],
-                    ['Size', `${asset.sizeMB} MB`],
-                    ['License', asset.license],
-                    ['Category', asset.category],
-                  ].filter(Boolean).map(([k, v]) => (
-                    <div key={k}>
-                      <dt className="text-mid">{k}</dt>
-                      <dd className="font-semibold text-hi">{v}</dd>
-                    </div>
-                  ))}
-                </dl>
+              {/* Open to guests — see components/ReactionBar.jsx */}
+              <ReactionBar memeId={asset.id} reactions={asset.reactions} />
+
+              {/*
+                mt-8 (32px) on top of the column's gap-4 (16px) gives 48px of
+                clear space above this card.
+
+                Worth knowing before an ad goes in that gap: AdSlot will refuse
+                it in this position. This card contains the download button, and
+                auditPlacement rejects any slot whose *direct sibling* contains
+                a [data-ad-unsafe] control — a rule about DOM structure, which no
+                amount of margin satisfies. Its geometric rule also wants
+                MIN_GAP_PX (150px), not 30. The pattern that does work is the one
+                used further down this page: put <AdSlot> in its own wrapper div
+                outside this column, and let its own my-40 (160px) supply the
+                distance.
+              */}
+              <div className="mt-8 overflow-hidden rounded-2xl border border-edge bg-panel">
+                <div className="p-4">
+                  <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-mid">File Details</h2>
+                  <dl className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    {[
+                      ['Format', asset.format],
+                      resolution && ['Resolution', resolution],
+                      ['Size', `${asset.sizeMB} MB`],
+                      ['License', asset.license],
+                      ['Category', asset.category],
+                    ].filter(Boolean).map(([k, v]) => (
+                      <div key={k}>
+                        <dt className="text-mid">{k}</dt>
+                        <dd className="font-semibold text-hi">{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+
+                {/*
+                  Actions live inside the card that describes the file, so the
+                  download is attached to the thing it downloads rather than
+                  floating under the headline. Stacked full-width and 48px tall
+                  each, with a gap between them — two 40px circles side by side
+                  was the shape that produced accidental taps.
+                */}
+                <div className="flex flex-col gap-2 border-t border-edge p-4">
+                  <DownloadButton
+                    label={`Download ${asset.title} ${asset.format}`}
+                    href={asset.publicUrl}
+                    filename={asset.filename}
+                    memeId={asset.id}
+                    layout="block"
+                    text={`Download Free ${asset.format}`}
+                  />
+                  <ShareButton
+                    url={window.location.href}
+                    title={asset.title}
+                    layout="block"
+                    text="Share Meme Asset Link"
+                  />
+                </div>
               </div>
 
             </div>

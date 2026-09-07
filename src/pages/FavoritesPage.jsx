@@ -1,9 +1,9 @@
-import { Heart, LogIn } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
 import { useFavorites } from '../store/FavoritesProvider'
 import { useAuth } from '../lib/authContext'
 import { useMemesByIds } from '../hooks/useMemes'
 import MasonryFeed from '../components/MasonryFeed'
+import GuestPrompt from '../components/GuestPrompt'
 import SEO from '../components/SEO'
 
 export default function FavoritesPage() {
@@ -12,6 +12,7 @@ export default function FavoritesPage() {
   const { memes: favorited, loading: memesLoading } = useMemesByIds(ids)
 
   const loading = authLoading || favsLoading || memesLoading
+  const isGuest = !authLoading && !user
 
   return (
     <>
@@ -27,34 +28,36 @@ export default function FavoritesPage() {
             <Heart className="size-5 fill-red-500 text-red-500" />
             Your Favorites
           </h1>
-          {user && !loading && (
+          {!loading && favorited.length > 0 && (
             <span className="text-xs text-lo">{favorited.length} saved</span>
           )}
         </div>
 
-        {/* Guest state */}
-        {!authLoading && !user ? (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed border-edge py-20 text-center">
-            <Heart className="size-10 text-lo/40" />
-            <div>
-              <p className="text-sm font-medium text-mid">Save your favorites</p>
-              <p className="mt-1 text-xs text-lo">Sign in to heart memes and access them from any device.</p>
-            </div>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-brand-2"
-            >
-              <LogIn className="size-4" />
-              Sign in
-            </Link>
-          </div>
-        ) : loading ? (
+        {/*
+          Guests are NOT walled off here. Their favorites live in localStorage
+          (see hooks/useFavorites.js) and render exactly like a signed-in
+          user's — the only difference is a dismissible note explaining that
+          signing in makes them portable across devices.
+        */}
+        {isGuest && favorited.length > 0 && (
+          <GuestPrompt
+            id="favorites_page"
+            message="These favorites are saved in this browser. Sign in to keep them across devices."
+          />
+        )}
+
+        {loading ? (
           <div className="py-12 text-center text-sm text-lo">Loading…</div>
         ) : favorited.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-edge py-20 text-center">
             <Heart className="size-10 text-lo/40" />
             <p className="text-sm text-mid">No favorites yet.</p>
             <p className="text-xs text-lo">Tap the heart on any card to save it here.</p>
+            {isGuest && (
+              <p className="text-xs text-lo">
+                No account needed — signing in just keeps them across devices.
+              </p>
+            )}
           </div>
         ) : (
           <MasonryFeed assets={favorited} />

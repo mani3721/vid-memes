@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Download } from 'lucide-react'
 import { compact, timeAgo } from '../data/assets'
 import { toMemeUrl } from '../utils/seo'
-import DownloadButton from './DownloadButton'
 import SoundCard from './SoundCard'
 
 function SimilarVideoCard({ asset }) {
@@ -57,17 +56,17 @@ function SimilarVideoCard({ asset }) {
             />
           )}
 
-          {/* Hover overlay */}
-          <div className="absolute inset-x-0 bottom-0 flex items-center justify-end gap-1.5 bg-linear-to-t from-black/70 to-transparent p-2 pt-6 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-            <DownloadButton
-              label={`Download ${asset.title} ${asset.format}`}
-              href={asset.publicUrl}
-              filename={asset.filename}
-              memeId={asset.id}
-              size="sm"
-              variant="ghost"
-            />
-          </div>
+          {/*
+            The hover overlay here held a single download button and nothing
+            else, so it is gone rather than left as an empty gradient. The
+            card links to the asset's detail page, which is where downloading
+            now happens.
+
+            This row renders inside MemePage, directly alongside <AdSlot> —
+            AdSlot's audit refuses to render next to a [data-ad-unsafe]
+            control, so these buttons were also suppressing the ad they sat
+            beside.
+          */}
 
           {/* Format badge */}
           <span className="absolute left-2 top-2 rounded-md bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white backdrop-blur-sm">

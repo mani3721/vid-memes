@@ -67,6 +67,11 @@ export const savePost = (id, patch) => request(`/api/admin/blog/${id}`, { method
 export const deletePost = (id, { hard = false } = {}) =>
   request(`/api/admin/blog/${id}`, { method: 'DELETE', params: { hard: hard ? 'true' : '' } })
 
+// ── Announcements (broadcast notifications) ──────────────────────────────────
+
+export const listAnnouncements = () => request('/api/admin/announcements')
+export const sendAnnouncement = (body) => request('/api/admin/announcements', { method: 'POST', body })
+
 // ── Sitemap ops ──────────────────────────────────────────────────────────────
 
 export const sitemapStatus = () => request('/api/admin/sitemap/status')

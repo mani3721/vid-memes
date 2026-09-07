@@ -23,6 +23,7 @@ const CookiePolicyPage  = lazy(() => import('./pages/CookiePolicyPage'))
 const HelpPage          = lazy(() => import('./pages/HelpPage'))
 const UploadForm        = lazy(() => import('./components/UploadForm'))
 const FavoritesPage     = lazy(() => import('./pages/FavoritesPage'))
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const LoginPage         = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
 const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
@@ -59,6 +60,14 @@ function Studio() {
         <Route path="/templates"      element={<CategoryPage category="templates" />} />
         <Route path="/sounds"         element={<CategoryPage category="sounds"    />} />
         <Route path="/meme/:slug"     element={<MemePage />} />
+        {/*
+          Sound detail pages. Same component as /meme/:slug on purpose — it
+          already resolves an asset from the slug, renders the long-form
+          description and hosts the download button, and duplicating 400 lines
+          to change a URL prefix would just create two things to keep in sync.
+          MemePage redirects to whichever prefix is canonical for the asset.
+        */}
+        <Route path="/sound/:slug"    element={<MemePage />} />
         <Route path="/about"          element={<AboutPage />} />
         <Route path="/contact"        element={<ContactPage />} />
         <Route path="/privacy"        element={<PrivacyPage />} />
@@ -69,6 +78,7 @@ function Studio() {
         <Route path="/help"           element={<HelpPage />} />
         <Route path="/upload"         element={<UploadForm />} />
         <Route path="/favorites"      element={<FavoritesPage />} />
+        <Route path="/notifications"  element={<NotificationsPage />} />
         <Route path="/login"          element={<LoginPage />} />
         <Route path="/admin"          element={<AdminDashboard />} />
         <Route path="/ai-sound"       element={<AISoundPage />} />
