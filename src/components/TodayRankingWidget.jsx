@@ -4,6 +4,7 @@ import { RefreshCw } from 'lucide-react'
 import { compact } from '../data/assets'
 import { useTodayTrending } from '../hooks/useMemes'
 import { toMemeUrl } from '../utils/seo'
+import AssetThumb from './AssetThumb'
 
 const MEDAL = ['text-yellow-400', 'text-slate-300', 'text-amber-600']
 
@@ -79,7 +80,7 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
               className="flex w-26 shrink-0 flex-col items-center gap-1.5 rounded-xl border border-edge bg-panel px-2 py-2.5 text-center transition-colors hover:border-brand/50"
             >
               <div className="relative">
-                <img src={asset.thumb} alt={asset.title} className="size-10 rounded-lg object-cover" />
+                <AssetThumb asset={asset} className="size-10" />
                 <span className={`absolute -left-1 -top-1 flex size-4 items-center justify-center rounded-full bg-canvas text-[10px] font-bold tabular-nums ${i < 3 ? MEDAL[i] : 'text-mid'}`}>
                   {i + 1}
                 </span>
@@ -124,13 +125,7 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
                   {i + 1}
                 </span>
 
-                <img
-                  src={asset.thumb}
-                  alt=""
-                  aria-hidden
-                  loading="lazy"
-                  className="aspect-video w-20 shrink-0 rounded-lg border border-edge object-cover sm:w-28"
-                />
+                <AssetThumb asset={asset} className="aspect-video w-20 sm:w-28" />
 
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-hi transition-colors group-hover/row:text-brand">
@@ -188,7 +183,7 @@ export default function TodayRankingWidget({ variant = 'sidebar' }) {
               <span className={`w-5 shrink-0 text-center text-xs font-bold tabular-nums ${i < 3 ? MEDAL[i] : 'text-mid'}`}>
                 {i + 1}
               </span>
-              <img src={asset.thumb} alt="" aria-hidden className="size-10 shrink-0 rounded-lg object-cover" />
+              <AssetThumb asset={asset} className="size-10" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-semibold leading-snug text-hi">{asset.title}</p>
                 {!isFallback && asset.todayDownloads != null ? (
