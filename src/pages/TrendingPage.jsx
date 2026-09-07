@@ -6,6 +6,7 @@ import SEO from '../components/SEO'
 import PageHeading from '../components/PageHeading'
 import TrendingCard from '../components/TrendingCard'
 import RankingList from '../components/RankingList'
+import TodayRankingWidget from '../components/TodayRankingWidget'
 
 const GRID_COUNT = 8
 const RANK_COUNT = 20
@@ -52,6 +53,32 @@ export default function TrendingPage() {
           </p>
         </div>
 
+        {/*
+          Top 10 of the day, above the fold and full width.
+
+          Distinct from the two blocks below, which both rank by all-time
+          download_count — the grid is literally the first 8 of the same list
+          the sidebar shows. This one ranks by downloads since midnight UTC, so
+          a meme that broke out today outranks the all-time leaders instead of
+          being buried under them.
+        */}
+        <section
+          aria-labelledby="today-top-heading"
+          className="rounded-2xl border border-edge bg-panel p-4"
+        >
+          <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+            <h2
+              id="today-top-heading"
+              className="font-display text-base tracking-wide text-hi sm:text-lg"
+            >
+              🏆 Top 10 Memes of the Day
+            </h2>
+            <p className="text-xs text-lo">Most downloaded today</p>
+          </div>
+
+          <TodayRankingWidget variant="page" />
+        </section>
+
         {loading ? (
           <div className="flex justify-center py-24" role="status" aria-live="polite">
             <Loader2 className="size-6 animate-spin text-brand" />
@@ -73,7 +100,7 @@ export default function TrendingPage() {
                 id="ranking-heading"
                 className="mb-3 font-display text-base tracking-wide text-hi"
               >
-                📈 Most Downloaded
+                📈 Most Downloaded — All Time
               </h2>
               <RankingList memes={memes} />
             </section>
@@ -84,7 +111,7 @@ export default function TrendingPage() {
                 id="trending-grid-heading"
                 className="mb-4 font-display text-base tracking-wide text-hi"
               >
-                🔥 Top Trending Now
+                🔥 Top Trending This Week
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {gridMemes.map((meme) => (

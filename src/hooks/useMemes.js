@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
 const PAGE_SIZE = 20
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 /**
  * Map Supabase snake_case columns to the camelCase shape the rest of the app
@@ -174,75 +175,61 @@ export function useMemesByIds(ids) {
 }
 
 /**
- * useTodayTrending — ranks memes by downloads since midnight UTC.
- * Falls back to all-time trending if today has fewer than 3 events.
- * Auto-refreshes every 5 minutes.
+ * useTodayTrending — today's most-downloaded memes, newest window first.
+ *
+ * Reads GET /api/trending/today rather than querying download_events from the
+ * browser. That table is service-role-only under RLS, so the anon key returns
+ * an empty set with no error — the previous client-side version therefore
+ * counted zero events every time and silently served the all-time list while
+ * labelling itself a daily ranking. Aggregating server-side is also what keeps
+ * a per-download audit log (which records country) off the public API.
+ *
+ * Refreshes every 5 minutes; the endpoint caches for 60s.
  */
-export function useTodayTrending({ limit = 10 } = {}) {
+export function useTodayTrending({ limit = 10, excludeCategory } = {}) {
   const [memes, setMemes] = useState([])
   const [loading, setLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState(null)
   const [isFallback, setIsFallback] = useState(false)
 
-  async function fetchTrending() {
-    const todayStart = new Date()
-    todayStart.setUTCHours(0, 0, 0, 0)
-
-    // Fetch today's download events (capped at 2000 to stay client-side)
-    const { data: events } = await supabase
-      .from('download_events')
-      .select('meme_id')
-      .gte('created_at', todayStart.toISOString())
-      .limit(2000)
-
-    const counts = {}
-    for (const { meme_id } of events ?? []) {
-      counts[meme_id] = (counts[meme_id] ?? 0) + 1
-    }
-
-    const topIds = Object.entries(counts)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, limit)
-      .map(([id]) => id)
-
-    if (topIds.length >= 3) {
-      // Enough real today data
-      const { data } = await supabase
-        .from('memes')
-        .select('*')
-        .in('id', topIds)
-        .eq('is_published', true)
-
-      const sorted = (data ?? [])
-        .map((m) => ({ ...normalize(m), todayDownloads: counts[m.id] ?? 0 }))
-        .sort((a, b) => b.todayDownloads - a.todayDownloads)
-
-      setMemes(sorted)
-      setIsFallback(false)
-    } else {
-      // Too early in the day — fall back to all-time top
-      const { data } = await supabase
-        .from('memes')
-        .select('*')
-        .eq('is_published', true)
-        .order('download_count', { ascending: false })
-        .limit(limit)
-
-      setMemes((data ?? []).map(normalize))
-      setIsFallback(true)
-    }
-
-    setLastUpdated(new Date())
-  }
-
   useEffect(() => {
-    setLoading(true)
-    fetchTrending().finally(() => setLoading(false))
+    let cancelled = false
 
-    const timer = setInterval(fetchTrending, 5 * 60 * 1000)
-    return () => clearInterval(timer)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit])
+    const params = new URLSearchParams({ limit: String(limit) })
+    if (excludeCategory) params.set('excludeCategory', excludeCategory)
+    const url = `${API_BASE}/api/trending/today?${params.toString()}`
+
+    function load() {
+      fetch(url)
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+        .then(({ memes: rows, isFallback: fallback }) => {
+          if (cancelled) return
+          setMemes(
+            (rows ?? []).map((m) => ({
+              ...normalize(m),
+              // null (not 0) when the server fell back, so the UI can tell
+              // "no downloads today" apart from "not a today ranking".
+              todayDownloads: fallback ? null : m.today_downloads ?? 0,
+            })),
+          )
+          setIsFallback(Boolean(fallback))
+          setLastUpdated(new Date())
+          setLoading(false)
+        })
+        .catch(() => {
+          // Leave whatever was last shown in place; a ranking is not worth an
+          // error state on the page.
+          if (!cancelled) setLoading(false)
+        })
+    }
+
+    load()
+    const timer = setInterval(load, 5 * 60 * 1000)
+    return () => {
+      cancelled = true
+      clearInterval(timer)
+    }
+  }, [limit, excludeCategory])
 
   return { memes, loading, lastUpdated, isFallback }
 }

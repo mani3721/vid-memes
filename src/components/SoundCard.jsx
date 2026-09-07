@@ -81,7 +81,11 @@ export default function SoundCard({ sfx, stagger = 0 }) {
             : <Play className="size-4 translate-x-0.5" />}
         </button>
 
-        <div className="min-w-0 flex-1">
+        {/*
+          `relative` scopes the stretched link below to this text block only,
+          so it never covers the play button or the waveform seek bar.
+        */}
+        <div className="group/meta relative min-w-0 flex-1">
           {/*
             The title is the route into the detail page, which is where the
             download button now lives. Previously the row carried its own
@@ -91,7 +95,7 @@ export default function SoundCard({ sfx, stagger = 0 }) {
           */}
           <Link
             to={detailUrl}
-            className="block truncate text-sm font-semibold text-hi transition-colors hover:text-brand"
+            className="block truncate text-sm font-semibold text-hi transition-colors group-hover/meta:text-brand"
           >
             {sfx.title}
           </Link>
@@ -99,6 +103,19 @@ export default function SoundCard({ sfx, stagger = 0 }) {
             {sfx.format} · {sfx.sizeMB} MB · {compact(sfx.editorUses)} downloads
             {age && <> · {age}</>}
           </p>
+
+          {/*
+            Stretched link, so the metadata line navigates too rather than
+            being dead space next to a clickable title.
+
+            A second link instead of wrapping both elements in one: the wrap
+            would fold "MP3 · 0.1 MB · 12 downloads · 1w ago" into the link's
+            accessible name, leaving screen-reader users to sit through the
+            file stats before hearing which sound it is. This one is
+            aria-hidden and untabbable, so it adds click area and nothing
+            else — the title above stays the single announced, focusable link.
+          */}
+          <Link to={detailUrl} tabIndex={-1} aria-hidden className="absolute inset-0" />
         </div>
       </div>
 
