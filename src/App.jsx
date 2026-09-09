@@ -29,6 +29,7 @@ const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
 const BlogIndexPage     = lazy(() => import('./pages/BlogIndexPage'))
 const BlogPostPage      = lazy(() => import('./pages/BlogPostPage'))
 const FeedPage          = lazy(() => import('./pages/FeedPage'))
+const StickersPage      = lazy(() => import('./pages/StickersPage'))
 
 function EditorFallback() {
   return (
@@ -57,6 +58,9 @@ function Studio() {
         <Route path="/trending"       element={<TrendingPage />} />
         <Route path="/videos"         element={<CategoryPage category="videos"    />} />
         <Route path="/gifs"           element={<CategoryPage category="gifs"      />} />
+        {/* Third-party KLIPY content, not the Supabase library — its own page
+            rather than a CategoryPage variant. */}
+        <Route path="/stickers"       element={<StickersPage />} />
         <Route path="/templates"      element={<CategoryPage category="templates" />} />
         <Route path="/sounds"         element={<CategoryPage category="sounds"    />} />
         <Route path="/meme/:slug"     element={<MemePage />} />

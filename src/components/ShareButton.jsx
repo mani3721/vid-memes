@@ -100,6 +100,12 @@ function computePosition(rect) {
  *              `size-10 rounded-full` from outside depends on Tailwind's
  *              output order rather than class order.
  *   text     – visible label in 'block' layout
+ *   noun     – what is being shared, for the button's accessible name. Only
+ *              the label changes; the meme copy below is still the default.
+ *   shareText– overrides the message body (stickers are not "meme downloads")
+ *   onShare  – fired once per completed share action (copy, platform, native
+ *              sheet). Used to register the share with the content's source
+ *              provider; must never block or alter the share itself.
  */
 export default function ShareButton({
   url,
@@ -108,6 +114,9 @@ export default function ShareButton({
   variant = 'ghost',
   layout = 'icon',
   text = 'Share',
+  noun = 'meme',
+  shareText: shareTextProp,
+  onShare,
   className = '',
 }) {
   const [copied, setCopied] = useState(false)
@@ -116,7 +125,7 @@ export default function ShareButton({
   const buttonRef = useRef(null)
   const menuRef = useRef(null)
 
-  const shareText = `${title} — free meme download 🦕`
+  const shareText = shareTextProp ?? `${title} — free meme download 🦕`
 
   const reposition = useCallback(() => {
     const rect = buttonRef.current?.getBoundingClientRect()
@@ -154,8 +163,9 @@ export default function ShareButton({
     }
     setCopied(true)
     setOpen(false)
+    onShare?.()
     setTimeout(() => setCopied(false), 2200)
-  }, [url])
+  }, [url, onShare])
 
   async function nativeShare(e) {
     e.preventDefault()
@@ -163,6 +173,7 @@ export default function ShareButton({
     setOpen(false)
     try {
       await navigator.share({ title, text: shareText, url })
+      onShare?.()
     } catch (err) {
       // A user cancelling the sheet is not a failure — only fall back on a
       // real error.
@@ -217,7 +228,7 @@ export default function ShareButton({
           ref={buttonRef}
           type="button"
           onClick={toggle}
-          aria-label={copied ? 'Link copied' : 'Share this meme'}
+          aria-label={copied ? 'Link copied' : `Share this ${noun}`}
           aria-haspopup="menu"
           aria-expanded={open}
           // min-h-12 (48px) matches DownloadButton's block layout so the two
@@ -241,7 +252,7 @@ export default function ShareButton({
           ref={buttonRef}
           type="button"
           onClick={toggle}
-          aria-label={copied ? 'Link copied' : 'Share this meme'}
+          aria-label={copied ? 'Link copied' : `Share this ${noun}`}
           aria-haspopup="menu"
           aria-expanded={open}
           className={`grid ${dims} shrink-0 place-items-center rounded-full transition-colors duration-150 ${tone} ${copied ? '!bg-brand-fill !text-ink' : ''} ${className}`}
@@ -276,7 +287,7 @@ export default function ShareButton({
               href={href(url, shareText)}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => { e.stopPropagation(); setOpen(false) }}
+              onClick={(e) => { e.stopPropagation(); setOpen(false); onShare?.() }}
               className={rowClass}
             >
               <span className={`grid size-6 shrink-0 place-items-center rounded-md text-[11px] font-bold leading-none ${chip}`}>
