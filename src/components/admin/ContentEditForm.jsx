@@ -231,27 +231,26 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
 
       {/* ── Long-form description ───────────────────────────────────────── */}
       <div className="rounded-2xl border border-edge bg-canvas/50 p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="mb-3 flex items-center justify-between gap-2">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-mid">
             Long description
           </h3>
-          <div className="flex items-center gap-3">
-            <span className={`text-xs ${words >= TARGET_WORDS ? 'text-emerald-400' : 'text-lo'}`}>
-              {words} / {TARGET_WORDS} words
-            </span>
-            <button
-              type="button"
-              onClick={writeBlog}
-              disabled={generating}
-              className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand transition-colors hover:bg-brand/20 disabled:opacity-50"
-            >
-              {generating
-                ? <Loader2 className="size-3 animate-spin" />
-                : <Sparkles className="size-3" />}
-              {generating ? 'Writing…' : 'Write Blog'}
-            </button>
-          </div>
+          <span className={`text-xs ${words >= TARGET_WORDS ? 'text-emerald-400' : 'text-lo'}`}>
+            {words} / {TARGET_WORDS} words
+          </span>
         </div>
+
+        <button
+          type="button"
+          onClick={writeBlog}
+          disabled={generating}
+          className="mb-4 flex w-full items-center justify-center gap-2 rounded-xl border border-brand/30 bg-brand/10 py-2.5 text-sm font-semibold text-brand transition-colors hover:bg-brand/20 disabled:opacity-50"
+        >
+          {generating
+            ? <Loader2 className="size-4 animate-spin" />
+            : <Sparkles className="size-4" />}
+          {generating ? 'Writing…' : 'Write Blog'}
+        </button>
 
         <p className="mb-4 text-xs leading-relaxed text-lo">
           Write about this specific clip. Use headings to separate sections (What is this meme,
