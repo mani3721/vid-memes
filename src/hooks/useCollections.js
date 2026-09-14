@@ -5,8 +5,10 @@ function sortByAddedAt(items) {
   return [...items].sort((a, b) => new Date(b.added_at) - new Date(a.added_at))
 }
 
-function normalizeCollection(col) {
+function normalizeCollection(col, thumbMap) {
   const items = sortByAddedAt(col.collection_items ?? [])
+  const latestMemeId = items[0]?.meme_id ?? null
+  const thumb = latestMemeId ? thumbMap.get(latestMemeId) : null
   return {
     id: col.id,
     name: col.name,
@@ -15,8 +17,8 @@ function normalizeCollection(col) {
     createdAt: col.created_at,
     items,
     itemCount: items.length,
-    latestThumbnail: items[0]?.memes?.thumbnail_url ?? null,
-    latestTitle: items[0]?.memes?.title ?? null,
+    latestThumbnail: thumb?.thumbnail_url ?? null,
+    latestTitle: thumb?.title ?? null,
   }
 }
 
@@ -43,24 +45,42 @@ export function useCollections(userId) {
     let cancelled = false
     setLoading(true)
 
-    supabase
-      .from('collections')
-      .select(`
-        id, name, emoji, is_default, created_at,
-        collection_items (
-          meme_id,
-          added_at,
-          memes ( thumbnail_url, title )
-        )
-      `)
-      .eq('user_id', userId)
-      .order('is_default', { ascending: false }) // default collection first
-      .order('created_at', { ascending: true })
-      .then(({ data, error }) => {
-        if (cancelled) return
-        if (!error && data) setCollections(data.map(normalizeCollection))
-        setLoading(false)
-      })
+    // Two flat queries instead of a nested join so this works without a
+    // PostgREST schema-cache reload after the migration.
+    Promise.all([
+      supabase
+        .from('collections')
+        .select('id, name, emoji, is_default, created_at, collection_items(meme_id, added_at)')
+        .eq('user_id', userId)
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: true }),
+    ]).then(async ([{ data: cols, error }]) => {
+      if (cancelled) return
+      if (error || !cols) { setLoading(false); return }
+
+      // Collect the one meme_id we need per collection (the most recently added)
+      const latestIds = [
+        ...new Set(
+          cols.flatMap((col) => {
+            const sorted = sortByAddedAt(col.collection_items ?? [])
+            return sorted[0]?.meme_id ? [sorted[0].meme_id] : []
+          }),
+        ),
+      ]
+
+      // Batch-fetch thumbnails for those memes in a single round-trip
+      const thumbMap = new Map()
+      if (latestIds.length > 0) {
+        const { data: memes } = await supabase
+          .from('memes')
+          .select('id, thumbnail_url, title')
+          .in('id', latestIds)
+        for (const m of memes ?? []) thumbMap.set(m.id, m)
+      }
+
+      if (!cancelled) setCollections(cols.map((col) => normalizeCollection(col, thumbMap)))
+      setLoading(false)
+    })
 
     return () => { cancelled = true }
   }, [userId, refreshKey])
