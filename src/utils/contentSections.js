@@ -36,8 +36,12 @@ export function filledSections(descriptionLong) {
   })).filter((s) => s.text)
 }
 
-/** Total words across every populated section. */
+/** Total words across the description, whether stored as rich HTML body or keyed sections. */
 export function countWords(descriptionLong) {
+  if (descriptionLong?.body) {
+    const text = descriptionLong.body.replace(/<[^>]+>/g, ' ')
+    return text.split(/\s+/).filter(Boolean).length
+  }
   return filledSections(descriptionLong).reduce(
     (total, s) => total + s.text.split(/\s+/).filter(Boolean).length,
     0,

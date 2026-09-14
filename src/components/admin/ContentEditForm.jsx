@@ -6,22 +6,28 @@ import { CONTENT_STATUSES, DESCRIPTION_SECTIONS, countWords } from '../../utils/
 import { toMemeUrl } from '../../utils/seo'
 import { getContent, saveContent } from '../../lib/adminApi'
 import StatusBadge from './StatusBadge'
+import RichTextEditor from './RichTextEditor'
 
 const CATEGORIES = ['videos', 'gifs', 'images', 'sounds']
 
 /** The brief's target length for the whole description. */
 const TARGET_WORDS = 400
 
-/**
- * Per-section hints, so an author knows what belongs in each box rather than
- * guessing from the heading alone.
- */
-const HINTS = {
-  what: 'Origin and context of the clip, who is in it, what made it spread. 2–3 sentences.',
-  why: 'The emotion or reaction it conveys — sarcasm, shock, humour — and the situations it fits. 2–3 sentences.',
-  how: 'WhatsApp status, Instagram Reels, YouTube Shorts, editing projects. 2–3 sentences.',
-  quality: 'Format, resolution and watermark-free status in natural language. 1–2 sentences.',
-  related: 'A thematic lead-in to the "You Might Also Like" row. 1–2 sentences.',
+/** Build initial HTML from the legacy keyed sections so old data loads cleanly. */
+function sectionsToHtml(dl) {
+  if (!dl || typeof dl !== 'object') return ''
+  return DESCRIPTION_SECTIONS
+    .map(({ key, heading }) => {
+      const text = dl[key]?.trim()
+      if (!text) return ''
+      const paragraphs = text
+        .split(/\n{2,}/)
+        .map((p) => `<p>${p.replace(/\n/g, '<br>')}</p>`)
+        .join('')
+      return `<h3>${heading}</h3>${paragraphs}`
+    })
+    .filter(Boolean)
+    .join('')
 }
 
 function Field({ label, children, hint }) {
@@ -37,15 +43,6 @@ function Field({ label, children, hint }) {
 const inputClass =
   'w-full rounded-xl border border-edge bg-canvas px-3 py-2 text-sm text-hi outline-none transition-colors focus:border-brand'
 
-/**
- * Full editor for one asset.
- *
- * The long description is five separate textareas rather than one rich-text
- * field. The page renders a fixed <h3> per subsection, so the structure is not
- * the author's to choose — five boxes make that explicit, keep each section
- * independently reviewable, and avoid shipping a rich-text dependency whose
- * markup would then need sanitising before it reached the page.
- */
 export default function ContentEditForm({ memeId, onClose, onSaved }) {
   const [item, setItem] = useState(null)
   const [draft, setDraft] = useState(null)
@@ -62,6 +59,7 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
       .then(({ item: loaded }) => {
         if (!active) return
         setItem(loaded)
+        const dl = loaded.description_long ?? {}
         setDraft({
           title: loaded.title ?? '',
           category: loaded.category ?? 'videos',
@@ -69,7 +67,10 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
           is_hot: Boolean(loaded.is_hot),
           needs_description: Boolean(loaded.needs_description),
           mood_tags: loaded.mood_tags ?? [],
-          description_long: loaded.description_long ?? {},
+          description_long: {
+            ...dl,
+            body: dl.body || sectionsToHtml(dl) || '',
+          },
         })
       })
       .catch((err) => active && setError(err.message))
@@ -77,10 +78,6 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
 
     return () => { active = false }
   }, [memeId])
-
-  function setSection(key, value) {
-    setDraft((d) => ({ ...d, description_long: { ...d.description_long, [key]: value } }))
-  }
 
   function toggleMood(id) {
     setDraft((d) => ({
@@ -230,24 +227,17 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
         </div>
 
         <p className="mb-4 text-xs leading-relaxed text-lo">
-          Write about this specific clip. Generic copy that only swaps the title is
-          what triggers a low-value-content review — the page already has the
-          templated version, so anything repeated here adds nothing.
+          Write about this specific clip. Use headings to separate sections (What is this meme,
+          Why people use it, etc.). Generic copy that only swaps the title triggers a
+          low-value-content review.
         </p>
 
-        <div className="space-y-4">
-          {DESCRIPTION_SECTIONS.map(({ key, heading }) => (
-            <Field key={key} label={heading} hint={HINTS[key]}>
-              <textarea
-                rows={3}
-                maxLength={2000}
-                value={draft.description_long[key] ?? ''}
-                onChange={(e) => setSection(key, e.target.value)}
-                className={`${inputClass} resize-y leading-relaxed`}
-              />
-            </Field>
-          ))}
-        </div>
+        <RichTextEditor
+          value={draft.description_long.body}
+          onChange={(html) =>
+            setDraft((d) => ({ ...d, description_long: { ...d.description_long, body: html } }))
+          }
+        />
       </div>
 
       <div className="flex flex-col gap-2">
