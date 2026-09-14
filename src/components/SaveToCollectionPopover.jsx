@@ -184,11 +184,12 @@ export default function SaveToCollectionPopover({ memeId, anchorRef, onClose }) 
   return (
     <>
       {createPortal(panel, document.body)}
-      {showCreateModal && (
+      {showCreateModal && createPortal(
         <CreateCollectionModal
           onClose={() => setShowCreateModal(false)}
           onCreated={handleCreated}
-        />
+        />,
+        document.body,
       )}
     </>
   )
