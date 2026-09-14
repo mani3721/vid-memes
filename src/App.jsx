@@ -6,6 +6,7 @@ import StreakToast from './components/StreakToast'
 import { StudioProvider } from './store/StudioProvider'
 import { useStudio } from './store/studioStore'
 import { FavoritesProvider } from './store/FavoritesProvider'
+import { CollectionsProvider } from './store/CollectionsProvider'
 import { AuthProvider } from './lib/authContext'
 
 const BrowseFeed        = lazy(() => import('./components/BrowseFeed'))
@@ -22,6 +23,7 @@ const DisclaimerPage    = lazy(() => import('./pages/DisclaimerPage'))
 const CookiePolicyPage  = lazy(() => import('./pages/CookiePolicyPage'))
 const UploadForm        = lazy(() => import('./components/UploadForm'))
 const FavoritesPage     = lazy(() => import('./pages/FavoritesPage'))
+const CollectionPage    = lazy(() => import('./pages/CollectionPage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const LoginPage         = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
@@ -80,7 +82,8 @@ function Studio() {
         <Route path="/disclaimer"     element={<DisclaimerPage />} />
         <Route path="/cookie-policy"  element={<CookiePolicyPage />} />
         <Route path="/upload"         element={<UploadForm />} />
-        <Route path="/favorites"      element={<FavoritesPage />} />
+        <Route path="/favorites"                    element={<FavoritesPage />} />
+        <Route path="/favorites/collection/:id"    element={<CollectionPage />} />
         <Route path="/notifications"  element={<NotificationsPage />} />
         <Route path="/login"          element={<LoginPage />} />
         <Route path="/admin"          element={<AdminDashboard />} />
@@ -98,10 +101,12 @@ export default function App() {
   return (
     <AuthProvider>
       <FavoritesProvider>
+        <CollectionsProvider>
         <StudioProvider>
           <Studio />
           <StreakToast />
         </StudioProvider>
+        </CollectionsProvider>
       </FavoritesProvider>
     </AuthProvider>
   )

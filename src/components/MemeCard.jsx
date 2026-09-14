@@ -7,6 +7,7 @@ import ShareButton from './ShareButton'
 import { useFavorites } from '../store/FavoritesProvider'
 import { useAuth } from '../lib/authContext'
 import SignInToFave from './SignInToFave'
+import SaveToCollectionPopover from './SaveToCollectionPopover'
 import { readGuestPrefs, writeGuestPref } from '../lib/guestSession'
 
 const TORN = ['torn', 'torn-b', 'torn-c']
@@ -25,8 +26,9 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
   const { user } = useAuth()
   const faved = isFav(asset.id)
   const [showFavePrompt, setShowFavePrompt] = useState(false)
+  const [showCollectionPopover, setShowCollectionPopover] = useState(false)
 
-  // The nudge auto-retires so it never becomes noise on a long browse.
+  // The guest nudge auto-retires so it never becomes noise on a long browse.
   useEffect(() => {
     if (!showFavePrompt) return
     const t = setTimeout(() => setShowFavePrompt(false), 5000)
@@ -39,14 +41,18 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
 
   function handleFaveClick(e) {
     e.preventDefault()
-    // Always toggle first. The favorite is saved for guests too (localStorage
-    // via useFavorites), so nothing below can block or undo this.
+
+    if (user) {
+      // Auth users get the collection picker instead of a bare toggle.
+      setShowCollectionPopover((v) => !v)
+      return
+    }
+
+    // Guest: simple toggle (localStorage via useFavorites).
     toggle(asset.id)
 
-    // Guests get a one-time, dismissible note that favorites are browser-local.
-    // Only when adding — nagging on removal would be pointless — and never
-    // again once dismissed anywhere on the site.
-    if (!user && !faved && !readGuestPrefs().dismissed_fave_nudge) {
+    // One-time, dismissible note that favorites are browser-local.
+    if (!faved && !readGuestPrefs().dismissed_fave_nudge) {
       setShowFavePrompt(true)
     }
   }
@@ -123,16 +129,25 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
 
         {/* Action overlay — above the stretched link so taps reach the buttons */}
         <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-end gap-1.5 bg-linear-to-t from-black/70 to-transparent p-2.5 pt-8 opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
-          <button
-            type="button"
-            onClick={handleFaveClick}
-            aria-label={faved ? 'Remove from favorites' : 'Add to favorites'}
-            className={`grid size-7 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 ${
-              faved ? 'bg-red-500 text-white' : 'bg-black/50 text-white hover:bg-red-500'
-            }`}
-          >
-            <Heart className={`size-3.5 ${faved ? 'fill-current' : ''}`} />
-          </button>
+          <div className="relative">
+            <button
+              type="button"
+              onClick={handleFaveClick}
+              aria-label={faved ? 'Remove from favorites' : 'Save to collection'}
+              aria-expanded={showCollectionPopover}
+              className={`grid size-7 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 ${
+                faved ? 'bg-red-500 text-white' : 'bg-black/50 text-white hover:bg-red-500'
+              }`}
+            >
+              <Heart className={`size-3.5 ${faved ? 'fill-current' : ''}`} />
+            </button>
+            {showCollectionPopover && (
+              <SaveToCollectionPopover
+                memeId={asset.id}
+                onClose={() => setShowCollectionPopover(false)}
+              />
+            )}
+          </div>
           {/*
             No download button here by design. Downloading happens on the
             asset's own detail page, which the card already links to — a feed
