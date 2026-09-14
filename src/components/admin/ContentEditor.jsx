@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  AlertCircle, ChevronLeft, ChevronRight, Loader2, Pencil, RefreshCw, Search, Trash2, X,
+  AlertCircle, ChevronLeft, ChevronRight, Loader2, Pencil, RefreshCw, Search, Sparkles, Trash2, X,
 } from 'lucide-react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { CONTENT_STATUSES } from '../../utils/contentSections'
-import { bulkEditContent, deleteMeme, listContent } from '../../lib/adminApi'
+import { bulkEditContent, deleteMeme, generateDescription, listContent, saveContent } from '../../lib/adminApi'
 import StatusBadge from './StatusBadge'
 import ContentEditForm from './ContentEditForm'
 
@@ -29,6 +29,7 @@ export default function ContentEditor() {
   const [editingId, setEditingId] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
   const [bulkBusy, setBulkBusy] = useState(false)
+  const [blogProgress, setBlogProgress] = useState(null) // { done, total, errors }
 
   const [reloadToken, setReloadToken] = useState(0)
 
@@ -116,6 +117,28 @@ export default function ContentEditor() {
     } finally {
       setBulkBusy(false)
     }
+  }
+
+  async function bulkWriteBlog() {
+    const ids = [...selected]
+    setBlogProgress({ done: 0, total: ids.length, errors: 0 })
+    setError(null)
+
+    for (const id of ids) {
+      try {
+        const { html } = await generateDescription(id)
+        await saveContent(id, { description_long: { body: html } })
+        setBlogProgress((p) => ({ ...p, done: p.done + 1 }))
+      } catch {
+        setBlogProgress((p) => ({ ...p, done: p.done + 1, errors: p.errors + 1 }))
+      }
+      // Small pause between requests to stay within Gemini rate limits
+      await new Promise((r) => setTimeout(r, 800))
+    }
+
+    setSelected(new Set())
+    setBlogProgress(null)
+    reload()
   }
 
   async function handleDelete(row) {
@@ -206,50 +229,87 @@ export default function ContentEditor() {
 
       {/* ── Bulk action bar ──────────────────────────────────────────────── */}
       {selected.size > 0 && (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand/40 bg-brand/10 p-3 text-sm">
-          <span className="font-semibold text-hi">{selected.size} selected</span>
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand/40 bg-brand/10 p-3 text-sm">
+            <span className="font-semibold text-hi">{selected.size} selected</span>
 
-          <button
-            type="button"
-            disabled={bulkBusy}
-            onClick={() => applyBulk({ needs_description: true })}
-            className="rounded-full bg-panel px-3 py-1 text-xs font-semibold text-hi hover:bg-panel-hover disabled:opacity-50"
-          >
-            Flag for description
-          </button>
-          <button
-            type="button"
-            disabled={bulkBusy}
-            onClick={() => applyBulk({ needs_description: false })}
-            className="rounded-full bg-panel px-3 py-1 text-xs font-semibold text-hi hover:bg-panel-hover disabled:opacity-50"
-          >
-            Clear flag
-          </button>
-
-          <span className="mx-1 text-lo" aria-hidden>|</span>
-
-          {CONTENT_STATUSES.map((status) => (
+            {/* ── Write Blog (bulk AI generate) ── */}
             <button
-              key={status}
               type="button"
-              disabled={bulkBusy}
-              onClick={() => applyBulk({ content_status: status })}
-              className="rounded-full bg-panel px-3 py-1 text-xs font-semibold capitalize text-hi hover:bg-panel-hover disabled:opacity-50"
+              disabled={!!blogProgress || bulkBusy}
+              onClick={bulkWriteBlog}
+              className="flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-white hover:opacity-90 disabled:opacity-50"
             >
-              Set {status}
+              <Sparkles className="size-3" />
+              Write Blog ({selected.size})
             </button>
-          ))}
 
-          {bulkBusy && <Loader2 className="size-4 animate-spin text-brand" />}
+            <span className="mx-1 text-lo" aria-hidden>|</span>
 
-          <button
-            type="button"
-            onClick={() => setSelected(new Set())}
-            className="ml-auto grid size-7 place-items-center rounded-full text-mid hover:text-hi"
-            aria-label="Clear selection"
-          >
-            <X className="size-4" />
-          </button>
+            <button
+              type="button"
+              disabled={bulkBusy || !!blogProgress}
+              onClick={() => applyBulk({ needs_description: true })}
+              className="rounded-full bg-panel px-3 py-1 text-xs font-semibold text-hi hover:bg-panel-hover disabled:opacity-50"
+            >
+              Flag for description
+            </button>
+            <button
+              type="button"
+              disabled={bulkBusy || !!blogProgress}
+              onClick={() => applyBulk({ needs_description: false })}
+              className="rounded-full bg-panel px-3 py-1 text-xs font-semibold text-hi hover:bg-panel-hover disabled:opacity-50"
+            >
+              Clear flag
+            </button>
+
+            <span className="mx-1 text-lo" aria-hidden>|</span>
+
+            {CONTENT_STATUSES.map((status) => (
+              <button
+                key={status}
+                type="button"
+                disabled={bulkBusy || !!blogProgress}
+                onClick={() => applyBulk({ content_status: status })}
+                className="rounded-full bg-panel px-3 py-1 text-xs font-semibold capitalize text-hi hover:bg-panel-hover disabled:opacity-50"
+              >
+                Set {status}
+              </button>
+            ))}
+
+            {bulkBusy && <Loader2 className="size-4 animate-spin text-brand" />}
+
+            <button
+              type="button"
+              disabled={!!blogProgress}
+              onClick={() => setSelected(new Set())}
+              className="ml-auto grid size-7 place-items-center rounded-full text-mid hover:text-hi disabled:opacity-40"
+              aria-label="Clear selection"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+
+          {/* ── Blog generation progress bar ── */}
+          {blogProgress && (
+            <div className="rounded-xl border border-brand/30 bg-brand/5 p-3">
+              <div className="mb-2 flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 font-semibold text-brand">
+                  <Loader2 className="size-3 animate-spin" />
+                  Writing blogs… {blogProgress.done} / {blogProgress.total}
+                </span>
+                {blogProgress.errors > 0 && (
+                  <span className="text-red-400">{blogProgress.errors} failed</span>
+                )}
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-edge">
+                <div
+                  className="h-full rounded-full bg-brand transition-all duration-500"
+                  style={{ width: `${(blogProgress.done / blogProgress.total) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
 
