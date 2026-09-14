@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Loader2, Save, X, AlertCircle, ExternalLink } from 'lucide-react'
+import { Loader2, Save, X, AlertCircle, ExternalLink, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { MOODS } from '../../data/assets'
 import { CONTENT_STATUSES, DESCRIPTION_SECTIONS, countWords } from '../../utils/contentSections'
 import { toMemeUrl } from '../../utils/seo'
-import { getContent, saveContent } from '../../lib/adminApi'
+import { getContent, saveContent, generateDescription } from '../../lib/adminApi'
 import StatusBadge from './StatusBadge'
 import RichTextEditor from './RichTextEditor'
 
@@ -48,6 +48,7 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
   const [draft, setDraft] = useState(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [generating, setGenerating] = useState(false)
   const [error, setError] = useState(null)
 
   // The parent renders this with key={memeId}, so a different asset remounts
@@ -78,6 +79,19 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
 
     return () => { active = false }
   }, [memeId])
+
+  async function writeBlog() {
+    setGenerating(true)
+    setError(null)
+    try {
+      const { html } = await generateDescription(memeId)
+      setDraft((d) => ({ ...d, description_long: { ...d.description_long, body: html } }))
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   function toggleMood(id) {
     setDraft((d) => ({
@@ -221,9 +235,22 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
           <h3 className="text-xs font-semibold uppercase tracking-wider text-mid">
             Long description
           </h3>
-          <span className={`text-xs ${words >= TARGET_WORDS ? 'text-emerald-400' : 'text-lo'}`}>
-            {words} / {TARGET_WORDS} words
-          </span>
+          <div className="flex items-center gap-3">
+            <span className={`text-xs ${words >= TARGET_WORDS ? 'text-emerald-400' : 'text-lo'}`}>
+              {words} / {TARGET_WORDS} words
+            </span>
+            <button
+              type="button"
+              onClick={writeBlog}
+              disabled={generating}
+              className="flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand transition-colors hover:bg-brand/20 disabled:opacity-50"
+            >
+              {generating
+                ? <Loader2 className="size-3 animate-spin" />
+                : <Sparkles className="size-3" />}
+              {generating ? 'Writing…' : 'Write Blog'}
+            </button>
+          </div>
         </div>
 
         <p className="mb-4 text-xs leading-relaxed text-lo">

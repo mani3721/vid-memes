@@ -2,7 +2,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
 import { Bold, Italic, Heading2, Heading3, List, ListOrdered, Link2, Undo2, Redo2, Minus } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 function ToolbarBtn({ onClick, active, title, children }) {
   return (
@@ -52,6 +52,17 @@ export default function RichTextEditor({ value, onChange }) {
     setLinkUrl('')
     setShowLink(false)
   }, [editor, linkUrl])
+
+  // Sync when value changes externally (e.g. from the "Write Blog" generator).
+  // Compare against the editor's own current HTML to avoid resetting on every
+  // keystroke (the parent updates `value` on each edit, but editor.getHTML()
+  // equals the incoming value in that case, so this fires only on true external
+  // changes like generated content).
+  useEffect(() => {
+    if (!editor) return
+    if (value === editor.getHTML()) return
+    editor.commands.setContent(value || '')
+  }, [editor, value])
 
   if (!editor) return null
 
