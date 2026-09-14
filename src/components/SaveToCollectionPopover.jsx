@@ -63,8 +63,10 @@ export default function SaveToCollectionPopover({ memeId, anchorRef, onClose }) 
     }
   }, [anchorRef])
 
-  // Close on outside click or Escape
+  // Close on outside click or Escape — suppressed while the create-modal is
+  // open so clicks inside the modal don't dismiss the whole popover.
   useEffect(() => {
+    if (showCreateModal) return
     function handleKey(e) { if (e.key === 'Escape') onClose() }
     function handleClick(e) {
       if (
@@ -78,7 +80,7 @@ export default function SaveToCollectionPopover({ memeId, anchorRef, onClose }) 
       document.removeEventListener('keydown', handleKey)
       document.removeEventListener('mousedown', handleClick)
     }
-  }, [onClose, anchorRef])
+  }, [onClose, anchorRef, showCreateModal])
 
   async function handleCollectionToggle(collectionId) {
     setPendingCollectionId(collectionId)
@@ -97,7 +99,7 @@ export default function SaveToCollectionPopover({ memeId, anchorRef, onClose }) 
     onClose()
   }
 
-  const panel = (
+  const panel = showCreateModal ? null : (
     <div
       ref={panelRef}
       role="menu"
