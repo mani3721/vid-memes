@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         description="Videsaur.co.in Privacy Policy. Learn how we collect, use, disclose, and safeguard your information when you visit our website."
         canonicalPath="/privacy"
       />
-      <PolicyLayout title="Privacy Policy" breadcrumb="Privacy Policy" lastUpdated="7 September 2026">
+      <PolicyLayout title="Privacy Policy" breadcrumb="Privacy Policy" lastUpdated="23 September 2026">
         <PolicySection heading="1. Introduction">
           <p>
             Welcome to Videsaur.co.in. We respect your privacy and are committed to protecting
@@ -61,30 +61,109 @@ export default function PrivacyPage() {
           </p>
         </PolicySection>
 
-        <PolicySection heading="5. Advertising and Third-Party Partners">
+        <PolicySection heading="5. Advertising — Google AdSense &amp; Third-Party Partners">
           <p className="mb-3">
-            We use third-party advertising companies to serve ads when you visit our website.
-            These companies may use information about your visits to this and other websites in
-            order to provide advertisements about goods and services of interest to you.
+            Videsaur.co.in participates in the <strong className="text-hi">Google AdSense</strong>{' '}
+            advertising programme, operated by <strong className="text-hi">Google LLC</strong>,
+            1600 Amphitheatre Parkway, Mountain View, CA 94043, USA (&ldquo;Google&rdquo;).
+            Google AdSense uses advertising cookies to serve personalised ads on our site based on
+            your prior visits to our website or other websites on the Internet.
           </p>
-          <p className="mb-3 font-semibold text-hi">5.1 Advertising Partners</p>
-          <p>
-            We may also partner with other third-party ad networks and exchanges to display
-            advertising on our website. These partners may use cookies and similar technologies
-            to collect information about your browsing activities over time and across different
-            websites.
+
+          <p className="mb-3 font-semibold text-hi">5.1 Google DoubleClick DART Cookie</p>
+          <p className="mb-3">
+            Google, as a third-party advertising vendor, uses the DoubleClick DART cookie to serve
+            ads to visitors of Videsaur.co.in based on their visits to this site and other websites
+            on the Internet. The DART cookie enables Google and its partners to serve ads based on
+            a user&rsquo;s visit to our site and/or other sites on the Internet. Users may opt out
+            of the use of the DART cookie by visiting Google&rsquo;s ad and content network
+            privacy policy:{' '}
+            <a
+              href="https://policies.google.com/technologies/ads"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              policies.google.com/technologies/ads
+            </a>
+            .
           </p>
-          <p className="mt-3">
-            For more information about how these advertising partners collect and use data, please
-            review their respective privacy policies. You can learn more about online advertising
-            and opt-out options at the{' '}
+
+          <p className="mb-3 font-semibold text-hi">5.2 Cookies Used by Google AdSense</p>
+          <p className="mb-3">
+            Google AdSense sets the following cookie categories on your device when you visit
+            our site:
+          </p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>
+              <strong className="text-hi">Advertising cookies</strong> — used to build a profile of
+              your interests and show you relevant ads on other sites (e.g., <code>IDE</code>,{' '}
+              <code>DSID</code>, <code>FLC</code>).
+            </li>
+            <li>
+              <strong className="text-hi">Analytics cookies</strong> — used to count visits and
+              traffic sources so Google can measure and improve ad performance.
+            </li>
+            <li>
+              <strong className="text-hi">Functional cookies</strong> — used to remember choices
+              you have made (e.g., consent preferences).
+            </li>
+          </ul>
+          <p className="mb-3">
+            For a complete list of cookies used by Google, see{' '}
+            <a
+              href="https://policies.google.com/technologies/cookies"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              policies.google.com/technologies/cookies
+            </a>
+            .
+          </p>
+
+          <p className="mb-3 font-semibold text-hi">5.3 Opting Out of Personalised Advertising</p>
+          <p className="mb-3">
+            You may opt out of personalised advertising served by Google by visiting{' '}
+            <a
+              href="https://www.google.com/settings/ads"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              Google Ad Settings
+            </a>
+            . You can also opt out of third-party vendor use of cookies for personalised
+            advertising by visiting{' '}
             <a
               href="https://optout.networkadvertising.org"
               target="_blank"
               rel="noopener noreferrer"
               className="text-hi underline underline-offset-2 hover:text-brand"
             >
-              Network Advertising Initiative
+              optout.networkadvertising.org
+            </a>
+            {' '}or{' '}
+            <a
+              href="https://optout.aboutads.info"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              optout.aboutads.info
+            </a>
+            . When you opt out, you will still see ads, but they will not be personalised based
+            on your interests.
+          </p>
+          <p>
+            For full details on how Google collects and uses data from our site, see{' '}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              Google&rsquo;s Privacy Policy
             </a>
             .
           </p>
@@ -109,9 +188,11 @@ export default function PrivacyPage() {
           </p>
         </PolicySection>
 
-        <PolicySection heading="8. Your Rights">
+        <PolicySection heading="8. Your Rights (General)">
           <p className="mb-3">
-            Depending on your location, you may have the following rights:
+            Depending on your location, you may have the following rights regarding your personal
+            data. Specific rights for EU/EEA residents (GDPR) and California residents (CCPA) are
+            detailed in Sections 13 and 14 respectively.
           </p>
           <ul className="list-disc space-y-1.5 pl-5 text-mid">
             <li>Access to your personal data</li>
@@ -120,7 +201,7 @@ export default function PrivacyPage() {
             <li>Objection to processing</li>
             <li>Data portability</li>
             <li>Withdrawal of consent</li>
-            <li>Opt out of personalized advertising</li>
+            <li>Opt out of personalised advertising</li>
           </ul>
         </PolicySection>
 
@@ -148,7 +229,134 @@ export default function PrivacyPage() {
           </p>
         </PolicySection>
 
-        <PolicySection heading="12. Contact Us">
+        <PolicySection heading="12. European Users — GDPR Rights">
+          <p className="mb-3">
+            If you are located in the European Union, European Economic Area (EEA), or the United
+            Kingdom, the following rights apply to you under the{' '}
+            <strong className="text-hi">General Data Protection Regulation (GDPR)</strong> and
+            applicable UK data protection law. Our legal bases for processing your personal data
+            are: (a) your consent (e.g., advertising cookies); (b) performance of a contract;
+            (c) compliance with a legal obligation; and (d) our legitimate interests.
+          </p>
+          <p className="mb-3 font-semibold text-hi">Your GDPR Rights</p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>
+              <strong className="text-hi">Right of access (Art. 15)</strong> — you may request a
+              copy of the personal data we hold about you.
+            </li>
+            <li>
+              <strong className="text-hi">Right to rectification (Art. 16)</strong> — you may ask
+              us to correct inaccurate or incomplete data.
+            </li>
+            <li>
+              <strong className="text-hi">Right to erasure (Art. 17)</strong> — you may ask us to
+              delete your personal data under certain circumstances (&ldquo;right to be
+              forgotten&rdquo;).
+            </li>
+            <li>
+              <strong className="text-hi">Right to restriction of processing (Art. 18)</strong>{' '}
+              — you may ask us to limit how we use your data.
+            </li>
+            <li>
+              <strong className="text-hi">Right to data portability (Art. 20)</strong> — you may
+              receive your data in a structured, commonly used format.
+            </li>
+            <li>
+              <strong className="text-hi">Right to object (Art. 21)</strong> — you may object to
+              processing based on legitimate interests or for direct marketing, including
+              profiling for ad targeting.
+            </li>
+            <li>
+              <strong className="text-hi">Right to withdraw consent</strong> — where we process
+              data based on consent, you may withdraw it at any time by adjusting your cookie
+              preferences or contacting us directly.
+            </li>
+          </ul>
+          <p className="mb-3">
+            To exercise any of these rights, contact us at{' '}
+            <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
+              support@videsaur.co.in
+            </a>
+            . We will respond within 30 days. If you believe your rights have not been upheld,
+            you have the right to lodge a complaint with your local data protection authority
+            (e.g., the ICO in the UK or the relevant supervisory authority in your EU member state).
+          </p>
+          <p>
+            Note: because we use Google AdSense, data about your ad interactions may be processed
+            by Google LLC in the United States under Standard Contractual Clauses approved by the
+            European Commission. For details, see{' '}
+            <a
+              href="https://privacy.google.com/businesses/processorterms/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-hi underline underline-offset-2 hover:text-brand"
+            >
+              Google&rsquo;s Data Processing Terms
+            </a>
+            .
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="13. California Residents — CCPA / CPRA Rights">
+          <p className="mb-3">
+            If you are a California resident, you have rights under the{' '}
+            <strong className="text-hi">California Consumer Privacy Act (CCPA)</strong> as
+            amended by the{' '}
+            <strong className="text-hi">California Privacy Rights Act (CPRA)</strong>. We do not
+            sell your personal information for monetary consideration. However, sharing data with
+            advertising partners (such as Google AdSense) for cross-context behavioural advertising
+            may constitute a &ldquo;sale&rdquo; or &ldquo;sharing&rdquo; under California law.
+          </p>
+          <p className="mb-3 font-semibold text-hi">Categories of Personal Information We Collect</p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>Identifiers (IP address, account email, username)</li>
+            <li>Internet or other electronic network activity (browsing history, pages visited)</li>
+            <li>Commercial information (download history)</li>
+            <li>Inferences drawn from the above to create a profile for advertising purposes</li>
+          </ul>
+          <p className="mb-3 font-semibold text-hi">Your CCPA / CPRA Rights</p>
+          <ul className="mb-4 list-disc space-y-1.5 pl-5 text-mid">
+            <li>
+              <strong className="text-hi">Right to Know</strong> — you may request disclosure of
+              the categories and specific pieces of personal information we have collected about
+              you in the past 12 months.
+            </li>
+            <li>
+              <strong className="text-hi">Right to Delete</strong> — you may request deletion of
+              your personal information, subject to certain exceptions.
+            </li>
+            <li>
+              <strong className="text-hi">Right to Correct</strong> — you may request that we
+              correct inaccurate personal information.
+            </li>
+            <li>
+              <strong className="text-hi">Right to Opt-Out of Sale / Sharing</strong> — you may
+              direct us to stop sharing your personal information for cross-context behavioural
+              advertising. To opt out, adjust your cookie preferences via our consent banner or
+              click &ldquo;Do Not Sell or Share My Personal Information&rdquo; in our Cookie
+              Policy.
+            </li>
+            <li>
+              <strong className="text-hi">Right to Non-Discrimination</strong> — we will not
+              discriminate against you for exercising any of your CCPA / CPRA rights.
+            </li>
+            <li>
+              <strong className="text-hi">Right to Limit Use of Sensitive Personal
+              Information</strong> — we do not collect sensitive personal information as defined
+              by the CPRA.
+            </li>
+          </ul>
+          <p>
+            To submit a verifiable consumer request, contact us at{' '}
+            <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
+              support@videsaur.co.in
+            </a>{' '}
+            with the subject line &ldquo;CCPA Request&rdquo;. We will respond within 45 days.
+            You may also designate an authorised agent to submit requests on your behalf.
+          </p>
+        </PolicySection>
+
+        <PolicySection heading="14. Contact Us">
           <p>
             If you have any questions about this Privacy Policy, please contact us at{' '}
             <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">

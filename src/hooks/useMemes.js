@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 35
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 /**
