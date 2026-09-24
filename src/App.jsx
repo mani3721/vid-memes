@@ -8,6 +8,7 @@ import { useStudio } from './store/studioStore'
 import { FavoritesProvider } from './store/FavoritesProvider'
 import { CollectionsProvider } from './store/CollectionsProvider'
 import { AuthProvider } from './lib/authContext'
+import { FeaturesProvider } from './lib/featuresContext'
 
 const BrowseFeed        = lazy(() => import('./components/BrowseFeed'))
 const EditorModeLayout  = lazy(() => import('./components/EditorModeLayout'))
@@ -99,6 +100,7 @@ function Studio() {
 
 export default function App() {
   return (
+    <FeaturesProvider>
     <AuthProvider>
       <FavoritesProvider>
         <CollectionsProvider>
@@ -109,5 +111,6 @@ export default function App() {
         </CollectionsProvider>
       </FavoritesProvider>
     </AuthProvider>
+    </FeaturesProvider>
   )
 }

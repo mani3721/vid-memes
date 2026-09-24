@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useFeatures } from '../lib/featuresContext'
 import { useParams, Navigate, useLocation } from 'react-router-dom'
 import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
@@ -43,6 +44,7 @@ export default function MemePage() {
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
   const { user, isAdmin } = useAuth()
+  const { flags } = useFeatures()
   const [editingTitle, setEditingTitle] = useState(null) // null = view, string = editing
   const [titleSaving, setTitleSaving] = useState(false)
   const [displayTitle, setDisplayTitle] = useState(null) // override after save
@@ -306,7 +308,7 @@ export default function MemePage() {
               </div>
 
               {/* Affiliate sidebar — compact cards below the download button */}
-              <AffiliateAdGrid isAffiliateModuleActive variant="sidebar" />
+              <AffiliateAdGrid isAffiliateModuleActive={flags.amazon_affiliate} variant="sidebar" />
 
             </div>
           </div>

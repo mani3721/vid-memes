@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X, FileText, Newspaper, Inbox, Megaphone } from 'lucide-react'
+import { CheckCircle2, XCircle, Loader2, AlertCircle, ShieldCheck, Pencil, Check, X, FileText, Newspaper, Inbox, Megaphone, ToggleLeft } from 'lucide-react'
 import { useAuth } from '../lib/authContext'
 import { useNavigate } from 'react-router-dom'
 import SEO from '../components/SEO'
 import ContentEditor from '../components/admin/ContentEditor'
 import BlogManager from '../components/admin/BlogManager'
 import AnnouncementSender from '../components/admin/AnnouncementSender'
+import FeatureManager from '../components/admin/FeatureManager'
 import { approveMeme, listPending, rejectMeme, renameMeme } from '../lib/adminApi'
 
 const TABS = [
-  { id: 'pending', label: 'Pending Approval', icon: Inbox },
-  { id: 'content', label: 'Content Editor', icon: FileText },
-  { id: 'blog', label: 'Blog', icon: Newspaper },
-  { id: 'announce', label: 'Announcements', icon: Megaphone },
+  { id: 'pending',  label: 'Pending Approval', icon: Inbox },
+  { id: 'content',  label: 'Content Editor',   icon: FileText },
+  { id: 'blog',     label: 'Blog',             icon: Newspaper },
+  { id: 'announce', label: 'Announcements',    icon: Megaphone },
+  { id: 'features', label: 'Features',         icon: ToggleLeft },
 ]
 
 /** The original moderation queue, unchanged in behaviour. */
@@ -271,10 +273,11 @@ export default function AdminDashboard() {
             Each panel is keyed and mounted only while active, so switching tabs
             refetches rather than showing a stale list from minutes ago.
           */}
-          {tab === 'pending' && <PendingQueue />}
-          {tab === 'content' && <ContentEditor />}
-          {tab === 'blog' && <BlogManager />}
+          {tab === 'pending'  && <PendingQueue />}
+          {tab === 'content'  && <ContentEditor />}
+          {tab === 'blog'     && <BlogManager />}
           {tab === 'announce' && <AnnouncementSender />}
+          {tab === 'features' && <FeatureManager />}
         </div>
       </div>
     </>

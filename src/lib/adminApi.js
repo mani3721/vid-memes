@@ -73,6 +73,12 @@ export const deletePost = (id, { hard = false } = {}) =>
 export const listAnnouncements = () => request('/api/admin/announcements')
 export const sendAnnouncement = (body) => request('/api/admin/announcements', { method: 'POST', body })
 
+// ── Feature flags ────────────────────────────────────────────────────────────
+
+export const listFeatureFlags = () => request('/api/admin/features')
+export const setFeatureFlag = (key, enabled) =>
+  request(`/api/admin/features/${key}`, { method: 'PATCH', body: { enabled } })
+
 // ── Sitemap ops ──────────────────────────────────────────────────────────────
 
 export const sitemapStatus = () => request('/api/admin/sitemap/status')

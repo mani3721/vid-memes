@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Home,
   TrendingUp,
@@ -24,6 +24,7 @@ import {
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
+import { useFeatures } from '../lib/featuresContext'
 
 const NAV_ITEMS = [
   { icon: Home,       label: 'Home',      to: '/'          },
@@ -32,8 +33,8 @@ const NAV_ITEMS = [
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
   { icon: Sparkles,   label: 'AI Voice',  to: '/ai-sound'  },
-  { icon: Shapes,     label: 'Stickers',  to: '/stickers'  },
-  { icon: Rss,        label: 'Feed',      to: '/feed',     badge: 'Beta' },
+  { icon: Shapes,     label: 'Stickers',  to: '/stickers',  featureKey: 'stickers_tab' },
+  { icon: Rss,        label: 'Feed',      to: '/feed',      featureKey: 'feed_tab', badge: 'Beta' },
 ]
 
 const YOU_ITEMS = [
@@ -80,6 +81,12 @@ function resourceClass(isActive) {
 export default function Sidebar({ open, onClose }) {
   const [tabletExpanded, setTabletExpanded] = useState(false)
   const { isAdmin } = useAuth()
+  const { flags } = useFeatures()
+
+  const visibleNavItems = useMemo(
+    () => NAV_ITEMS.filter(({ featureKey }) => !featureKey || flags[featureKey] !== false),
+    [flags],
+  )
 
   const fullView = open || tabletExpanded
 
@@ -139,7 +146,7 @@ export default function Sidebar({ open, onClose }) {
 
         {/* ── Main nav ─────────────────────────────────────── */}
         <nav aria-label="Main" className="px-2 pt-1">
-          {NAV_ITEMS.map(({ icon: Icon, label, to, isNew, badge }) => (
+          {visibleNavItems.map(({ icon: Icon, label, to, isNew, badge }) => (
             <NavLink
               key={label}
               to={to}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useFeatures } from '../lib/featuresContext'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useStudio } from '../store/studioStore'
 import { useMixedFeed } from '../hooks/useMemes'
@@ -20,6 +21,7 @@ const SORT_OPTIONS = [
 export default function BrowseFeed() {
   const { mood, query } = useStudio()
   const [sort, setSort] = useState('popular')
+  const { flags } = useFeatures()
 
   const { memes, loading, error, page, totalPages, setPage } = useMixedFeed({
     mood: mood ?? undefined,
@@ -117,7 +119,7 @@ export default function BrowseFeed() {
         <TrendingSoundsFeed />
 
         {/* Amazon affiliate product grid */}
-        <AffiliateAdGrid isAffiliateModuleActive />
+        <AffiliateAdGrid isAffiliateModuleActive={flags.amazon_affiliate} />
 
         {/* SEO content block */}
         <section aria-labelledby="about-videsaur" className="mt-8 border-t border-edge pt-8">
