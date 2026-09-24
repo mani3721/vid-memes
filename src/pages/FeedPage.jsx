@@ -3,8 +3,6 @@ import {
   Share2, ExternalLink, Play, Plus,
   RefreshCw,
 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../lib/authContext'
 import { useRedditFeed } from '../hooks/useRedditFeed'
 
 // ─── Subreddit groups ─────────────────────────────────────────────────────────
@@ -180,13 +178,6 @@ function SubredditGroup({ label, items, active, onSelect }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function FeedPage() {
-  const { isAdmin, loading: authLoading } = useAuth()
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (!authLoading && !isAdmin) navigate('/', { replace: true })
-  }, [authLoading, isAdmin, navigate])
-
   useEffect(() => {
     const meta   = document.createElement('meta')
     meta.name    = 'robots'
@@ -199,8 +190,6 @@ export default function FeedPage() {
 
   const { posts, loading, error, fetchedAt, fromCache, refresh, loadMore } =
     useRedditFeed(subreddit)
-
-  if (authLoading || !isAdmin) return null
 
   return (
     <div className="mx-auto max-w-2xl">
