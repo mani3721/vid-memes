@@ -15,6 +15,7 @@ import {
 } from '../utils/seo'
 import SEO from '../components/SEO'
 import AdSlot from '../components/AdSlot'
+import AffiliateAdGrid from '../components/AffiliateAdGrid'
 import Breadcrumbs from '../components/Breadcrumbs'
 import MemeDescription from '../components/MemeDescription'
 import DownloadButton from '../components/DownloadButton'
@@ -303,6 +304,9 @@ export default function MemePage() {
                   />
                 </div>
               </div>
+
+              {/* Affiliate sidebar — compact cards below the download button */}
+              <AffiliateAdGrid isAffiliateModuleActive variant="sidebar" />
 
             </div>
           </div>

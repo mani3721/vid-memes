@@ -8,6 +8,7 @@ import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import TrendingSoundsFeed from './TrendingSoundsFeed'
 import PageHeading from './PageHeading'
+import AffiliateAdGrid from './AffiliateAdGrid'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
 
@@ -114,6 +115,9 @@ export default function BrowseFeed() {
 
         {/* Trending Sound Effects strip */}
         <TrendingSoundsFeed />
+
+        {/* Amazon affiliate product grid */}
+        <AffiliateAdGrid isAffiliateModuleActive />
 
         {/* SEO content block */}
         <section aria-labelledby="about-videsaur" className="mt-8 border-t border-edge pt-8">
