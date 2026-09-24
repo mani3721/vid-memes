@@ -20,6 +20,7 @@ import {
   Bell,
   Rss,
   Shapes,
+  BookOpen,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
@@ -41,6 +42,7 @@ const YOU_ITEMS = [
 ]
 
 const RESOURCE_ITEMS = [
+  { icon: BookOpen,      label: 'Blog',              to: '/blog'           },
   { icon: Info,          label: 'About Us',          to: '/about'          },
   { icon: Mail,          label: 'Contact Us',         to: '/contact'        },
   { icon: Lock,          label: 'Privacy Policy',     to: '/privacy'        },
