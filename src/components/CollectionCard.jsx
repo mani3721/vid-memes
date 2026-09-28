@@ -27,6 +27,7 @@ export default function CollectionCard({ collection }) {
             src={latestThumbnail}
             alt=""
             aria-hidden
+            loading="lazy"
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
             className={`size-full object-cover transition-[opacity,transform] duration-300 group-hover:scale-105 ${

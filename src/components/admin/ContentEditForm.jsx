@@ -140,7 +140,7 @@ export default function ContentEditForm({ memeId, onClose, onSaved }) {
     <form onSubmit={submit} className="space-y-5">
       <div className="flex items-start gap-3">
         {item?.thumbnail_url && (
-          <img src={item.thumbnail_url} alt="" className="size-16 shrink-0 rounded-xl object-cover" />
+          <img src={item.thumbnail_url} alt="" loading="lazy" className="size-16 shrink-0 rounded-xl object-cover" />
         )}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">

@@ -10,6 +10,8 @@ import CreateCollectionModal from '../components/CreateCollectionModal'
 import GuestPrompt from '../components/GuestPrompt'
 import SEO from '../components/SEO'
 
+const FAVS_BATCH = 24
+
 const TABS = [
   { id: 'all', label: 'All Favorites', Icon: Heart },
   { id: 'collections', label: 'Collections', Icon: Layers },
@@ -22,6 +24,7 @@ export default function FavoritesPage() {
   const { memes: favorited, loading: memesLoading } = useMemesByIds(ids)
   const [activeTab, setActiveTab] = useState('all')
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [displayCount, setDisplayCount] = useState(FAVS_BATCH)
 
   const loading = authLoading || favsLoading || memesLoading
   const isGuest = !authLoading && !user
@@ -100,7 +103,20 @@ export default function FavoritesPage() {
                 )}
               </div>
             ) : (
-              <MasonryFeed assets={favorited} />
+              <>
+                <MasonryFeed assets={favorited.slice(0, displayCount)} />
+                {displayCount < favorited.length && (
+                  <div className="flex justify-center pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setDisplayCount((c) => c + FAVS_BATCH)}
+                      className="rounded-xl bg-panel-hover px-6 py-2.5 text-sm font-medium text-hi transition-colors hover:bg-panel"
+                    >
+                      Load More ({favorited.length - displayCount} remaining)
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </>
         )}

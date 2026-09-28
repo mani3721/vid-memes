@@ -29,4 +29,17 @@ function asyncCssPlugin() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss(), asyncCssPlugin()],
+  build: {
+    assetsInlineLimit: 8192,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-editor': ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extension-link'],
+        },
+      },
+    },
+  },
 })
