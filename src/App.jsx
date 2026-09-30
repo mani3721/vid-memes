@@ -29,6 +29,7 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const LoginPage         = lazy(() => import('./pages/LoginPage'))
 const AdminDashboard    = lazy(() => import('./pages/AdminDashboard'))
 const AISoundPage       = lazy(() => import('./pages/AISoundPage'))
+const AIChatPage        = lazy(() => import('./pages/AIChatPage'))
 const BlogIndexPage     = lazy(() => import('./pages/BlogIndexPage'))
 const BlogPostPage      = lazy(() => import('./pages/BlogPostPage'))
 const FeedPage          = lazy(() => import('./pages/FeedPage'))
@@ -89,6 +90,7 @@ function Studio() {
         <Route path="/login"          element={<LoginPage />} />
         <Route path="/admin"          element={<AdminDashboard />} />
         <Route path="/ai-sound"       element={<AISoundPage />} />
+        <Route path="/ai-chat"        element={<AIChatPage />} />
         <Route path="/blog"           element={<BlogIndexPage />} />
         <Route path="/blog/:slug"     element={<BlogPostPage />} />
         <Route path="/feed"           element={<FeedPage />} />

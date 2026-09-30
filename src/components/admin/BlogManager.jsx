@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AlertCircle, ExternalLink, Loader2, Plus, RefreshCw, Save, Trash2, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import Markdown from '../Markdown'
+import RichContent from '../RichContent'
+import RichTextEditor from './RichTextEditor'
 import { createPost, deletePost, listPosts, savePost } from '../../lib/adminApi'
 
 const STATUSES = ['draft', 'published', 'removed']
@@ -173,18 +174,16 @@ export default function BlogManager() {
 
           {preview ? (
             <div className="min-h-48 rounded-xl border border-edge bg-canvas p-4">
-              <Markdown source={draft.body} />
+              <RichContent source={draft.body} />
             </div>
           ) : (
-            <textarea
-              rows={16} value={draft.body}
-              onChange={(e) => setDraft((d) => ({ ...d, body: e.target.value }))}
-              className={`${inputClass} resize-y font-mono text-xs leading-relaxed`}
+            <RichTextEditor
+              value={draft.body}
+              onChange={(body) => setDraft((d) => ({ ...d, body }))}
             />
           )}
           <span className="mt-1 block text-xs text-lo">
-            Markdown: <code>## heading</code>, <code>- list</code>, <code>**bold**</code>,
-            {' '}<code>[text](/meme/slug)</code>. Link to meme pages to build internal links.
+            Use the toolbar to format the post. Link to meme pages to build internal links.
           </span>
         </div>
 

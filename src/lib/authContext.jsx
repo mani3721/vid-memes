@@ -55,7 +55,11 @@ export function AuthProvider({ children }) {
 
   const loading = session === undefined
   const user = session?.user ?? null
-  const isAdmin = profile?.role === 'admin'
+  const isLoopbackHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname)
+  // Local development lets any authenticated developer open the admin tools.
+  // import.meta.env.DEV is compiled to false in production builds, where the
+  // profile role remains the only way to gain admin access.
+  const isAdmin = profile?.role === 'admin' || Boolean(import.meta.env.DEV && isLoopbackHost && user)
 
   return (
     <AuthContext.Provider value={{ session, user, profile, isAdmin, loading, signIn, signUp, signInWithGoogle, signOut }}>

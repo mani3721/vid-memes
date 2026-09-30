@@ -2,7 +2,7 @@ import { Navigate, useParams } from 'react-router-dom'
 import SEO from '../components/SEO'
 import AdSlot from '../components/AdSlot'
 import Breadcrumbs from '../components/Breadcrumbs'
-import Markdown from '../components/Markdown'
+import RichContent from '../components/RichContent'
 import { useBlogPost } from '../hooks/useBlog'
 import { BASE_URL, SITE_NAME, buildBreadcrumbSchema } from '../utils/seo'
 
@@ -37,6 +37,7 @@ export default function BlogPostPage() {
     ...(post.cover_url ? { image: post.cover_url } : {}),
     ...(post.published_at ? { datePublished: post.published_at } : {}),
     ...(post.updated_at ? { dateModified: post.updated_at } : {}),
+    author: { '@type': 'Organization', name: 'Admin', url: BASE_URL },
     publisher: { '@type': 'Organization', name: SITE_NAME, url: BASE_URL },
   }
 
@@ -54,29 +55,44 @@ export default function BlogPostPage() {
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
         <Breadcrumbs crumbs={crumbs} />
 
-        <article>
-          <h1 className="font-display text-2xl leading-tight tracking-wide text-hi sm:text-3xl">
-            {post.title}
-          </h1>
-          {post.published_at && (
-            <p className="mt-2 text-xs text-lo">
-              <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
-            </p>
-          )}
+        <article className="mt-4">
+          <header className="border-b border-edge pb-6">
+            <h1 className="font-display text-3xl leading-tight tracking-wide text-hi sm:text-4xl md:text-5xl">
+              {post.title}
+            </h1>
+
+            {post.excerpt && (
+              <p className="mt-4 text-base leading-relaxed text-mid sm:text-lg">
+                {post.excerpt}
+              </p>
+            )}
+
+            <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-lo">
+              <span>
+                By <span className="font-semibold text-hi">Admin</span>
+              </span>
+              {post.published_at && (
+                <>
+                  <span aria-hidden="true">•</span>
+                  <time dateTime={post.published_at}>{formatDate(post.published_at)}</time>
+                </>
+              )}
+            </div>
+          </header>
 
           {post.cover_url && (
-            <img
-              src={post.cover_url}
-              alt=""
-              loading="eager"
-              fetchpriority="high"
-              className="mt-5 w-full rounded-2xl border border-edge object-cover"
-            />
+            <figure className="mt-7 overflow-hidden rounded-2xl border border-edge bg-panel">
+              <img
+                src={post.cover_url}
+                alt={`Cover image for ${post.title}`}
+                loading="eager"
+                fetchPriority="high"
+                className="aspect-video w-full object-cover"
+              />
+            </figure>
           )}
 
-          <div className="mt-6">
-            <Markdown source={post.body} />
-          </div>
+          <RichContent source={post.body} className="mt-8" />
         </article>
 
         {/* In-flow slot after the article body. */}

@@ -6,6 +6,7 @@ const DEFAULTS = {
   feed_tab:         true,
   stickers_tab:     true,
   amazon_affiliate: true,
+  ai_chat_tab:      false,
 }
 
 const FeaturesContext = createContext({ flags: DEFAULTS, loading: true })

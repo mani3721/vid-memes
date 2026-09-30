@@ -21,6 +21,7 @@ import {
   Rss,
   Shapes,
   BookOpen,
+  Bot,
 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../lib/authContext'
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { icon: Smile,      label: 'GIFs',      to: '/gifs'      },
   { icon: AudioLines, label: 'Music',     to: '/sounds'    },
   { icon: LayoutGrid, label: 'Templates', to: '/templates' },
+  { icon: Bot,        label: 'AI Chat',   to: '/ai-chat',   featureKey: 'ai_chat_tab', badge: 'New' },
   { icon: Sparkles,   label: 'AI Voice',  to: '/ai-sound'  },
   { icon: Shapes,     label: 'Stickers',  to: '/stickers',  featureKey: 'stickers_tab' },
   { icon: Rss,        label: 'Feed',      to: '/feed',      featureKey: 'feed_tab', badge: 'Beta' },
