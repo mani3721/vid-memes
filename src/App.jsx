@@ -17,6 +17,7 @@ const TrendingPage      = lazy(() => import('./pages/TrendingPage'))
 const CategoryPage      = lazy(() => import('./pages/CategoryPage'))
 const AboutPage         = lazy(() => import('./pages/AboutPage'))
 const ContactPage       = lazy(() => import('./pages/ContactPage'))
+const SupportUsPage     = lazy(() => import('./pages/SupportUsPage'))
 const PrivacyPage       = lazy(() => import('./pages/PrivacyPage'))
 const TermsPage         = lazy(() => import('./pages/TermsPage'))
 const DmcaPage          = lazy(() => import('./pages/DmcaPage'))
@@ -78,6 +79,7 @@ function Studio() {
         <Route path="/sound/:slug"    element={<MemePage />} />
         <Route path="/about"          element={<AboutPage />} />
         <Route path="/contact"        element={<ContactPage />} />
+        <Route path="/support-us"     element={<SupportUsPage />} />
         <Route path="/privacy"        element={<PrivacyPage />} />
         <Route path="/terms"          element={<TermsPage />} />
         <Route path="/content-policy" element={<DmcaPage />} />
