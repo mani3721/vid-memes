@@ -72,6 +72,8 @@ export const deletePost = (id, { hard = false } = {}) =>
 
 export const listAnnouncements = () => request('/api/admin/announcements')
 export const sendAnnouncement = (body) => request('/api/admin/announcements', { method: 'POST', body })
+export const updateAnnouncement = (id, body) =>
+  request(`/api/admin/announcements/${id}`, { method: 'PATCH', body })
 
 // ── Feature flags ────────────────────────────────────────────────────────────
 

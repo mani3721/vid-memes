@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Megaphone, Loader2, Send, CircleCheck, CircleAlert } from 'lucide-react'
-import { listAnnouncements, sendAnnouncement } from '../../lib/adminApi'
+import { Megaphone, Loader2, Send, CircleCheck, CircleAlert, Pencil, Save, X } from 'lucide-react'
+import { listAnnouncements, sendAnnouncement, updateAnnouncement } from '../../lib/adminApi'
 import { timeAgo } from '../../data/assets'
 
 const MAX_TITLE = 200
@@ -24,6 +24,10 @@ export default function AnnouncementSender() {
   const [result, setResult] = useState(null) // { ok: boolean, text: string }
   const [sent, setSent] = useState([])
   const [loading, setLoading] = useState(true)
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState(EMPTY)
+  const [savingEdit, setSavingEdit] = useState(false)
+  const [editError, setEditError] = useState('')
 
   useEffect(() => {
     let cancelled = false
@@ -60,6 +64,49 @@ export default function AnnouncementSender() {
       setResult({ ok: false, text: err.message })
     } finally {
       setSending(false)
+    }
+  }
+
+  function beginEdit(announcement) {
+    setEditingId(announcement.id)
+    setEditForm({
+      title: announcement.title ?? '',
+      message: announcement.message ?? '',
+      link: announcement.link ?? '',
+      thumbnail: announcement.thumbnail ?? '',
+      segmentLanguage: announcement.segment_language ?? '',
+    })
+    setEditError('')
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditForm(EMPTY)
+    setEditError('')
+  }
+
+  async function saveEdit(e) {
+    e.preventDefault()
+    const title = editForm.title.trim()
+    if (!title || title.length > MAX_TITLE || savingEdit) return
+
+    setSavingEdit(true)
+    setEditError('')
+    try {
+      const { announcement } = await updateAnnouncement(editingId, {
+        title,
+        message: editForm.message.trim() || undefined,
+        link: editForm.link.trim() || undefined,
+        thumbnail: editForm.thumbnail.trim() || undefined,
+        segmentLanguage: editForm.segmentLanguage.trim() || undefined,
+      })
+      setSent((items) => items.map((item) => (item.id === announcement.id ? announcement : item)))
+      cancelEdit()
+      setResult({ ok: true, text: 'Announcement updated.' })
+    } catch (err) {
+      setEditError(err.message)
+    } finally {
+      setSavingEdit(false)
     }
   }
 
@@ -193,19 +240,98 @@ export default function AnnouncementSender() {
           <ul className="flex flex-col gap-2">
             {sent.map((a) => (
               <li key={a.id} className="rounded-xl border border-edge bg-panel p-3.5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <p className="min-w-0 flex-1 truncate text-sm font-medium text-hi">{a.title}</p>
-                  <time dateTime={a.created_at} className="shrink-0 text-[11px] text-lo">
-                    {timeAgo(a.created_at)}
-                  </time>
-                </div>
-                {a.message && <p className="mt-1 line-clamp-2 text-xs text-mid">{a.message}</p>}
-                <div className="mt-1.5 flex flex-wrap gap-2 text-[10px] text-lo">
-                  {a.link && <span className="rounded-full border border-edge px-2 py-0.5">{a.link}</span>}
-                  <span className="rounded-full border border-edge px-2 py-0.5">
-                    {a.segment_language ? `segment: ${a.segment_language}` : 'everyone'}
-                  </span>
-                </div>
+                {editingId === a.id ? (
+                  <form onSubmit={saveEdit} className="flex flex-col gap-3">
+                    <input
+                      type="text"
+                      value={editForm.title}
+                      onChange={(e) => setEditForm((form) => ({ ...form, title: e.target.value }))}
+                      maxLength={MAX_TITLE}
+                      required
+                      aria-label="Announcement title"
+                      className={fieldClass}
+                    />
+                    <textarea
+                      value={editForm.message}
+                      onChange={(e) => setEditForm((form) => ({ ...form, message: e.target.value }))}
+                      maxLength={MAX_MESSAGE}
+                      rows={3}
+                      aria-label="Announcement message"
+                      className={`${fieldClass} resize-y`}
+                    />
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        value={editForm.link}
+                        onChange={(e) => setEditForm((form) => ({ ...form, link: e.target.value }))}
+                        placeholder="Site-relative link"
+                        aria-label="Announcement link"
+                        className={fieldClass}
+                      />
+                      <input
+                        type="text"
+                        value={editForm.thumbnail}
+                        onChange={(e) => setEditForm((form) => ({ ...form, thumbnail: e.target.value }))}
+                        placeholder="Thumbnail URL"
+                        aria-label="Announcement thumbnail"
+                        className={fieldClass}
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={editForm.segmentLanguage}
+                      onChange={(e) => setEditForm((form) => ({ ...form, segmentLanguage: e.target.value }))}
+                      placeholder="Audience language (blank for everyone)"
+                      aria-label="Audience language"
+                      className={fieldClass}
+                    />
+                    {editError && <p className="text-xs text-red-400" role="alert">{editError}</p>}
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        disabled={!editForm.title.trim() || savingEdit}
+                        className="btn-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold disabled:cursor-not-allowed"
+                      >
+                        {savingEdit ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
+                        {savingEdit ? 'Saving…' : 'Save'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        disabled={savingEdit}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-edge px-3 py-1.5 text-xs text-mid hover:text-hi disabled:cursor-not-allowed"
+                      >
+                        <X className="size-3.5" /> Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="min-w-0 flex-1 truncate text-sm font-medium text-hi">{a.title}</p>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <time dateTime={a.created_at} className="text-[11px] text-lo">
+                          {timeAgo(a.created_at)}
+                        </time>
+                        <button
+                          type="button"
+                          onClick={() => beginEdit(a)}
+                          className="inline-flex items-center gap-1 rounded-full border border-edge px-2 py-1 text-[11px] text-mid hover:border-brand hover:text-hi"
+                          aria-label={`Edit ${a.title}`}
+                        >
+                          <Pencil className="size-3" /> Edit
+                        </button>
+                      </div>
+                    </div>
+                    {a.message && <p className="mt-1 line-clamp-2 text-xs text-mid">{a.message}</p>}
+                    <div className="mt-1.5 flex flex-wrap gap-2 text-[10px] text-lo">
+                      {a.link && <span className="rounded-full border border-edge px-2 py-0.5">{a.link}</span>}
+                      <span className="rounded-full border border-edge px-2 py-0.5">
+                        {a.segment_language ? `segment: ${a.segment_language}` : 'everyone'}
+                      </span>
+                    </div>
+                  </>
+                )}
               </li>
             ))}
           </ul>
