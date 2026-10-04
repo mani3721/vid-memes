@@ -33,11 +33,17 @@ export default defineConfig({
     assetsInlineLimit: 8192,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-editor': ['@tiptap/react', '@tiptap/starter-kit', '@tiptap/extension-link'],
+        // Vite 8 uses Rolldown, which only supports the function form of
+        // manualChunks (the previous Rollup object form causes builds to fail).
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router-dom/')) {
+            return 'vendor-react'
+          }
+          if (id.includes('/@supabase/')) return 'vendor-supabase'
+          if (id.includes('/lucide-react/')) return 'vendor-icons'
+          if (id.includes('/@tiptap/')) return 'vendor-editor'
+          return undefined
         },
       },
     },
