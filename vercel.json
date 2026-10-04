@@ -2,13 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "headers": [
     {
-      "source": "/assets/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-      ]
-    },
-    {
-      "source": "/(.*\\.(jpg|jpeg|png|gif|webp|ico|svg|woff|woff2|ttf|otf|eot)$)",
+      "source": "/assets/:path*",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
@@ -16,15 +10,19 @@
   ],
   "rewrites": [
     {
-      "source": "/:file(sitemap(?:-[a-z]+(?:-[0-9]+)?)?\\.xml)",
-      "destination": "https://api-videsaur.onrender.com/:file"
+      "source": "/sitemap.xml",
+      "destination": "https://api-videsaur.onrender.com/sitemap.xml"
+    },
+    {
+      "source": "/sitemap-:name.xml",
+      "destination": "https://api-videsaur.onrender.com/sitemap-:name.xml"
     },
     {
       "source": "/indexnow.txt",
       "destination": "https://api-videsaur.onrender.com/indexnow.txt"
     },
     {
-      "source": "/((?!assets|favicon\\.ico|robots\\.txt|.*\\..*).*)",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ]
