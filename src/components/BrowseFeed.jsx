@@ -121,41 +121,6 @@ export default function BrowseFeed() {
         {/* Amazon affiliate product grid */}
         <AffiliateAdGrid isAffiliateModuleActive={flags.amazon_affiliate} />
 
-        {/* SEO content block */}
-        <section aria-labelledby="about-videsaur" className="mt-8 border-t border-edge pt-8">
-          <h2 id="about-videsaur" className="mb-5 font-display text-lg tracking-wide text-hi">
-            About Videsaur
-          </h2>
-          <div className="grid gap-6 text-sm leading-relaxed text-mid sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <h3 className="mb-2 font-semibold text-hi">What is Videsaur?</h3>
-              <p>
-                Videsaur is a free meme download hub for content creators, social media managers,
-                and meme enthusiasts. Browse thousands of HD meme videos, animated GIFs, blank
-                templates, and sound effects — all without watermarks, accounts, or fees.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-semibold text-hi">How to Download</h3>
-              <p>
-                Find a meme you love, click the card to open its detail page, then tap the
-                Download button. Every file is served in its native format — MP4, WebM, GIF, PNG,
-                or MP3 — at full resolution, ready for Instagram Reels, YouTube Shorts, WhatsApp
-                Status, TikTok, Discord, and any video editor.
-              </p>
-            </div>
-            <div>
-              <h3 className="mb-2 font-semibold text-hi">Why Videsaur?</h3>
-              <ul className="space-y-1.5">
-                <li><strong className="text-hi">Updated daily</strong> — fresh memes every day.</li>
-                <li><strong className="text-hi">HD quality</strong> — optimised for every platform.</li>
-                <li><strong className="text-hi">No watermark</strong> — clean, ready-to-use files.</li>
-                <li><strong className="text-hi">Free forever</strong> — no subscription, no gotchas.</li>
-                <li><strong className="text-hi">Creator tools</strong> — bulk downloads, green-screen assets, and sound effects.</li>
-              </ul>
-            </div>
-          </div>
-        </section>
 
       </div>
     </>

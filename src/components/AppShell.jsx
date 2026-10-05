@@ -32,15 +32,14 @@ export default function AppShell({ children }) {
 
         {/* Content — offset left by sidebar width */}
         <main className="min-w-0 flex-1 md:ml-16 lg:ml-65">
-          <div className="px-4 pb-20 pt-5 sm:px-6">
+          <div className="px-4 pb-5 pt-5 sm:px-6">
             <Suspense fallback={<ContentFallback />}>
               {children}
             </Suspense>
           </div>
+          <Footer />
         </main>
       </div>
-
-      <Footer />
     </>
   )
 }
