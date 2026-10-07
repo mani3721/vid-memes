@@ -64,6 +64,38 @@
   --checker-tint:     #EFEFF3;
 }
 
+/* Broad regional/seasonal palettes. These only change visual tokens and never
+   ad containers, dimensions, positioning, or consent behavior. */
+html[data-climate-theme='tropical'] {
+  --bg-base: #F5FBF8;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #E9F6F0;
+  --border-subtle: #CFE8DC;
+  --brand-col: #087F5B;
+  --brand-col-2: #20A97A;
+  --checker-tint: #E5F2EC;
+}
+
+html[data-climate-theme='warm'] {
+  --bg-base: #FFF9F2;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #FFF0DE;
+  --border-subtle: #EEDBC5;
+  --brand-col: #B54708;
+  --brand-col-2: #E86F19;
+  --checker-tint: #F7EAD9;
+}
+
+html[data-climate-theme='cool'] {
+  --bg-base: #F4F8FC;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #E8F1F8;
+  --border-subtle: #CDDFEC;
+  --brand-col: #1769AA;
+  --brand-col-2: #3B8AC4;
+  --checker-tint: #E2EDF5;
+}
+
 html.dark {
   /* Dark mode — energetic layered dark */
   --bg-base:          #0F0F13;
@@ -77,6 +109,36 @@ html.dark {
   --brand-col:        #FF3E9E;
   --brand-col-2:      #FF74B8;
   --checker-tint:     #24242F;
+}
+
+html.dark[data-climate-theme='tropical'] {
+  --bg-base: #0D1512;
+  --bg-surface: #14201B;
+  --bg-surface-hover: #1C2D26;
+  --border-subtle: #29473A;
+  --brand-col: #55D6A5;
+  --brand-col-2: #87E8C2;
+  --checker-tint: #1E3028;
+}
+
+html.dark[data-climate-theme='warm'] {
+  --bg-base: #17110D;
+  --bg-surface: #211812;
+  --bg-surface-hover: #302219;
+  --border-subtle: #493426;
+  --brand-col: #FF9B54;
+  --brand-col-2: #FFC078;
+  --checker-tint: #33241A;
+}
+
+html.dark[data-climate-theme='cool'] {
+  --bg-base: #0C131A;
+  --bg-surface: #121D27;
+  --bg-surface-hover: #1A2A38;
+  --border-subtle: #294255;
+  --brand-col: #63B3ED;
+  --brand-col-2: #90CDF4;
+  --checker-tint: #1C2D3B;
 }
 
 /* ── Dynamic Tailwind tokens ─────────────────────────────── */

@@ -13,6 +13,9 @@ Disallow: /login
 Disallow: /upload
 Disallow: /favorites
 
+# Temporary support/payment page is intentionally excluded from search.
+Disallow: /support-us
+
 # Search result pages are thin duplicates of the category feeds.
 Disallow: /*?q=
 Disallow: /404

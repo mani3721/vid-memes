@@ -28,6 +28,10 @@
       "destination": "https://api-videsaur.onrender.com/indexnow.txt"
     },
     {
+      "source": "/api/location-theme",
+      "destination": "https://api-videsaur.onrender.com/api/location-theme"
+    },
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }

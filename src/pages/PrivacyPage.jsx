@@ -32,7 +32,11 @@ export default function PrivacyPage() {
             <li>Device information (IP address, browser type, operating system)</li>
             <li>Usage data (pages visited, time spent, clicks, downloads)</li>
             <li>Cookies and similar tracking technologies</li>
-            <li>Location data (if permitted)</li>
+            <li>
+              Approximate country/region codes inferred by our hosting provider to select a broad
+              seasonal colour theme. We do not request GPS coordinates or store these codes for
+              this feature, and they are not used to personalize advertisements.
+            </li>
           </ul>
         </PolicySection>
 
