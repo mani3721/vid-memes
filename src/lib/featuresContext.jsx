@@ -5,7 +5,6 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 const DEFAULTS = {
   feed_tab:         true,
   stickers_tab:     true,
-  amazon_affiliate: true,
   ai_chat_tab:      false,
 }
 

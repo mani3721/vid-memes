@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Loader2, Rss, Shapes, ShoppingBag, Bot, AlertCircle } from 'lucide-react'
+import { Loader2, Rss, Shapes, Bot, AlertCircle } from 'lucide-react'
 import { listFeatureFlags, setFeatureFlag } from '../../lib/adminApi'
 
 const FLAG_META = {
   feed_tab:         { label: 'Feed Tab',          description: 'Show the Feed tab in the sidebar navigation.', icon: Rss },
   stickers_tab:     { label: 'Stickers Tab',       description: 'Show the Stickers tab in the sidebar navigation.', icon: Shapes },
-  amazon_affiliate: { label: 'Amazon Affiliate',   description: 'Show Amazon affiliate product sections on browse and meme detail pages.', icon: ShoppingBag },
   ai_chat_tab:      { label: 'AI Chat Tab',        description: 'Show the AI Chat tab in the sidebar. Turn off if the ModelScope daily quota runs out.', icon: Bot },
 }
 

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useFeatures } from '../lib/featuresContext'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useStudio } from '../store/studioStore'
 import { useMixedFeed } from '../hooks/useMemes'
@@ -9,7 +8,6 @@ import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import TrendingSoundsFeed from './TrendingSoundsFeed'
 import PageHeading from './PageHeading'
-import AffiliateAdGrid from './AffiliateAdGrid'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
 
@@ -21,8 +19,6 @@ const SORT_OPTIONS = [
 export default function BrowseFeed() {
   const { mood, query } = useStudio()
   const [sort, setSort] = useState('popular')
-  const { flags } = useFeatures()
-
   const { memes, loading, error, page, totalPages, setPage } = useMixedFeed({
     mood: mood ?? undefined,
     query: query || undefined,

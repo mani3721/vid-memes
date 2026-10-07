@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useFeatures } from '../lib/featuresContext'
 import { useParams, Navigate, useLocation } from 'react-router-dom'
 import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
@@ -16,7 +15,6 @@ import {
 } from '../utils/seo'
 import SEO from '../components/SEO'
 import AdSlot from '../components/AdSlot'
-import AffiliateAdGrid from '../components/AffiliateAdGrid'
 import Breadcrumbs from '../components/Breadcrumbs'
 import MemeDescription from '../components/MemeDescription'
 import DownloadButton from '../components/DownloadButton'
@@ -44,7 +42,6 @@ export default function MemePage() {
   const id = slugToId(slug)
   const { meme: asset, loading, error } = useMemeById(id)
   const { user, isAdmin } = useAuth()
-  const { flags } = useFeatures()
   const [editingTitle, setEditingTitle] = useState(null) // null = view, string = editing
   const [titleSaving, setTitleSaving] = useState(false)
   const [displayTitle, setDisplayTitle] = useState(null) // override after save
