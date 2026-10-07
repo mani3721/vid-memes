@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import {
   Sparkles, Download, RotateCcw, Volume2, AlertCircle,
   ChevronDown, ChevronRight, Info, Settings2, RefreshCw, Lock,
+  Upload, FileAudio, Copy, Check,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
@@ -134,7 +135,14 @@ export default function AISoundPage() {
   const [audioUrl, setAudioUrl]           = useState(null)
   const [loading, setLoading]             = useState(false)
   const [error, setError]                 = useState(null)
+  const [speechFile, setSpeechFile]       = useState(null)
+  const [transcript, setTranscript]       = useState('')
+  const [transcribing, setTranscribing]   = useState(false)
+  const [transcriptionError, setTranscriptionError] = useState(null)
+  const [copied, setCopied]               = useState(false)
+  const [activeTool, setActiveTool]       = useState('speech-to-text')
   const prevUrlRef                        = useRef(null)
+  const speechInputRef                    = useRef(null)
 
   useEffect(() => {
     return () => { if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current) }
@@ -192,9 +200,47 @@ export default function AISoundPage() {
     a.href = audioUrl; a.download = `ai-voice.${settings.format}`; a.click()
   }
 
+  async function handleTranscribe() {
+    if (!user || !speechFile || transcribing) return
+    setTranscribing(true)
+    setTranscriptionError(null)
+    setTranscript('')
+
+    try {
+      const formData = new FormData()
+      formData.append('audio', speechFile, speechFile.name || 'speech.wav')
+      const response = await fetch(`${import.meta.env.VITE_API_BASE}/api/asr`, {
+        method: 'POST',
+        body: formData,
+      })
+      const data = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(data?.error || `Server error ${response.status}`)
+      if (typeof data?.text !== 'string') throw new Error('The server returned an invalid transcription.')
+      setTranscript(data.text)
+    } catch (err) {
+      console.error('[asr]', err)
+      setTranscriptionError(err.message || 'Transcription failed')
+    } finally {
+      setTranscribing(false)
+    }
+  }
+
+  async function handleCopyTranscript() {
+    if (!transcript) return
+    try {
+      await navigator.clipboard.writeText(transcript)
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1500)
+    } catch {
+      setTranscriptionError('Could not copy the transcript. Please copy it manually.')
+    }
+  }
+
   function handleReset() {
     setPrompt(''); setSettings(DEFAULT_SETTINGS); setActivePreset(DEFAULT_PRESET_ID)
     setSelectedVoice(VOICES[0]); setAudioUrl(null); setError(null)
+    setSpeechFile(null); setTranscript(''); setTranscriptionError(null); setCopied(false)
+    if (speechInputRef.current) speechInputRef.current.value = ''
   }
 
   const isDisabled = !user || !prompt.trim() || charOver || loading || authLoading
@@ -202,8 +248,8 @@ export default function AISoundPage() {
   return (
     <>
       <SEO
-        title="AI Voice Generator — Text to Speech"
-        description="Generate AI voice-over audio instantly. Choose a voice, pick a quality preset, generate."
+        title="AI Voice Tools — Speech to Text & Text to Speech"
+        description="Transcribe speech into editable text or generate AI voice-over audio with AI voice tools."
         canonicalPath="/ai-sound"
       />
 
@@ -212,7 +258,7 @@ export default function AISoundPage() {
         {/* ── Header ─────────────────────────────────────── */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <PageHeading level={1} text="AI Voice Generator" keyword="AI Voice" />
+            <PageHeading level={1} text="AI Voice Tools" keyword="AI Voice" />
             <span className="inline-flex items-center rounded-full bg-brand/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand">
               New
             </span>
@@ -225,8 +271,50 @@ export default function AISoundPage() {
           </button>
         </div>
 
+        {/* ── Tool tabs ──────────────────────────────────── */}
+        <div
+          role="tablist"
+          aria-label="AI voice tools"
+          className="inline-grid w-fit max-w-full grid-cols-2 gap-0.5 rounded-xl border border-edge bg-panel p-1"
+        >
+          {[
+            { id: 'speech-to-text', label: 'Speech to Text', icon: FileAudio },
+            { id: 'text-to-speech', label: 'Text to Speech', icon: Volume2 },
+          ].map((tool) => {
+            const Icon = tool.icon
+            const selected = activeTool === tool.id
+            return (
+              <button
+                key={tool.id}
+                id={`${tool.id}-tab`}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                aria-controls={`${tool.id}-panel`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => setActiveTool(tool.id)}
+                className={[
+                  'flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-all sm:px-3',
+                  selected
+                    ? 'border-brand bg-brand/15 text-brand shadow-sm shadow-brand/20'
+                    : 'border-transparent text-mid hover:border-edge hover:bg-panel-hover hover:text-hi',
+                ].join(' ')}
+              >
+                <Icon className="size-3.5 shrink-0" />
+                <span>{tool.label}</span>
+              </button>
+            )
+          })}
+        </div>
+
         {/* ── 2-column grid ──────────────────────────────── */}
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]">
+        {activeTool === 'text-to-speech' && (
+        <div
+          id="text-to-speech-panel"
+          role="tabpanel"
+          aria-labelledby="text-to-speech-tab"
+          className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
+        >
 
           {/* ═══ LEFT: Text input ══════════════════════════ */}
           <section className="flex flex-col gap-2.5 rounded-2xl border border-edge bg-panel p-4">
@@ -426,9 +514,95 @@ export default function AISoundPage() {
             </div>
           </section>
         </div>
+        )}
+
+        {/* ── Speech to text ─────────────────────────────── */}
+        {activeTool === 'speech-to-text' && (
+        <section
+          id="speech-to-text-panel"
+          role="tabpanel"
+          aria-labelledby="speech-to-text-tab"
+          className="rounded-2xl border border-edge bg-panel p-4"
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="grid size-8 place-items-center rounded-xl bg-brand/15"><FileAudio className="size-4 text-brand" /></span>
+                <div>
+                  <h2 className="text-sm font-semibold text-hi">AI Speech to Text</h2>
+                  <p className="text-[11px] text-lo">Upload audio and turn spoken words into editable text.</p>
+                </div>
+              </div>
+
+              <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-edge bg-canvas px-4 py-3 transition-colors hover:border-brand/50 hover:bg-panel-hover">
+                <Upload className="size-5 shrink-0 text-brand" />
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-xs font-semibold text-hi">{speechFile ? speechFile.name : 'Choose an audio file'}</span>
+                  <span className="block text-[10px] text-lo">
+                    {speechFile ? `${(speechFile.size / 1024 / 1024).toFixed(2)} MB` : 'MP3, WAV, M4A, OGG, FLAC, or WebM · up to 25 MB'}
+                  </span>
+                </span>
+                <input
+                  ref={speechInputRef}
+                  type="file"
+                  accept="audio/mpeg,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a,audio/ogg,audio/flac,audio/webm,.mp3,.wav,.m4a,.ogg,.flac,.webm"
+                  className="sr-only"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null
+                    setSpeechFile(file)
+                    setTranscript('')
+                    setTranscriptionError(file?.size > 25 * 1024 * 1024 ? 'Audio file must be 25 MB or smaller.' : null)
+                  }}
+                />
+              </label>
+
+              <div className="mt-3 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleTranscribe}
+                  disabled={!user || !speechFile || speechFile.size > 25 * 1024 * 1024 || transcribing || authLoading}
+                  className="btn-primary flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {transcribing
+                    ? <><span className="size-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />Transcribing…</>
+                    : <><Sparkles className="size-3.5" />Transcribe Audio</>}
+                </button>
+                {!authLoading && !user && <Link to="/login" className="text-xs font-medium text-brand hover:underline">Sign in to use this tool</Link>}
+              </div>
+
+              {transcriptionError && (
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-red-400"><AlertCircle className="size-3.5 shrink-0" />{transcriptionError}</p>
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1 rounded-xl border border-edge bg-canvas p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-hi">Transcript</span>
+                <button
+                  type="button"
+                  onClick={handleCopyTranscript}
+                  disabled={!transcript}
+                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-medium text-mid hover:bg-panel-hover disabled:opacity-40"
+                >
+                  {copied ? <Check className="size-3 text-green-400" /> : <Copy className="size-3" />}
+                  {copied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+              <textarea
+                value={transcript}
+                onChange={(event) => setTranscript(event.target.value)}
+                placeholder={transcribing ? 'Listening to your audio…' : 'Your transcription will appear here.'}
+                rows={6}
+                className="w-full resize-y rounded-lg border border-edge bg-panel px-3 py-2 text-sm leading-relaxed text-hi placeholder:text-lo focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand/30"
+              />
+            </div>
+          </div>
+        </section>
+        )}
       </div>
 
       {/* ── Sticky footer bar ──────────────────────────────── */}
+      {activeTool === 'text-to-speech' && (
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-edge bg-canvas/95 backdrop-blur-md">
         <div className="flex items-center gap-3 px-4 py-2.5">
 
@@ -517,6 +691,7 @@ export default function AISoundPage() {
           )}
         </div>
       </div>
+      )}
     </>
   )
 }

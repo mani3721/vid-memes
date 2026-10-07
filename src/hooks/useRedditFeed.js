@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { supabase } from '../lib/supabaseClient'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 const NS_MEDIA = 'http://search.yahoo.com/mrss/'
@@ -50,13 +49,8 @@ export function useRedditFeed(subreddit = 'memes') {
     setLoading(true)
     setError(null)
     try {
-      const { data: { session } } = await supabase.auth.getSession()
       const url = `${API_BASE}/api/reddit-feed?sub=${subreddit}${force ? '&force=true' : ''}`
-      const res = await fetch(url, {
-        headers: session?.access_token
-          ? { Authorization: `Bearer ${session.access_token}` }
-          : {},
-      })
+      const res = await fetch(url)
       const ct  = res.headers.get('content-type') ?? ''
 
       if (!res.ok) {

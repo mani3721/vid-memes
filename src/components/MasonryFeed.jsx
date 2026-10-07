@@ -1,4 +1,6 @@
+import { Fragment } from 'react'
 import MemeCard from './MemeCard'
+import MemeFeedAdCard from './MemeFeedAdCard'
 
 // Stable style objects — `i % 4` only ever yields 0-3, so hoisting these keeps the
 // wrapper style referentially equal across re-renders instead of allocating per card.
@@ -27,18 +29,24 @@ export default function MasonryFeed({ assets, page, totalPages, onPageChange }) 
     <div>
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
         {assets.map((asset, i) => (
-          <div
-            key={asset.id}
-            className="reveal-item mb-4 break-inside-avoid"
-            style={STAGGER[i % 4]}
-          >
-            <MemeCard
-              asset={asset}
-              index={i}
-              aspectClass={CARD_ASPECTS[i % CARD_ASPECTS.length]}
-              priority={i === 0}
-            />
-          </div>
+          <Fragment key={asset.id}>
+            <div
+              className="reveal-item mb-4 break-inside-avoid"
+              style={STAGGER[i % 4]}
+            >
+              <MemeCard
+                asset={asset}
+                index={i}
+                aspectClass={CARD_ASPECTS[i % CARD_ASPECTS.length]}
+                priority={i === 0}
+              />
+            </div>
+            {i === 3 && (
+              <div className="mb-4 break-inside-avoid">
+                <MemeFeedAdCard />
+              </div>
+            )}
+          </Fragment>
         ))}
       </div>
 
