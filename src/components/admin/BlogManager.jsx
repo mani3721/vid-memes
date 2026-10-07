@@ -177,7 +177,7 @@ export default function BlogManager() {
               <RichContent source={draft.body} />
             </div>
           ) : (
-            <RichTextEditor
+            <RichTextEditor 
               value={draft.body}
               onChange={(body) => setDraft((d) => ({ ...d, body }))}
             />
