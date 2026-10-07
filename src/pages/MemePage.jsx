@@ -304,9 +304,6 @@ export default function MemePage() {
                 </div>
               </div>
 
-              {/* Affiliate sidebar — compact cards below the download button */}
-              <AffiliateAdGrid isAffiliateModuleActive={flags.amazon_affiliate} variant="sidebar" />
-
             </div>
           </div>
         </article>
