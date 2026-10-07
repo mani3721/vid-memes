@@ -114,10 +114,6 @@ export default function BrowseFeed() {
         {/* Trending Sound Effects strip */}
         <TrendingSoundsFeed />
 
-        {/* Amazon affiliate product grid */}
-        <AffiliateAdGrid isAffiliateModuleActive={flags.amazon_affiliate} />
-
-
       </div>
     </>
   )
