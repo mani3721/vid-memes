@@ -1,8 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useConsent } from '../consent/consentStore'
 
-const POPUNDER_URL =
-  'https://pl31708202.profitableratecpmnetwork.com/67/69/53/676953c0ba8ce919e0b2078e105e7c04.js'
 const SOCIAL_BAR_URL =
   'https://pl31708203.profitableratecpmnetwork.com/32/0c/35/320c354ab607c1de1e15f25edf8958a4.js'
 const NATIVE_BANNER_URL =
@@ -25,20 +22,13 @@ function appendScript({ id, src, parent = document.body, before = null, attribut
 }
 
 /**
- * Loads the requested ad-network tags only after explicit advertising consent.
+ * Loads the requested ad-network tags on every visit.
  * Script IDs make loading idempotent under React Strict Mode and route changes.
  */
 export default function AdsterraAds() {
-  const { adsAllowed } = useConsent()
   const nativeWrapperRef = useRef(null)
 
   useEffect(() => {
-    if (!adsAllowed) return
-
-    appendScript({
-      id: 'adsterra-popunder-script',
-      src: POPUNDER_URL,
-    })
     appendScript({
       id: 'adsterra-social-bar-script',
       src: SOCIAL_BAR_URL,
@@ -55,9 +45,7 @@ export default function AdsterraAds() {
         attributes: { 'data-cfasync': 'false' },
       })
     }
-  }, [adsAllowed])
-
-  if (!adsAllowed) return null
+  }, [])
 
   return (
     <aside
