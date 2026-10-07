@@ -9,11 +9,6 @@ import { FavoritesProvider } from './store/FavoritesProvider'
 import { CollectionsProvider } from './store/CollectionsProvider'
 import { AuthProvider } from './lib/authContext'
 import { FeaturesProvider } from './lib/featuresContext'
-import MaintenancePage from './pages/MaintenancePage'
-
-// Default to maintenance while upstream services are suspended. Set
-// VITE_MAINTENANCE_MODE=false at build time when the APIs are healthy again.
-const MAINTENANCE_MODE = import.meta.env.VITE_MAINTENANCE_MODE !== 'false'
 
 const BrowseFeed        = lazy(() => import('./components/BrowseFeed'))
 const EditorModeLayout  = lazy(() => import('./components/EditorModeLayout'))
@@ -108,22 +103,6 @@ function Studio() {
 }
 
 export default function App() {
-  if (MAINTENANCE_MODE) {
-    return (
-      <Routes>
-        <Route
-          path="/support-us"
-          element={(
-            <Suspense fallback={<EditorFallback />}>
-              <SupportUsPage />
-            </Suspense>
-          )}
-        />
-        <Route path="*" element={<MaintenancePage />} />
-      </Routes>
-    )
-  }
-
   return (
     <FeaturesProvider>
     <AuthProvider>

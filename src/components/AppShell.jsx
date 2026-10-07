@@ -3,6 +3,8 @@ import { Loader2 } from 'lucide-react'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
+import AdsterraAds from './AdsterraAds'
+import CookieBanner from './CookieBanner'
 
 function ContentFallback() {
   return (
@@ -37,7 +39,9 @@ export default function AppShell({ children }) {
               {children}
             </Suspense>
           </div>
+          <AdsterraAds />
           <Footer />
+          <CookieBanner />
         </main>
       </div>
     </>

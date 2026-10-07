@@ -33,8 +33,9 @@ export default function CookieBanner() {
             Your cookie preferences
           </p>
           <p className="text-xs leading-relaxed text-mid">
-            Videsaur uses cookies to serve personalised ads through Google AdSense and to
-            analyse site traffic. Only essential cookies load without your consent. Read our{' '}
+            Videsaur uses cookies to serve ads through Google AdSense and third-party
+            advertising partners, and to analyse site traffic. Only essential cookies load
+            without your consent. Read our{' '}
             <Link
               to="/privacy"
               className="text-hi underline underline-offset-2 transition-colors hover:text-brand"
