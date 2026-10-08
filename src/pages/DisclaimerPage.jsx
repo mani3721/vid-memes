@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
 import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 
@@ -7,104 +6,121 @@ export default function DisclaimerPage() {
     <>
       <SEO
         title="Disclaimer — Videsaur.co.in"
-        description="Read the Videsaur.co.in disclaimer regarding the use of content, limitations of liability, and third-party links."
+        description="Review the Videsaur disclaimer covering fair use, user submissions, external links, technical limitations, and platform liability."
         canonicalPath="/disclaimer"
       />
-      <PolicyLayout title="Disclaimer" breadcrumb="Disclaimer" lastUpdated="7 September 2026">
-        <PolicySection heading="1. General Information">
-          <p className="mb-3">
-            The information on this website (Videsaur.co.in) is provided on an &ldquo;as
-            is&rdquo; basis. To the fullest extent permitted by law, this Company:
-          </p>
-          <ul className="list-disc space-y-1.5 pl-5 text-mid">
-            <li>Excludes all representations and warranties relating to this website and its contents</li>
-            <li>Excludes all liability for damages arising out of or in connection with your use of this website</li>
-            <li>Does not warrant that the website will be available at all times or that the information is complete, accurate, or up-to-date</li>
-          </ul>
-        </PolicySection>
-
-        <PolicySection heading="2. Content Disclaimer">
-          <p className="mb-3">
-            The content on Videsaur.co.in is provided for entertainment and informational
-            purposes only. We do not:
-          </p>
-          <ul className="list-disc space-y-1.5 pl-5 text-mid">
-            <li>Guarantee the accuracy, completeness, or usefulness of any content</li>
-            <li>Endorse or assume responsibility for any content posted by users</li>
-            <li>Warrant that content is free from errors, viruses, or other harmful components</li>
-            <li>Take responsibility for the content of external links</li>
-          </ul>
-        </PolicySection>
-
-        <PolicySection heading="3. User-Generated Content">
+      <PolicyLayout title="Disclaimer" breadcrumb="Disclaimer" lastUpdated="October 8, 2026">
+        <PolicySection heading="1. General Information Baseline">
           <p>
-            Videsaur.co.in may contain user-generated content. We do not review all content
-            before it is posted and are not responsible for the content, accuracy, or opinions
-            expressed in such content. Users are solely responsible for the content they post.
+            All digital media resources, system routing parameters, technical files, and
+            contextual explanations indexed across <strong>Videsaur.co.in</strong> (the
+            &ldquo;Platform&rdquo;) are provided strictly on an <strong>&ldquo;as is&rdquo;</strong>{' '}
+            and <strong>&ldquo;as available&rdquo;</strong> operational basis. To the maximum
+            extent permitted by applicable statutory laws, the Platform explicitly excludes all
+            structural representations, warranties, or operational guarantees relating to this
+            web application and its database layer contents.
+          </p>
+          <p>
+            Videsaur does not warrant, promise, or guarantee that our file delivery network will
+            operate completely uninterrupted, that server connections will remain accessible at
+            all times, or that the aggregate historical data points mapped within our media
+            arrays are error-free, entirely complete, or up to date.
           </p>
         </PolicySection>
 
-        <PolicySection heading="4. Copyright and Intellectual Property">
+        <PolicySection heading="2. Fair Use & Intellectual Property Curation Disclaimer">
           <p>
-            While we strive to respect intellectual property rights, Videsaur.co.in may contain
-            content that is not owned by us. We do not claim ownership of user-uploaded content.
-            If you believe your copyright has been infringed, please refer to our{' '}
-            <Link to="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
-              DMCA Policy
-            </Link>{' '}
-            for information on how to file a takedown request.
+            Videsaur operates as a community index and utility workshop archiving cultural
+            digital artifacts, short-form reaction video tracks, loopable animation structures,
+            open soundboard components, and textless editing formats. The individual media
+            elements indexed across our grids consist of pop-culture highlights, trending
+            public-domain internet elements, and user-contributed media materials.
+          </p>
+          <p>
+            We explicitly declare that Videsaur does not claim underlying copyright title or
+            official trademark ownership over third-party media clips hosted on our network.
+            These resources are compiled, categorized, and presented strictly under the
+            statutory principles of <strong>Fair Use</strong> (in compliance with Section 107 of
+            the United States Copyright Act and corresponding global digital media frameworks)
+            for the purposes of parody, social commentary, cultural review, and educational
+            transformation. The ultimate value of our library relies entirely on our users
+            leveraging these clips to construct unique, highly transformed, non-competitive new
+            creations.
           </p>
         </PolicySection>
 
-        <PolicySection heading="5. Third-Party Links">
+        <PolicySection heading="3. User-Generated Telemetry & Submissions">
           <p>
-            Our website may contain links to third-party websites or services that are not owned
-            or controlled by Videsaur.co.in. We have no control over, and assume no
-            responsibility for, the content, privacy policies, or practices of any third-party
-            websites or services.
+            The Platform provides interactive lanes allowing community uploaders and digital
+            creators to catalog media elements. Videsaur functions as a technical conduit and
+            does not perform intensive manual screening of every asset before it enters public
+            indexing viewports. Consequently, the Platform assumes zero legal accountability for
+            the textual accuracy, historical origin files, or cultural opinions expressed within
+            user-submitted elements. Digital producers and individual downloaders bear exclusive
+            responsibility for the content they fetch, display, or distribute.
           </p>
         </PolicySection>
 
-        <PolicySection heading="6. Limitation of Liability">
+        <PolicySection heading="4. Third-Party Connections & External Networks">
           <p>
-            In no event shall Videsaur.co.in, its directors, employees, partners, agents,
-            suppliers, or affiliates, be liable for any indirect, incidental, special,
-            consequential, or punitive damages, including without limitation, loss of profits,
-            data, use, goodwill, or other intangible losses, resulting from your use of the
-            service.
+            Our platform grids and dynamic blog routes may occasionally feature anchor links
+            connecting to external networks, content management providers, or external creator
+            hubs that sit entirely outside the ownership or administrative control parameters of
+            Videsaur. We possess no oversight regarding the operational practices, security
+            protocols, or privacy frameworks of external destinations. You acknowledge that
+            clicking external links transfers your data session into alternate spaces at your
+            own operational risk.
           </p>
         </PolicySection>
 
-        <PolicySection heading="7. No Professional Advice">
+        <PolicySection heading="5. System Performance & Technical Security Limits">
           <p>
-            The information provided on Videsaur.co.in is for general informational and
-            entertainment purposes only and is not intended to be a substitute for professional
-            advice. Always seek the advice of qualified professionals regarding any specific
-            questions you may have.
+            While our automated architecture enforces strict clean-room check routines to shield
+            our file grids from anomalies, Videsaur cannot guarantee or warrant that the media
+            asset components, file extractors, or Nginx/Vercel script engines are entirely free
+            from underlying browser caching conflicts, code deprecations, or unexpected runtime
+            bottlenecks. The download, processing, and caching of files acquired from our
+            environment execute entirely inside your own computing discretion.
           </p>
         </PolicySection>
 
-        <PolicySection heading="8. Changes to Disclaimer">
+        <PolicySection heading="6. Clear Boundary of Platform Liability">
           <p>
-            We reserve the right to modify this disclaimer at any time. We will notify users of
-            any changes by posting the new disclaimer on this page and updating the &ldquo;Last
-            Updated&rdquo; date.
+            In no scenario or legal environment shall Videsaur, its administrative coordinators,
+            development engineers, or platform associates be held liable for any downstream
+            indirect, incidental, special, consequential, or punitive damages. This exclusion
+            spans, without limitation, network fee overages, production file losses, database
+            dropouts, commercial project delays, or loss of creative goodwill resulting directly
+            from your utilization or inability to pull assets from our system channels—even if
+            our support desk has been explicitly alerted to the risk of such operational gaps.
           </p>
         </PolicySection>
 
-        <PolicySection heading="9. Contact Us">
+        <PolicySection heading="7. Structural Modifications & Tracking Update Clauses">
           <p>
-            If you have any questions about this Disclaimer, please contact us at{' '}
-            <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
+            We preserve our total administrative right to adapt, rewrite, or completely replace
+            this legal Disclaimer at any time without issuing individual notifications. We
+            fulfill transparency demands by modifying the <strong>&ldquo;Last Updated&rdquo;</strong>{' '}
+            indicator tracking parameters prominently featured at the top of this layout. Your
+            ongoing interaction with our curation arrays signifies a total, unreserved acceptance
+            of the revised framework bounds.
+          </p>
+        </PolicySection>
+
+        <footer className="mt-10 border-t border-edge pt-5 text-center text-mid">
+          <p>
+            For explicit copyright inquiries, immediate takedown notifications, or clarification
+            queries regarding this liability framework, connect directly with our compliance
+            desk:{' '}
+            <a
+              href="mailto:support@videsaur.co.in"
+              className="font-semibold text-hi underline underline-offset-2 hover:text-brand"
+            >
               support@videsaur.co.in
-            </a>{' '}
-            or visit our{' '}
-            <Link to="/contact" className="text-hi underline underline-offset-2 hover:text-brand">
-              Contact Us
-            </Link>{' '}
-            page.
+            </a>
+            .
           </p>
-        </PolicySection>
+        </footer>
       </PolicyLayout>
     </>
   )

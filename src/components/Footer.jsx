@@ -1,85 +1,108 @@
 import { Link } from 'react-router-dom'
 
-const SECTIONS = [
+const FOOTER_COLUMNS = [
   {
-    heading: 'Explore',
+    title: 'Asset Libraries',
     links: [
-      ['Trending', '/trending'],
-      ['Videos', '/videos'],
-      ['GIFs', '/gifs'],
-      ['Templates', '/templates'],
-      ['Sounds', '/sounds'],
+      ['Trending Memes', '/trending-memes'],
+      ['Animated GIFs', '/gifs'],
+      ['Sound Effects', '/sound-effects'],
+      ['Meme Templates', '/meme-templates'],
     ],
   },
   {
-    heading: 'Quick Links',
+    title: 'Privacy & Legal',
     links: [
-      ['About Us', '/about'],
-      ['Contact Us', '/contact'],
-    ],
-  },
-  {
-    heading: 'Legal',
-    links: [
-      ['Privacy Policy', '/privacy'],
-      ['Terms & Conditions', '/terms'],
-      ['Disclaimer', '/disclaimer'],
-    ],
-  },
-  {
-    heading: 'Policies',
-    links: [
-      ['DMCA Policy', '/content-policy'],
+      ['Privacy Policy', '/privacy-policy'],
+      ['Terms of Use', '/terms-and-conditions'],
+      ['DMCA Policy', '/dmca-policy'],
       ['Cookie Policy', '/cookie-policy'],
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      ['About Us', '/about-us'],
+      ['Contact Us', '/contact-us'],
+      ['Platform Disclaimer', '/disclaimer'],
     ],
   },
 ]
 
+const linkStyle = {
+  color: 'var(--text-secondary)',
+  minHeight: '48px',
+  minWidth: '48px',
+}
+
 export default function Footer() {
   return (
-    <footer className="border-t border-edge bg-panel">
-      {/* content-visibility defers layout/paint until this scrolls near the
-          viewport; contain-intrinsic-size keeps scrollbar height stable
-          before that first measurement happens. */}
-      <div className="mx-auto max-w-7xl px-6 py-12 [content-visibility:auto] [contain-intrinsic-size:auto_420px]">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
-          {SECTIONS.map(({ heading, links }) => (
-            <div key={heading}>
-              <h3 className="mb-4 text-sm font-semibold text-hi">{heading}</h3>
-              <ul className="space-y-2.5">
+    <footer
+      className="px-5 py-10 font-sans text-sm leading-[1.6] sm:px-8 lg:px-12"
+      style={{
+        backgroundColor: 'var(--bg-panel)',
+        borderTop: '1px solid var(--border-edge)',
+        color: 'var(--text-primary)',
+      }}
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 text-center md:grid-cols-2 lg:grid-cols-4 lg:text-left">
+        <section aria-labelledby="footer-platform-title">
+          <h2
+            id="footer-platform-title"
+            className="mb-4 text-lg font-bold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Videsaur
+          </h2>
+          <p className="m-0" style={{ color: 'var(--text-secondary)' }}>
+            Videsaur is an open-access digital curation workshop providing
+            high-performance media elements, short-form transitions, and lossless
+            soundboards for digital media professionals and independent storytellers.
+          </p>
+        </section>
+
+        {FOOTER_COLUMNS.map(({ title, links }) => {
+          const headingId = `footer-${title.toLowerCase().replace(/[^a-z]+/g, '-')}`
+
+          return (
+            <nav key={title} aria-labelledby={headingId}>
+              <h2
+                id={headingId}
+                className="mb-3 font-bold"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {title}
+              </h2>
+              <ul className="m-0 flex list-none flex-col items-center gap-3 p-0 lg:items-start">
                 {links.map(([label, to]) => (
                   <li key={to}>
                     <Link
                       to={to}
-                      className="text-sm text-mid transition-colors hover:text-hi"
+                      className="flex items-center justify-center font-medium no-underline transition-opacity hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 lg:justify-start"
+                      style={linkStyle}
                     >
                       {label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
-          ))}
-
-          <div>
-            <h3 className="mb-4 text-sm font-semibold text-hi">Contact</h3>
-            <a
-              href="mailto:support@videsaur.com"
-              className="text-sm text-mid transition-colors hover:text-hi"
-            >
-              support@videsaur.com
-            </a>
-          </div>
-        </div>
+            </nav>
+          )
+        })}
       </div>
 
-      <div className="border-t border-edge">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-6 py-4 sm:flex-row">
-          <span className="text-xs text-lo">
-            © {new Date().getFullYear()} Videsaur. All rights reserved.
-          </span>
-          <span className="text-xs text-lo">Made with ♥ for video lovers worldwide</span>
-        </div>
+      <div
+        className="mx-auto mt-10 max-w-7xl pt-6 text-center text-xs"
+        style={{
+          borderTop: '1px solid var(--border-edge)',
+          color: 'var(--text-tertiary)',
+        }}
+      >
+        <p className="m-0">
+          © 2026 Videsaur. All rights reserved. Sourced pop-culture assets and community
+          historical artifacts are curated and processed strictly inside transformative
+          Fair Use boundaries.
+        </p>
       </div>
     </footer>
   )

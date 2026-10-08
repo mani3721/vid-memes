@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import SEO from '../components/SEO'
 import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 
@@ -6,106 +5,133 @@ export default function DmcaPage() {
   return (
     <>
       <SEO
-        title="DMCA Policy — Videsaur.co.in"
-        description="Videsaur.co.in DMCA Policy. How to submit a copyright takedown notice, counter-notice process, and our repeat-infringer policy."
+        title="DMCA Copyright Policy — Videsaur.co.in"
+        description="Review Videsaur.co.in's DMCA Copyright Policy, including takedown notice requirements, counter-notifications, repeat-infringer protocols, and processing times."
         canonicalPath="/content-policy"
       />
       <PolicyLayout
-        title="DMCA Policy"
-        breadcrumb="DMCA Policy"
-        lastUpdated="7 September 2026"
+        title="DMCA Copyright Policy"
+        breadcrumb="DMCA Copyright Policy"
+        lastUpdated="October 8, 2026"
       >
-        <PolicySection heading="1. Introduction">
+        <PolicySection heading="1. Introduction & Statement of Commitment">
+          <p className="mb-3">
+            <strong className="text-hi">Videsaur.co.in</strong> (the "Platform") strictly respects
+            the intellectual property rights of external content producers, trademark owners, and
+            creative artists. In direct compliance with the{' '}
+            <strong className="text-hi">Digital Millennium Copyright Act (DMCA)</strong> of 1998,
+            specifically 17 U.S.C. § 512, we maintain an expedited, formalized protocol to address
+            and clear legitimate claims of alleged copyright infringement.
+          </p>
           <p>
-            Videsaur.co.in respects the intellectual property rights of others and expects its
-            users to do the same. In accordance with the Digital Millennium Copyright Act
-            (DMCA), we have adopted a policy to respond to clear notices of alleged copyright
-            infringement.
+            As a digital repository and curation index mapping pop-culture media elements, viral
+            short-form loops, and open-access audio tracks, our system functions as an automated
+            service provider hosting user-shared and community-contributed materials inside
+            established Fair Use frameworks. We expect our active user base to respect these
+            intellectual property standards. Videsaur will swiftly terminate system access and
+            remove hosted elements if an administrative notice details a verified license violation.
           </p>
         </PolicySection>
 
-        <PolicySection heading="2. Reporting Copyright Infringement">
+        <PolicySection heading="2. Filing a Formal Notice of Copyright Infringement">
           <p className="mb-3">
-            If you believe that content on Videsaur.co.in infringes your copyright, please
-            provide our Copyright Agent with the following information in writing:
+            If you are a copyright owner, or an authorized corporate representative acting on behalf
+            of a rights holder, and you identify any media asset or text string indexed across our
+            active channels that you believe infringes upon your exclusive rights, you may submit a
+            formal written notification. To ensure statutory processing validity under 17 U.S.C.
+            § 512(c)(3), your DMCA Takedown Notice must include the following precise elements:
           </p>
           <ul className="list-disc space-y-1.5 pl-5 text-mid">
-            <li>A physical or electronic signature of a person authorized to act on behalf of the copyright owner</li>
-            <li>Identification of the copyrighted work claimed to have been infringed</li>
-            <li>Identification of the material that is claimed to be infringing and information reasonably sufficient to permit us to locate the material</li>
-            <li>Your contact information, including address, telephone number, and email address</li>
-            <li>A statement that you have a good faith belief that use of the material is not authorized by the copyright owner</li>
-            <li>A statement that the information in the notification is accurate and, under penalty of perjury, that you are authorized to act on behalf of the copyright owner</li>
+            <li>A physical or electronic signature of the individual legally authorized to act on behalf of the owner of the exclusive right that is allegedly infringed.</li>
+            <li>Explicit identification of the copyrighted work or registered artistic creation claimed to have been infringed (or, if multiple works across our grids are covered by a single notice, a comprehensive list of those assets).</li>
+            <li>Identification of the specific material, thumbnail file, video track, or audio wave claimed to be infringing. This must include information reasonably sufficient to allow our engineering team to locate the asset (such as the direct dynamic URL: <code className="text-hi">https://videsaur.co.in[slug]</code>).</li>
+            <li>Your direct contact metrics, including a valid mailing address, a functional telephone number, and an active business email address.</li>
+            <li>A formal statement that you maintain a good-faith belief that utilization of the targeted material in the manner complained of is not authorized by the copyright owner, its legal agent, or statutory law.</li>
+            <li>A statement that the data elements mapped out in the notification are entirely accurate, and, under penalty of perjury, that you are the rightful copyright holder or are legally authorized to act on behalf of the owner.</li>
           </ul>
         </PolicySection>
 
-        <PolicySection heading="3. Designated Copyright Agent">
-          <p className="mb-3">Please send your DMCA takedown notice to:</p>
+        <PolicySection heading="3. Designated Copyright Agent Contact">
+          <p className="mb-3">
+            All formal copyright remediation declarations and structural DMCA Takedown Notices must
+            be directed to our designated agent via our secure compliance portal:
+          </p>
           <div className="rounded-xl border border-edge bg-panel p-4 text-sm">
-            <p className="font-semibold text-hi">Copyright Agent — Videsaur.co.in</p>
+            <p className="font-semibold text-hi">Copyright Administration Agent — Videsaur.co.in</p>
             <p className="mt-1 text-mid">
-              Email:{' '}
-              <a href="mailto:support@videsaur.co.in" className="text-hi hover:text-brand">
+              <strong className="text-hi">Email Endpoint:</strong>{' '}
+              <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
                 support@videsaur.co.in
               </a>
             </p>
-            <p className="mt-1 text-mid">Subject Line: <span className="text-hi">DMCA Takedown Request</span></p>
+            <p className="mt-1 text-mid">
+              <strong className="text-hi">Mandatory Subject Line:</strong> DMCA Takedown Request — [Asset ID/Name]
+            </p>
           </div>
+          <p className="mt-3 text-sm italic text-mid">
+            Note: Communications sent to this endpoint that do not contain a valid copyright claim
+            template may be automatically filtered out by our network routers.
+          </p>
         </PolicySection>
 
-        <PolicySection heading="4. Counter-Notification">
+        <PolicySection heading="4. Counter-Notification Framework">
           <p className="mb-3">
-            If you believe that your content was removed in error, you may submit a
-            counter-notification. Your counter-notification must include:
+            If your user profile or submitted asset layout has been modified or removed via a DMCA
+            takedown loop, and you maintain that the targeted asset was flagged due to an error,
+            misidentification, or fits a protected Fair Use allocation, you may file a formal
+            Counter-Notification. Your written response must include the following statutory properties:
           </p>
           <ul className="list-disc space-y-1.5 pl-5 text-mid">
-            <li>Your physical or electronic signature</li>
-            <li>Identification of the material that has been removed and its location before removal</li>
-            <li>A statement under penalty of perjury that you have a good faith belief the material was removed by mistake</li>
-            <li>Your name, address, and telephone number</li>
-            <li>A statement that you consent to the jurisdiction of the federal court in your district</li>
+            <li>Your physical or verified electronic signature.</li>
+            <li>Identification of the specific media asset that was removed or disabled, alongside its exact repository routing path prior to deletion.</li>
+            <li>A formal statement under penalty of perjury that you possess a good-faith belief that the content was hidden or disabled as a result of mistake or misidentification.</li>
+            <li>Your legal name, operating address, and telephone number.</li>
+            <li>A statement that you consent to the jurisdiction of the federal court district in which your address is located (or, if you reside outside the United States, that you consent to the jurisdiction of the judicial district where Videsaur's data hosting servers sit), and that you will accept service of process from the original claimant.</li>
           </ul>
         </PolicySection>
 
-        <PolicySection heading="5. Repeat Infringers">
+        <PolicySection heading="5. Repeat Infringer Termination Protocols">
           <p>
-            It is our policy to terminate, in appropriate circumstances, the accounts of users
-            who are repeat infringers of intellectual property rights.
+            In accordance with the mandatory provisions of the DMCA, Videsaur enforces a strict,
+            automated <strong className="text-hi">Repeat Infringer Policy</strong>. If a community
+            profile or contributor layout accumulates multiple independent copyright strikes or is
+            found to repeatedly upload unlicensed commercial materials outside of transformative
+            Fair Use parameters, our administration tools will completely disable the account,
+            invalidate associated API access tokens, and issue a permanent network IP block.
           </p>
         </PolicySection>
 
-        <PolicySection heading="6. False Claims">
+        <PolicySection heading="6. Legal Protections Against Fraudulent Claims">
           <p>
-            Please note that under Section 512(f) of the DMCA, any person who knowingly
-            materially misrepresents that material or activity is infringing may be subject to
-            liability for damages. Please be sure that you are the actual copyright holder or
-            authorized to act on behalf of the copyright owner before submitting a takedown
-            notice.
+            Please be actively aware that under <strong className="text-hi">17 U.S.C. § 512(f)</strong>,
+            any individual who knowingly and materially misrepresents that a file or active online
+            service is infringing your copyright can be held strictly liable for civil financial
+            damages. This includes legal fees, administrative costs, and project disruption penalties
+            incurred by the Platform or the targeted creator. If you are uncertain whether the asset
+            actually compromises your legal trademark boundaries, consult with a qualified
+            intellectual property attorney before filing a notice.
           </p>
         </PolicySection>
 
-        <PolicySection heading="7. Processing Time">
+        <PolicySection heading="7. Processing Windows & SLA">
           <p>
-            We will review and respond to valid DMCA takedown notices within a reasonable
-            timeframe, typically within{' '}
-            <strong className="text-hi">48–72 hours</strong> of receipt. However, processing
-            times may vary depending on the complexity of the case.
+            Upon receiving an unreserved, legally valid DMCA notification, our moderation team
+            executes rapid remediation sweeps. Under our standard operational Service Level Agreement
+            (SLA), assets satisfying removal metrics are hidden or disabled within a{' '}
+            <strong className="text-hi">48 to 72-hour processing window</strong>. Complex claims or
+            multi-asset queries may require additional validation queues.
           </p>
         </PolicySection>
 
-        <PolicySection heading="8. Contact Information">
+        <div className="border-t border-edge pt-5 text-center text-mid">
           <p>
-            For questions about this DMCA Policy, please contact us at{' '}
-            <a href="mailto:support@videsaur.co.in" className="text-hi underline underline-offset-2 hover:text-brand">
+            For administrative follow-ups, regulatory compliance status, or related intellectual
+            property inquiries, reach our development office directly at:{' '}
+            <a href="mailto:support@videsaur.co.in" className="font-semibold text-hi underline underline-offset-2 hover:text-brand">
               support@videsaur.co.in
-            </a>{' '}
-            or visit our{' '}
-            <Link to="/contact" className="text-hi underline underline-offset-2 hover:text-brand">
-              Contact Us
-            </Link>{' '}
-            page.
+            </a>.
           </p>
-        </PolicySection>
+        </div>
       </PolicyLayout>
     </>
   )

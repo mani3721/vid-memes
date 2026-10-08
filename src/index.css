@@ -50,6 +50,8 @@
   --bg-surface:       #FFFFFF;
   --bg-surface-hover: #F0F0F4;
   --border-subtle:    #E2E2E8;
+  --bg-panel:         var(--bg-surface);
+  --border-edge:      var(--border-subtle);
   --text-primary:     #1A1D23;
   --text-secondary:   #6B6C78;
   /* 4.53:1 on --bg-base. #9A9AA8 was 2.62:1 and failed WCAG AA. */

@@ -78,11 +78,15 @@ function Studio() {
         */}
         <Route path="/sound/:slug"    element={<MemePage />} />
         <Route path="/about"          element={<AboutPage />} />
+        <Route path="/about-us"       element={<AboutPage />} />
         <Route path="/contact"        element={<ContactPage />} />
         <Route path="/support-us"     element={<SupportUsPage />} />
         <Route path="/privacy"        element={<PrivacyPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPage />} />
         <Route path="/terms"          element={<TermsPage />} />
+        <Route path="/terms-and-conditions" element={<TermsPage />} />
         <Route path="/content-policy" element={<DmcaPage />} />
+        <Route path="/dmca-policy"    element={<DmcaPage />} />
         <Route path="/disclaimer"     element={<DisclaimerPage />} />
         <Route path="/cookie-policy"  element={<CookiePolicyPage />} />
         <Route path="/upload"         element={<UploadForm />} />
