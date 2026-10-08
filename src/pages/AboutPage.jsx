@@ -11,7 +11,7 @@ export default function AboutPage() {
         canonicalPath="/about"
       />
       <PolicyLayout title="About Vidsaur">
-        <p className="-mt-8 text-center text-base italic text-lo sm:text-lg">
+        <p className="mx-auto max-w-2xl wrap-break-word px-2 text-center text-base italic leading-relaxed text-lo sm:text-lg">
           The Authoritative Digital Media Repository &amp; Curation Workshop for Content Creators
         </p>
 

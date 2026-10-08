@@ -1,184 +1,331 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Mail, Clock, HelpCircle } from 'lucide-react'
 import SEO from '../components/SEO'
-import PolicyLayout, { PolicySection } from '../components/PolicyLayout'
 
-function ContactCard({ icon: Icon, label, value, href }) {
-  return (
-    <div className="flex items-start gap-3 rounded-2xl border border-edge bg-panel p-4">
-      <Icon className="mt-0.5 size-5 shrink-0 text-brand" />
-      <div>
-        <p className="text-xs text-mid">{label}</p>
-        {href ? (
-          <a href={href} className="text-sm font-semibold text-hi transition-colors hover:text-brand">
-            {value}
-          </a>
-        ) : (
-          <p className="text-sm font-semibold text-hi">{value}</p>
-        )}
-      </div>
-    </div>
-  )
-}
+const initialForm = { name: '', email: '', inquiryType: '', message: '' }
 
 export default function ContactPage() {
-  const [sent, setSent] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+  const [form, setForm] = useState(initialForm)
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    // Stub: in production, POST to a form endpoint (Formspree, Netlify Forms, etc.)
-    setSent(true)
+  function updateField(event) {
+    const { name, value } = event.target
+    setForm((current) => ({ ...current, [name]: value }))
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    const subject = encodeURIComponent(`[${form.inquiryType}] Contact request from ${form.name}`)
+    const body = encodeURIComponent(
+      `Full Name: ${form.name}\nEmail Address: ${form.email}\nInquiry Type: ${form.inquiryType}\n\n${form.message}`,
+    )
+
+    window.location.href = `mailto:support@videsaur.co.in?subject=${subject}&body=${body}`
   }
 
   return (
     <>
       <SEO
-        title="Contact Videsaur.co.in"
-        description="Get in touch with the Videsaur.co.in team. General enquiries, support, feedback, or copyright requests — we respond within 24–48 hours."
-        canonicalPath="/contact"
+        title="Contact Us — Videsaur"
+        description="Contact the Videsaur administrative team for technical support, media curation suggestions, general feedback, or copyright and DMCA inquiries."
+        canonicalPath="/contact-us"
       />
-      <PolicyLayout title="Contact Us" breadcrumb="Contact">
-        <PolicySection heading="Get in Touch">
-          <p>
-            We&rsquo;d love to hear from you! Whether you have a question, feedback, suggestion,
-            or need support, our team is here to help. Please use the contact information below
-            to reach out to us.
-          </p>
-          <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <ContactCard
-              icon={Mail}
-              label="Email Us"
-              value="support@videsaur.co.in"
-              href="mailto:support@videsaur.co.in"
-            />
-            <ContactCard
-              icon={Clock}
-              label="Response Time"
-              value="24–48 hours (business days)"
-            />
-            <ContactCard
-              icon={HelpCircle}
-              label="Support"
-              value="Technical, content &amp; general"
-            />
-          </div>
-        </PolicySection>
 
-        <PolicySection heading="Send a Message">
-          {sent ? (
-            <div className="rounded-2xl border border-brand/30 bg-brand/10 p-6 text-center">
-              <p className="text-sm font-semibold text-hi">Message received!</p>
-              <p className="mt-1 text-xs text-mid">We&rsquo;ll reply to your email within 24–48 hours on business days.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="contact-name" className="mb-1 block text-xs font-semibold text-hi">
-                    Name
-                  </label>
-                  <input
-                    id="contact-name"
-                    type="text"
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="contact-email" className="mb-1 block text-xs font-semibold text-hi">
-                    Email
-                  </label>
-                  <input
-                    id="contact-email"
-                    type="email"
-                    required
-                    value={form.email}
-                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                    className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="contact-subject" className="mb-1 block text-xs font-semibold text-hi">
-                  Subject
-                </label>
+      <main className="contact-page">
+        <header className="contact-header">
+          <h1>Contact Us</h1>
+          <p>
+            Connect with the Videsaur coordination desk for platform support, curation feedback,
+            and compliance assistance.
+          </p>
+        </header>
+
+        <div className="contact-grid">
+          <section className="contact-panel" aria-labelledby="inquiry-form-title">
+            <h2 id="inquiry-form-title">Send an Inquiry</h2>
+            <p className="contact-intro">
+              Complete the form below and your email application will prepare a message for our
+              administrative team.
+            </p>
+
+            <form className="contact-form" onSubmit={handleSubmit}>
+              <div className="contact-field">
+                <label htmlFor="contact-name">Full Name</label>
                 <input
-                  id="contact-subject"
+                  id="contact-name"
+                  name="name"
                   type="text"
+                  autoComplete="name"
                   required
-                  value={form.subject}
-                  onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
-                  className="w-full rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
-                  placeholder="Technical support / Feedback / Partnership / Other"
+                  value={form.name}
+                  onChange={updateField}
                 />
               </div>
-              <div>
-                <label htmlFor="contact-message" className="mb-1 block text-xs font-semibold text-hi">
-                  Message
-                </label>
+
+              <div className="contact-field">
+                <label htmlFor="contact-email">Email Address</label>
+                <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={form.email}
+                  onChange={updateField}
+                />
+              </div>
+
+              <div className="contact-field">
+                <label htmlFor="contact-inquiry-type">Inquiry Type</label>
+                <select
+                  id="contact-inquiry-type"
+                  name="inquiryType"
+                  required
+                  value={form.inquiryType}
+                  onChange={updateField}
+                >
+                  <option value="" disabled>Select an inquiry category</option>
+                  <option value="General Feedback">General Feedback</option>
+                  <option value="Technical Support / Build Glitch">
+                    Technical Support / Build Glitch
+                  </option>
+                  <option value="Media Curation Suggestions">Media Curation Suggestions</option>
+                  <option value="Copyright / DMCA Inquiries">Copyright / DMCA Inquiries</option>
+                </select>
+              </div>
+
+              <div className="contact-field">
+                <label htmlFor="contact-message">Message</label>
                 <textarea
                   id="contact-message"
+                  name="message"
+                  rows="7"
                   required
-                  rows={5}
+                  minLength="10"
                   value={form.message}
-                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-                  className="w-full resize-none rounded-xl border border-edge bg-panel px-3 py-2.5 text-sm text-hi placeholder-mist/50 outline-none transition-colors focus:border-brand"
-                  placeholder="Tell us how we can help..."
+                  onChange={updateField}
                 />
               </div>
-              <button
-                type="submit"
-                className="btn-primary rounded-full px-6 py-2.5 text-sm font-semibold"
-              >
-                Send message
+
+              <button type="submit" className="contact-submit">
+                Submit Inquiry
               </button>
             </form>
-          )}
-        </PolicySection>
+          </section>
 
-        <PolicySection heading="What We Can Help With">
-          <ul className="list-disc space-y-1.5 pl-5">
-            <li>Technical support and troubleshooting</li>
-            <li>Content-related questions</li>
-            <li>Account and profile assistance</li>
-            <li>Feedback and suggestions</li>
-            <li>Copyright and DMCA inquiries</li>
-            <li>Partnership and collaboration opportunities</li>
-            <li>General questions about our platform</li>
-          </ul>
-        </PolicySection>
+          <aside className="contact-panel contact-trust" aria-labelledby="contact-info-title">
+            <h2 id="contact-info-title">Administrative Contact Info</h2>
 
-        <PolicySection heading="Before Contacting Us">
-          <p>
-            Before reaching out, you might find answers to common questions in our:
-          </p>
-          <ul className="mt-2 list-disc space-y-1.5 pl-5">
-            <li>
-              <Link to="/privacy-policy" className="text-hi underline underline-offset-2 hover:text-brand">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link to="/terms" className="text-hi underline underline-offset-2 hover:text-brand">
-                Terms and Conditions
-              </Link>
-            </li>
-          </ul>
-        </PolicySection>
+            <div className="contact-info-block">
+              <h3>Direct Support Endpoint</h3>
+              <a href="mailto:support@videsaur.co.in">support@videsaur.co.in</a>
+            </div>
 
-        <PolicySection heading="Follow Us">
-          <p>
-            Stay connected with us for the latest updates, new content, and announcements.
-            Follow us on our social media platforms to be part of our growing community!
-          </p>
-        </PolicySection>
-      </PolicyLayout>
+            <div className="contact-info-block">
+              <h3>Standard Response Window</h3>
+              <p>
+                Our coordination desk reviews and processes standard technical and curation
+                inquiries within a strict 24-to-48 hour window.
+              </p>
+            </div>
+
+            <div className="contact-legal-note" role="note" aria-label="Urgent legal inquiries">
+              <h3>Intellectual Property Notices</h3>
+              <p>
+                For urgent intellectual property claims, trademark issues, or removal requests,
+                please submit a formal notification directly via our automated{' '}
+                <Link to="/dmca-policy">DMCA Policy lane</Link> for immediate safe-harbor
+                remediation.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <style>{`
+        .contact-page {
+          max-width: 1120px;
+          margin: 0 auto;
+          padding: 48px 20px 64px;
+          color: var(--text-primary);
+          font-size: 16px;
+          line-height: 1.7;
+        }
+
+        .contact-header {
+          max-width: 720px;
+          margin: 0 auto 36px;
+          text-align: center;
+        }
+
+        .contact-header h1 {
+          margin: 0 0 12px;
+          color: var(--text-primary);
+          font-size: clamp(2rem, 5vw, 2.75rem);
+          line-height: 1.2;
+        }
+
+        .contact-header p,
+        .contact-intro,
+        .contact-info-block p,
+        .contact-legal-note p {
+          color: var(--text-secondary);
+        }
+
+        .contact-header p,
+        .contact-intro,
+        .contact-info-block p,
+        .contact-legal-note p,
+        .contact-info-block h3,
+        .contact-legal-note h3 {
+          margin-top: 0;
+        }
+
+        .contact-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+          gap: 28px;
+          align-items: start;
+        }
+
+        .contact-panel {
+          padding: 28px;
+          border: 1px solid var(--border-edge);
+          border-radius: 16px;
+          background: var(--bg-panel);
+        }
+
+        .contact-panel h2 {
+          margin: 0 0 10px;
+          color: var(--text-primary);
+          font-size: 1.4rem;
+          line-height: 1.4;
+        }
+
+        .contact-form {
+          display: grid;
+          gap: 20px;
+          margin-top: 24px;
+        }
+
+        .contact-field {
+          display: grid;
+          gap: 8px;
+        }
+
+        .contact-field label,
+        .contact-info-block h3,
+        .contact-legal-note h3 {
+          color: var(--text-primary);
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 1.6;
+        }
+
+        .contact-field input,
+        .contact-field select,
+        .contact-field textarea {
+          width: 100%;
+          min-height: 48px;
+          box-sizing: border-box;
+          border: 1px solid var(--border-edge);
+          border-radius: 8px;
+          background: var(--bg-panel);
+          color: var(--text-primary);
+          font: inherit;
+          line-height: 1.6;
+          padding: 11px 12px;
+        }
+
+        .contact-field textarea {
+          min-height: 168px;
+          resize: vertical;
+        }
+
+        .contact-field input:focus,
+        .contact-field select:focus,
+        .contact-field textarea:focus,
+        .contact-submit:focus-visible,
+        .contact-trust a:focus-visible {
+          outline: 2px solid var(--text-primary);
+          outline-offset: 3px;
+        }
+
+        .contact-submit {
+          min-width: 48px;
+          min-height: 48px;
+          justify-self: start;
+          border: 1px solid var(--text-primary);
+          border-radius: 8px;
+          background: var(--text-primary);
+          color: var(--bg-panel);
+          cursor: pointer;
+          font: inherit;
+          font-weight: 700;
+          padding: 12px 24px;
+        }
+
+        .contact-submit:hover {
+          background: var(--text-secondary);
+          border-color: var(--text-secondary);
+        }
+
+        .contact-trust {
+          display: grid;
+          gap: 24px;
+        }
+
+        .contact-info-block {
+          padding-bottom: 24px;
+          border-bottom: 1px solid var(--border-edge);
+        }
+
+        .contact-info-block h3,
+        .contact-legal-note h3 {
+          margin-bottom: 8px;
+        }
+
+        .contact-trust a {
+          display: inline-flex;
+          align-items: center;
+          min-height: 48px;
+          color: var(--text-primary);
+          font-weight: 700;
+          overflow-wrap: anywhere;
+          text-decoration: underline;
+          text-underline-offset: 4px;
+        }
+
+        .contact-legal-note {
+          padding: 20px;
+          border: 1px solid var(--border-edge);
+          border-left-width: 4px;
+          border-radius: 8px;
+          background: var(--bg-panel);
+        }
+
+        .contact-legal-note p {
+          margin-bottom: 0;
+        }
+
+        @media (max-width: 760px) {
+          .contact-page {
+            padding: 36px 16px 48px;
+          }
+
+          .contact-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .contact-panel {
+            padding: 22px 18px;
+          }
+
+          .contact-submit {
+            width: 100%;
+          }
+        }
+      `}</style>
     </>
   )
 }
