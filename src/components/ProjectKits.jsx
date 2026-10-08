@@ -38,7 +38,6 @@ export default function ProjectKits() {
             <DownloadButton
               label={`Download the ${kit.name} kit`}
               count={kit.assetIds.length}
-              size="sm"
             />
             <button
               type="button"

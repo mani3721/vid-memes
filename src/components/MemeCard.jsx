@@ -129,14 +129,14 @@ function MemeCard({ asset, index, aspectClass = 'aspect-square', priority = fals
         )}
 
         {/* Action overlay — above the stretched link so taps reach the buttons */}
-        <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-end gap-1.5 bg-linear-to-t from-black/70 to-transparent p-2.5 pt-8 opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-end gap-2 bg-linear-to-t from-black/70 to-transparent p-2 pt-8 opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
           <button
             ref={heartBtnRef}
             type="button"
             onClick={handleFaveClick}
             aria-label={faved ? 'Remove from favorites' : 'Save to collection'}
             aria-expanded={showCollectionPopover}
-            className={`grid size-7 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 ${
+            className={`grid size-12 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 ${
               faved ? 'bg-red-500 text-white' : 'bg-black/50 text-white hover:bg-red-500'
             }`}
           >

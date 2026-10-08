@@ -2,6 +2,7 @@ import { Loader2 } from 'lucide-react'
 import { BASE_URL, SITE_NAME } from '../utils/seo'
 import { useCategoryMemes } from '../hooks/useMemes'
 import SEO from '../components/SEO'
+import AdSlot from '../components/AdSlot'
 import MasonryFeed from '../components/MasonryFeed'
 import MoodPicker from '../components/MoodPicker'
 import EmptyGridState from '../components/EmptyGridState'
@@ -111,6 +112,12 @@ export default function CategoryPage({ category }) {
             )}
           </>
         )}
+
+        {/* Own wrapper — see AdSlot.jsx for why this trivially clears the
+            structural sibling check regardless of what's inside the grid. */}
+        <div>
+          <AdSlot context="feed-gap" />
+        </div>
       </div>
     </>
   )

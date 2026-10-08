@@ -26,7 +26,6 @@ export default function MemeOfDayBanner() {
         href={meme.publicUrl}
         filename={meme.filename}
         memeId={meme.id}
-        size="sm"
       />
     </div>
   )

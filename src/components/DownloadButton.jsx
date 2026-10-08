@@ -32,7 +32,6 @@ export default function DownloadButton({
   filename,
   memeId,
   count = 1,
-  size = 'md',
   variant = 'solid',
   layout = 'icon',
   text = 'Download',
@@ -82,7 +81,10 @@ export default function DownloadButton({
     timers.current.push(setTimeout(() => setState('idle'), 2300))
   }
 
-  const dims = size === 'sm' ? 'size-8' : 'size-10'
+  // 48px — Google's/Lighthouse's tap-target minimum. This used to vary by a
+  // `size` prop (32px/40px, neither of which cleared 48px), so the prop was
+  // dropped along with the smaller sizes rather than kept as dead API.
+  const dims = 'size-12'
   const tone =
     variant === 'solid'
       ? 'btn-primary'

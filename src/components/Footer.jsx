@@ -38,7 +38,10 @@ const SECTIONS = [
 export default function Footer() {
   return (
     <footer className="border-t border-edge bg-panel">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+      {/* content-visibility defers layout/paint until this scrolls near the
+          viewport; contain-intrinsic-size keeps scrollbar height stable
+          before that first measurement happens. */}
+      <div className="mx-auto max-w-7xl px-6 py-12 [content-visibility:auto] [contain-intrinsic-size:auto_420px]">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5">
           {SECTIONS.map(({ heading, links }) => (
             <div key={heading}>

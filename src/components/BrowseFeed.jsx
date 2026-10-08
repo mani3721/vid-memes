@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useStudio } from '../store/studioStore'
 import { useMixedFeed } from '../hooks/useMemes'
-import { WEBSITE_SCHEMA } from '../utils/seo'
+import { WEBSITE_SCHEMA, FAQ_SCHEMA } from '../utils/seo'
 import SEO from './SEO'
+import AdSlot from './AdSlot'
 import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import TrendingSoundsFeed from './TrendingSoundsFeed'
 import PageHeading from './PageHeading'
+import HomeContentDepth from './HomeContentDepth'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
 
@@ -33,7 +35,7 @@ export default function BrowseFeed() {
         description="Download free meme videos, GIFs, blank templates, and sound effects. No watermark, HD quality, updated daily. Perfect for creators, Reels, Shorts, and WhatsApp Status."
         keywords="meme download, meme video download, free meme download, meme templates, meme sound effects, no watermark memes, funny memes download, gif memes download"
         canonicalPath="/"
-        schemas={[WEBSITE_SCHEMA]}
+        schemas={[WEBSITE_SCHEMA, FAQ_SCHEMA]}
       />
 
       <div className="flex flex-col gap-5">
@@ -111,9 +113,16 @@ export default function BrowseFeed() {
           )}
         </section>
 
+        {/* Own wrapper — see AdSlot.jsx for why this trivially clears the
+            structural sibling check regardless of what's inside the feed. */}
+        <div>
+          <AdSlot context="feed-gap" />
+        </div>
+
         {/* Trending Sound Effects strip */}
         <TrendingSoundsFeed />
 
+        <HomeContentDepth />
       </div>
     </>
   )

@@ -108,13 +108,14 @@ function StickerCard({ sticker, searchTerm = '', priority = false }) {
           on pointer devices. The scrim is anchored to the bottom edge so it
           never sits over the middle of the artwork.
         */}
-        <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-end gap-1.5 bg-linear-to-t from-black/70 to-transparent p-2 pt-8 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+        <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-end gap-2 bg-linear-to-t from-black/70 to-transparent p-2 pt-8 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
           <button
             type="button"
             onClick={handleDownload}
             disabled={!sticker.downloadUrl}
+            data-ad-unsafe="download"
             aria-label={saved ? 'Sticker downloaded' : `Download ${sticker.title}`}
-            className={`grid size-7 shrink-0 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40 ${
+            className={`grid size-12 shrink-0 place-items-center rounded-full backdrop-blur-sm transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-40 ${
               saved ? 'bg-brand-fill text-ink' : 'bg-black/50 text-white hover:bg-brand-fill hover:text-ink'
             }`}
           >

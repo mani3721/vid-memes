@@ -323,5 +323,101 @@ export const FAQ_SCHEMA = {
         text: 'Videsaur offers MP4, GIF, WebM (with optional alpha transparency), and PNG. Meme sound effects are available as standalone audio downloads on the Sounds page.',
       },
     },
+    {
+      '@type': 'Question',
+      name: 'Do I need to create an account to use Videsaur?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'No. You can browse, search, and download memes as a guest with no sign-up required. Creating a free account just lets you save Favorites, organize Collections, and get notified about new content.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Are there Tamil memes on Videsaur?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Use the language toggle on the Feed page to switch between Tamil and English content, including Tamil movie reaction clips, dialogues, and templates.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I create my own memes on Videsaur?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Use the Create Meme tool to upload your own clip, trim it to the exact moment you want, and export it as an MP4 or GIF — no editing software needed.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What are Collections and how are they different from Favorites?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Collections let you organize your saved memes into named folders (like "Work Chat" or "Savage Replies") instead of one long Favorites list, making it easier to find exactly what you saved later.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Videsaur have sound effects and meme audio?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. The Sounds page has a growing library of meme sound effects and soundboards you can preview and download as standalone MP3/audio files — great for video editors and streamers.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I download meme templates to make my own version?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. The Templates page has blank, editable meme templates based on trending formats — download one and add your own caption using any image editor.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the AI Voice feature?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'AI Voice lets you generate custom audio clips in different voices and tones to pair with your memes or video edits — useful for dubbing, voiceovers, or adding a funny narration to your content.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I share a meme directly to WhatsApp or Instagram?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Every meme page has a share button that lets you copy the direct link or share instantly to WhatsApp, Instagram, and other apps without needing to download first.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How often is new content added?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'New memes, GIFs, sounds, and templates are added daily. Check the "Fresh Off The Internet" section on the homepage or the Trending page for the latest additions.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'I found a mistake or have a content request — how do I report it?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Use the Contact Us page to report incorrect tags, broken downloads, or to request specific memes/templates you’d like to see added.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does Videsaur work on mobile?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes. Videsaur is fully responsive and works on any mobile browser — no app installation required to browse, download, or create memes.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What does the CC0 vs Editorial license badge mean?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'CC0 means the asset is public domain and free for any use, including commercial projects. Editorial means the clip (often featuring real people or copyrighted footage) is intended for non-commercial, transformative use only — check the badge on each meme page before using it in monetized content.',
+      },
+    },
   ],
 }

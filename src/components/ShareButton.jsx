@@ -211,7 +211,10 @@ export default function ShareButton({
     }
   }, [open])
 
-  const dims = size === 'sm' ? 'size-7' : 'size-10'
+  // 48px circle regardless of size — Google's/Lighthouse's tap-target
+  // minimum (size-7/size-10, 28/40px, both missed it). `size` still controls
+  // the glyph itself, just not the tappable footprint around it.
+  const dims = 'size-12'
   const iconSize = size === 'sm' ? 'size-3.5' : 'size-4'
   const tone =
     variant === 'ghost'
@@ -228,6 +231,7 @@ export default function ShareButton({
           ref={buttonRef}
           type="button"
           onClick={toggle}
+          data-ad-unsafe="share"
           aria-label={copied ? 'Link copied' : `Share this ${noun}`}
           aria-haspopup="menu"
           aria-expanded={open}
@@ -252,6 +256,7 @@ export default function ShareButton({
           ref={buttonRef}
           type="button"
           onClick={toggle}
+          data-ad-unsafe="share"
           aria-label={copied ? 'Link copied' : `Share this ${noun}`}
           aria-haspopup="menu"
           aria-expanded={open}

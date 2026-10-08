@@ -152,7 +152,18 @@ export default function MemePage() {
 
         <article aria-labelledby="meme-title">
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-            <div className="torn paper-lift relative overflow-hidden rounded-2xl bg-panel">
+            {/*
+              aspect-ratio reserves the hero's layout box before the image or
+              video loads — this is the single most prominent above-the-fold
+              element on the page, so leaving it unsized is a real CLS hit.
+              Real width_px/height_px wins when known; 16:9 is the fallback
+              rather than a guess at square, since most meme video uploads are
+              widescreen or vertical-but-cropped-to-video, not square.
+            */}
+            <div
+              className="torn paper-lift relative overflow-hidden rounded-2xl bg-panel"
+              style={{ aspectRatio: asset.width_px && asset.height_px ? `${asset.width_px} / ${asset.height_px}` : '16 / 9' }}
+            >
               {isAudio ? (
                 /*
                   Audio gets a generated hero rather than its thumbnail.
@@ -169,7 +180,7 @@ export default function MemePage() {
                   controls
                   muted
                   playsInline
-                  className="w-full object-cover"
+                  className="size-full object-cover"
                 />
               ) : (
                 <img
@@ -178,7 +189,7 @@ export default function MemePage() {
                   loading="eager"
                   decoding="async"
                   fetchpriority="high"
-                  className="w-full object-cover"
+                  className="size-full object-cover"
                 />
               )}
             </div>
@@ -307,6 +318,18 @@ export default function MemePage() {
             </div>
           </div>
         </article>
+
+        {/*
+          Tried a slot here (between the grid and "About this meme") during
+          this round of AdSense layout work and measured it live: the File
+          Details/download card can end only ~70-80px above this point
+          depending on title length and mood label, well inside MIN_GAP_PX.
+          AdSlot correctly refuses it every time rather than rendering unsafe.
+          There is no reliable "sidebar" position on this page — the existing
+          "article" slot below (after "About this meme" has pushed real
+          distance between this point and the download button) is the first
+          place that's actually safe.
+        */}
 
         {/* About this meme — long-form, structured, unique per asset */}
         <div className="mt-12">

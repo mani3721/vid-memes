@@ -44,7 +44,6 @@ export default function SoundGrabStrip() {
               href={sfx.publicUrl}
               filename={sfx.filename}
               memeId={sfx.id}
-              size="sm"
             />
           </div>
         ))}

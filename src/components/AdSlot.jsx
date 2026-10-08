@@ -22,6 +22,7 @@ const ALLOWED_CONTEXTS = {
   'pre-footer': 'After the last content block, before the footer navigation.',
   article: 'Inside long-form prose, between paragraphs.',
   sidebar: 'A column with no download, play or bulk-action controls.',
+  'header-banner': 'Full-width, non-sticky banner below the global header, above page content.',
 }
 
 /** Edge-to-edge distance between two rects; 0 when they overlap. */

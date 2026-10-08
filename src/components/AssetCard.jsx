@@ -140,7 +140,7 @@ export default function AssetCard({ asset, selected, onToggle, onStar }) {
             <Code2 className="size-3" />
             {copied === 'embed' ? 'Copied' : 'Embed'}
           </button>
-          <DownloadButton label={`Download ${asset.title}`} size="sm" />
+          <DownloadButton label={`Download ${asset.title}`} />
         </div>
       </div>
     </article>

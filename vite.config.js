@@ -26,9 +26,34 @@ function asyncCssPlugin() {
   }
 }
 
+// Preloads the Latin-subset variable font files so body/display text doesn't
+// wait for the browser to discover them via the CSS @font-face rule first.
+// Hand-writing the href would be wrong: Fontsource ships one file per Unicode
+// range (latin, latin-ext, cyrillic, greek, vietnamese...) and Vite fingerprints
+// every filename per build, so this reads the real names out of the finished
+// bundle instead of guessing one. Only the "latin" subset is preloaded — the
+// other ranges cover scripts this site's UI copy doesn't use, and preloading
+// all nine files would just add unused network weight.
+function fontPreloadPlugin() {
+  const WANTED = [/inter-latin-wght-normal-.*\.woff2$/, /anton-latin-400-normal-.*\.woff2$/]
+
+  return {
+    name: 'font-preload',
+    apply: 'build',
+    transformIndexHtml(html, { bundle }) {
+      const links = Object.values(bundle ?? {})
+        .filter((file) => file.type === 'asset' && WANTED.some((re) => re.test(file.fileName)))
+        .map((file) => `<link rel="preload" as="font" type="font/woff2" href="/${file.fileName}" crossorigin>`)
+
+      if (!links.length) return html
+      return html.replace('</head>', `    ${links.join('\n    ')}\n  </head>`)
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), asyncCssPlugin()],
+  plugins: [react(), tailwindcss(), asyncCssPlugin(), fontPreloadPlugin()],
   build: {
     assetsInlineLimit: 8192,
     rollupOptions: {
