@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node prerender.mjs",
-    "vercel-build": "vite build && npx playwright install chromium && node prerender.mjs",
+    "vercel-build": "vite build && npx playwright install --with-deps chromium && node prerender.mjs",
     "prerender": "node prerender.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
