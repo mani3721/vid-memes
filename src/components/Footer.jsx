@@ -46,11 +46,7 @@ export default function Footer() {
       </div>
 
       <div className="site-footer__statutory">
-        <p>
-          © 2026 Videsaur. All rights reserved. Sourced pop-culture assets and community
-          cultural elements are indexed and processed strictly within transformative Fair
-          Use boundaries.
-        </p>
+        <p>© 2026 Videsaur. All rights reserved. Materials curated under Fair Use.</p>
       </div>
     </footer>
   )
