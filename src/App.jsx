@@ -61,13 +61,16 @@ function Studio() {
       <Routes>
         <Route path="/"               element={<BrowseFeed />} />
         <Route path="/trending"       element={<TrendingPage />} />
+        <Route path="/trending-memes" element={<TrendingPage />} />
         <Route path="/videos"         element={<CategoryPage category="videos"    />} />
         <Route path="/gifs"           element={<CategoryPage category="gifs"      />} />
         {/* Third-party KLIPY content, not the Supabase library — its own page
             rather than a CategoryPage variant. */}
         <Route path="/stickers"       element={<StickersPage />} />
         <Route path="/templates"      element={<CategoryPage category="templates" />} />
+        <Route path="/meme-templates" element={<CategoryPage category="templates" />} />
         <Route path="/sounds"         element={<CategoryPage category="sounds"    />} />
+        <Route path="/sound-effects"  element={<CategoryPage category="sounds"    />} />
         <Route path="/meme/:slug"     element={<MemePage />} />
         {/*
           Sound detail pages. Same component as /meme/:slug on purpose — it
@@ -79,6 +82,7 @@ function Studio() {
         <Route path="/sound/:slug"    element={<MemePage />} />
         <Route path="/about"          element={<AboutPage />} />
         <Route path="/about-us"       element={<AboutPage />} />
+        <Route path="/contact-us"     element={<ContactPage />} />
         <Route path="/contact"        element={<ContactPage />} />
         <Route path="/support-us"     element={<SupportUsPage />} />
         <Route path="/privacy"        element={<PrivacyPage />} />

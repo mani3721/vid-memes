@@ -1,195 +1,124 @@
-/**
- * Homepage editorial copy + FAQ — the "visible content" half of the
- * AdSense/Googlebot content-depth checklist in COMPLIANCE.md (the homepage
- * item was unchecked; this fills it with real copy instead of padding).
- *
- * The FAQ text below is kept byte-identical to FAQ_SCHEMA in utils/seo.js —
- * that JSON-LD is rendered by BrowseFeed's <SEO schemas={...}>, and a
- * FAQPage schema whose answers don't match the visible page text is exactly
- * what gets an SEO rich-result penalized rather than earning one.
- */
 export default function HomeContentDepth() {
   return (
-    <section aria-labelledby="home-content-depth-heading" className="mt-10 border-t border-edge pt-10">
-      <h2
-        id="home-content-depth-heading"
-        className="mb-4 font-display text-base tracking-wide text-hi sm:text-lg"
-      >
-        WHAT VIDESAUR IS
+    <section
+      id="adsense-compliance-baseline"
+      aria-labelledby="adsense-compliance-heading"
+      itemScope
+      itemType="https://schema.org/FAQPage"
+      style={{
+        color: 'var(--text-primary)',
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border-edge)',
+        borderRadius: '16px',
+        fontSize: '16px',
+        lineHeight: 1.7,
+        marginTop: '2.5rem',
+        padding: 'clamp(1.25rem, 4vw, 2.5rem)',
+      }}
+    >
+      <h2 id="adsense-compliance-heading" className="font-display text-2xl tracking-wide text-hi sm:text-3xl">
+        Videsaur Platform Manifesto &amp; Editorial Curation Framework
       </h2>
-      <div className="space-y-4 text-sm leading-7 text-mid">
+
+      <div className="mt-5 space-y-4" style={{ color: 'var(--text-secondary)' }}>
         <p>
-          Videsaur is a free library of short-form meme videos, animated GIFs, blank meme
-          templates, and sound effects, built for the people who turn that raw material into
-          something new &mdash; video editors, social media managers, streamers, and anyone
-          putting together a Reel, a Short, a WhatsApp status, or a group chat reply that needs
-          to land. Every asset is HD, watermark-free, and downloadable without an account, a
-          waitlist, or a paywall: find the clip, download it, use it.
+          Videsaur is an authoritative digital media archival repository, creative utility
+          database, and curation workshop built for media professionals, video editors, social
+          media teams, streamers, and independent content creators. Rather than operating as a
+          simple download hub, the platform documents the changing visual and audio vocabulary of
+          online culture. Its catalog brings together short-form reaction video clips, looping
+          graphics, adaptable templates, sound effects, and soundboard material in an organized
+          environment where creators can identify useful references, compare formats, and plan
+          responsible edits for YouTube Shorts, Instagram Reels, streaming segments, commentary,
+          and other transformative productions.
         </p>
         <p>
-          That matters because a lot of what goes into finished short-form content isn&rsquo;t
-          original footage &mdash; it&rsquo;s a reaction clip dropped into an edit, a sound
-          effect under a jump cut, a template repurposed with new text. Videsaur exists to be the
-          source library for that layer of the work: clips and sounds that are easy to search by
-          mood or category, fast to preview, and free to actually use once you&rsquo;ve found
-          them, instead of scattered across forums, Discord servers, and watermark-locked stock
-          sites.
+          Editorial curation is centered on practical discoverability and contextual accuracy.
+          Assets are classified by media type, subject, mood, language, and creative function so
+          that an editor can move from an idea to an appropriate source efficiently. Descriptive
+          titles, preview media, format details, and license labels are maintained as working
+          metadata rather than decorative keywords. Videsaur reviews published entries for
+          relevance and policy compliance, corrects inaccurate records, and provides reporting
+          and takedown channels. This framework supports a useful, navigable archive while
+          recognizing that access to a file never replaces the creator&rsquo;s duty to evaluate
+          rights, context, and platform rules before publication.
         </p>
       </div>
 
-      <h3 className="mb-3 mt-8 font-display text-sm tracking-wide text-hi">
-        WHY SHORT-FORM CLIPS AND SOUND EFFECTS MATTER FOR MODERN CONTENT CREATION
+      <h3 className="mt-8 font-display text-xl tracking-wide text-hi">
+        The Programmatic Role of Short-Form Media Assets in Modern Digital Communication
       </h3>
-      <div className="space-y-4 text-sm leading-7 text-mid">
+      <div className="mt-4 space-y-4" style={{ color: 'var(--text-secondary)' }}>
         <p>
-          Reaction clips, loop backgrounds, and sound effects aren&rsquo;t filler &mdash;
-          they&rsquo;re load-bearing parts of how short-form video actually communicates. A
-          well-placed reaction GIF carries tone a caption can&rsquo;t. A whoosh or glitch sound
-          effect sells a transition that would otherwise feel flat. A blank meme template lets
-          someone join a format that&rsquo;s already trending instead of starting from nothing.
-          None of that requires the creator to produce the raw asset themselves; it requires a
-          library where the asset is easy to find, properly categorized, and legally clear to
-          use &mdash; which is the specific gap Videsaur is built to fill.
+          Short media elements now function much like punctuation in digital storytelling. A
+          reaction cutaway can clarify tone, a brief loop can establish rhythm, and a precisely
+          timed audio cue can make a transition understandable without adding narration. For
+          editors working under tight publishing schedules, a searchable utility database reduces
+          the time spent locating technically suitable material and leaves more time for original
+          scripting, criticism, education, parody, or commentary. Videsaur therefore treats each
+          item as a component in a larger creative workflow, not as a finished substitute for
+          original expression.
         </p>
         <p>
-          The catalogue is organized by format (video, GIF, sound, template) and by category and
-          mood, so a creator looking for &ldquo;sarcastic reaction&rdquo; or &ldquo;sad piano
-          sting&rdquo; can filter down instead of scrolling a flat feed. New uploads go through an
-          admin review step before they go live &mdash; checked for correct categorization and
-          policy compliance &mdash; so what&rsquo;s published is deliberately curated rather than
-          an unmoderated dump.
+          The most valuable use of an archived clip is usually transformative: trimming it,
+          combining it with original footage, adding analysis, changing its sequence, or using it
+          to illustrate a new message. Videsaur&rsquo;s previews and categories help professionals
+          assess those possibilities before downloading. They do not grant ownership of third-party
+          characters, performances, trademarks, music, or footage. Clear separation between CC0
+          material and editorial material helps users make informed decisions, while links to the
+          Terms and Content &amp; DMCA Policy explain the standards applied to the repository.
         </p>
       </div>
 
-      <h3 className="mb-3 mt-8 font-display text-sm tracking-wide text-hi">
-        LICENSING, MODERATION &amp; TAKEDOWNS
+      <h3 className="mt-8 font-display text-xl tracking-wide text-hi">
+        Comprehensive Platform Utility Matrix &amp; Core FAQ Schema
       </h3>
-      <div className="space-y-4 text-sm leading-7 text-mid">
-        <p>
-          Every asset on Videsaur carries one of two license tags, shown on its download page:{' '}
-          <strong className="text-hi">CC0</strong> (public domain &mdash; free for personal and
-          commercial use, no attribution required) or{' '}
-          <strong className="text-hi">Editorial</strong> (restricted to non-commercial and
-          transformative use). That distinction is the thing to check before dropping an asset
-          into monetized work &mdash; CC0 clears that bar outright, Editorial-licensed assets do
-          not. Full terms live on the{' '}
-          <a href="/terms" className="text-hi underline underline-offset-2 hover:text-brand">
-            Terms &amp; Conditions
-          </a>{' '}
-          page.
-        </p>
-        <p>
-          If a published asset turns out to infringe a copyright or violate content policy, it
-          gets unpublished and removed from search immediately rather than quietly left up. The{' '}
-          <a href="/content-policy" className="text-hi underline underline-offset-2 hover:text-brand">
-            Content &amp; DMCA Policy
-          </a>{' '}
-          page covers the full takedown process and the designated contact for a notice.
-        </p>
-      </div>
+      <p className="mt-4" style={{ color: 'var(--text-secondary)' }}>
+        The following operational guidance explains how the archive supports research and editing,
+        how records are maintained, and where responsibility rests when material is republished.
+      </p>
 
-      <h3 className="mb-3 mt-8 font-display text-sm tracking-wide text-hi">
-        FREQUENTLY ASKED QUESTIONS
-      </h3>
-      {/* 16 items below the fold — content-visibility skips layout/paint for
-          the ones off-screen until they scroll into view. */}
-      <div className="divide-y divide-edge border-y border-edge [content-visibility:auto] [contain-intrinsic-size:auto_900px]">
-        {HOME_FAQ.map(({ q, a }) => (
-          <details key={q} className="group py-3">
-            <summary className="cursor-pointer list-none text-sm font-medium text-hi marker:content-none">
-              {q}
-            </summary>
-            <p className="mt-2 text-sm leading-7 text-mid">{a}</p>
-          </details>
+      <div className="mt-5 divide-y" style={{ borderColor: 'var(--border-edge)' }}>
+        {HOME_FAQ.map(({ question, answer }) => (
+          <article
+            key={question}
+            className="py-5 first:pt-0 last:pb-0"
+            itemScope
+            itemProp="mainEntity"
+            itemType="https://schema.org/Question"
+          >
+            <h4 className="font-semibold text-hi" itemProp="name">{question}</h4>
+            <div itemScope itemProp="acceptedAnswer" itemType="https://schema.org/Answer">
+              <p className="mt-2" style={{ color: 'var(--text-secondary)' }} itemProp="text">
+                {answer}
+              </p>
+            </div>
+          </article>
         ))}
       </div>
     </section>
   )
 }
 
-/**
- * Kept in lockstep with FAQ_SCHEMA in utils/seo.js by hand — pulling the
- * schema's mainEntity array directly would couple visible copy to JSON-LD
- * shape, so the two are duplicated on purpose. Change both together.
- */
 const HOME_FAQ = [
   {
-    q: 'How do I download memes from Videsaur?',
-    a: 'Click the download button on any meme card. Your file downloads instantly in MP4, GIF, WebM, or PNG format — no account or sign-up required.',
+    question: 'What specific purpose does Videsaur serve for online video producers?',
+    answer: 'Videsaur provides a curated research and production library for locating reaction clips, loops, templates, graphics, and sound cues that can support a larger original edit. Producers can preview and compare assets for Shorts, Reels, livestreams, explainers, and social campaigns. The service is designed to improve discovery and workflow planning; it does not present an archived asset as a complete creative work or guarantee that every possible use is permitted.',
   },
   {
-    q: 'Are Videsaur memes completely free to download?',
-    a: 'Yes. All memes on Videsaur are free to browse and download with no watermark. No subscription, no login, no hidden fees.',
+    question: 'How does the platform ensure media asset indexing and data cleanliness?',
+    answer: 'Entries are organized with descriptive titles, media categories, mood and language signals, technical formats, previews, and applicable license labels. Published material is subject to editorial review and may be corrected, recategorized, unpublished, or removed when metadata is misleading, a file is broken, or a policy concern is reported. This continuing maintenance keeps search results useful without claiming that automated or human classification can be error-free.',
   },
   {
-    q: 'Can I use these memes in commercial YouTube videos?',
-    a: 'Many assets are available under the CC0 (public domain) license, which permits commercial use. Assets marked Editorial are for non-commercial and transformative use only. Always check the license badge on each meme before monetised publication.',
+    question: 'Are there forced registration or subscription walls to access the media feeds?',
+    answer: 'No. Visitors can browse public feeds, inspect asset pages, search the catalog, and access available downloads without a mandatory account or paid subscription. Optional account features may help a user save favorites, organize collections, or receive relevant notifications, but they are not a condition for viewing the public repository. Availability can still depend on moderation status, regional law, technical maintenance, or removal requests.',
   },
   {
-    q: 'Does Videsaur have green screen meme clips?',
-    a: 'Yes. Videsaur offers green screen (chroma key) meme clips and transparent PNG memes with alpha channels, ready to drop into CapCut, Premiere Pro, DaVinci Resolve, or After Effects.',
+    question: 'How does Videsaur approach digital copyright, trademark integrity, and fair-use boundaries?',
+    answer: 'Videsaur distinguishes public-domain or CC0 records from editorial material and provides Terms and a Content & DMCA Policy for notices and takedowns. Fair use is context-specific and can depend on purpose, transformation, amount used, and market effect; it is not automatically created by downloading or adding a credit. Trademarks, recognizable people, music, and third-party footage may carry separate restrictions, so creators must review the asset label and obtain legal advice when necessary.',
   },
   {
-    q: 'What video formats are available for download?',
-    a: 'Videsaur offers MP4, GIF, WebM (with optional alpha transparency), and PNG. Meme sound effects are available as standalone audio downloads on the Sounds page.',
-  },
-  {
-    q: 'Do I need to create an account to use Videsaur?',
-    a: 'No. You can browse, search, and download memes as a guest with no sign-up required. Creating a free account just lets you save Favorites, organize Collections, and get notified about new content.',
-  },
-
-  {
-    q: 'Are there Tamil memes on Videsaur?',
-    a: 'Yes. Use the language toggle on the Feed page to switch between Tamil and English content, including Tamil movie reaction clips, dialogues, and templates.',
-  },
-
-  {
-    q: 'Can I create my own memes on Videsaur?',
-    a: 'Yes. Use the Create Meme tool to upload your own clip, trim it to the exact moment you want, and export it as an MP4 or GIF — no editing software needed.',
-  },
-
-  {
-    q: 'What are Collections and how are they different from Favorites?',
-    a: 'Collections let you organize your saved memes into named folders (like "Work Chat" or "Savage Replies") instead of one long Favorites list, making it easier to find exactly what you saved later.',
-  },
-
-  {
-    q: 'Does Videsaur have sound effects and meme audio?',
-    a: 'Yes. The Sounds page has a growing library of meme sound effects and soundboards you can preview and download as standalone MP3/audio files — great for video editors and streamers.',
-  },
-
-  {
-    q: 'Can I download meme templates to make my own version?',
-    a: 'Yes. The Templates page has blank, editable meme templates based on trending formats — download one and add your own caption using any image editor.',
-  },
-
-  {
-    q: 'What is the AI Voice feature?',
-    a: 'AI Voice lets you generate custom audio clips in different voices and tones to pair with your memes or video edits — useful for dubbing, voiceovers, or adding a funny narration to your content.',
-  },
-
-  {
-    q: 'Can I share a meme directly to WhatsApp or Instagram?',
-    a: 'Yes. Every meme page has a share button that lets you copy the direct link or share instantly to WhatsApp, Instagram, and other apps without needing to download first.',
-  },
-
-  {
-    q: 'How often is new content added?',
-    a: 'New memes, GIFs, sounds, and templates are added daily. Check the "Fresh Off The Internet" section on the homepage or the Trending page for the latest additions.',
-  },
-
-  {
-    q: 'I found a mistake or have a content request — how do I report it?',
-    a: 'Use the Contact Us page to report incorrect tags, broken downloads, or to request specific memes/templates you\'d like to see added.',
-  },
-
-  {
-    q: 'Does Videsaur work on mobile?',
-    a: 'Yes. Videsaur is fully responsive and works on any mobile browser — no app installation required to browse, download, or create memes.',
-  },
-
-  {
-    q: 'What does the CC0 vs Editorial license badge mean?',
-    a: 'CC0 means the asset is public domain and free for any use, including commercial projects. Editorial means the clip (often featuring real people or copyrighted footage) is intended for non-commercial, transformative use only — check the badge on each meme page before using it in monetized content.',
+    question: 'Can creative editors safely mix these assets into monetized commercial streams?',
+    answer: 'Only when the rights and license attached to the selected asset permit that use. CC0 material generally allows commercial reuse, subject to unrelated rights such as trademarks, privacy, or publicity. Editorial material should not be assumed to authorize advertising, sponsorship, merchandise, or monetized entertainment. Editors should verify the source record, preserve evidence of the applicable license, add substantial original value, follow each distribution platform’s rules, and secure permission whenever the intended commercial use is uncertain.',
   },
 ]

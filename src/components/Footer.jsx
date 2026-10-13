@@ -1,107 +1,55 @@
-import { Link } from 'react-router-dom'
-
-const FOOTER_COLUMNS = [
-  {
-    title: 'Asset Libraries',
-    links: [
-      ['Trending Memes', '/trending-memes'],
-      ['Animated GIFs', '/gifs'],
-      ['Sound Effects', '/sound-effects'],
-      ['Meme Templates', '/meme-templates'],
-    ],
-  },
-  {
-    title: 'Privacy & Legal',
-    links: [
-      ['Privacy Policy', '/privacy-policy'],
-      ['Terms of Use', '/terms-and-conditions'],
-      ['DMCA Policy', '/dmca-policy'],
-      ['Cookie Policy', '/cookie-policy'],
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      ['About Us', '/about-us'],
-      ['Contact Us', '/contact-us'],
-      ['Platform Disclaimer', '/disclaimer'],
-    ],
-  },
-]
-
-const linkStyle = {
-  color: 'var(--text-secondary)',
-  minHeight: '48px',
-  minWidth: '48px',
-}
+import './Footer.css'
 
 export default function Footer() {
   return (
-    <footer
-      className="px-5 py-10 font-sans text-sm leading-[1.6] sm:px-8 lg:px-12"
-      style={{
-        backgroundColor: 'var(--bg-panel)',
-        borderTop: '1px solid var(--border-edge)',
-        color: 'var(--text-primary)',
-      }}
-    >
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 text-center md:grid-cols-2 lg:grid-cols-4 lg:text-left">
-        <section aria-labelledby="footer-platform-title">
-          <h2
-            id="footer-platform-title"
-            className="mb-4 text-lg font-bold"
-            style={{ color: 'var(--text-primary)' }}
-          >
+    <footer className="site-footer" aria-label="Videsaur site footer">
+      <div className="site-footer__grid">
+        <section aria-labelledby="footer-platform-heading">
+          <h2 id="footer-platform-heading" className="site-footer__heading site-footer__brand-heading">
             Videsaur
           </h2>
-          <p className="m-0" style={{ color: 'var(--text-secondary)' }}>
-            Videsaur is an open-access digital curation workshop providing
-            high-performance media elements, short-form transitions, and lossless
-            soundboards for digital media professionals and independent storytellers.
+          <p className="site-footer__overview">
+            Videsaur is an open-access digital curation workshop providing high-performance
+            media elements, short-form reaction transitions, and lossless soundboards for
+            digital media professionals and social media creators.
           </p>
         </section>
 
-        {FOOTER_COLUMNS.map(({ title, links }) => {
-          const headingId = `footer-${title.toLowerCase().replace(/[^a-z]+/g, '-')}`
+        <nav aria-labelledby="footer-assets-heading">
+          <h2 id="footer-assets-heading" className="site-footer__heading">Asset Libraries</h2>
+          <ul className="site-footer__links">
+            <li><a className="site-footer__link" href="/trending-memes">Trending Memes</a></li>
+            <li><a className="site-footer__link" href="/gifs">Animated GIFs</a></li>
+            <li><a className="site-footer__link" href="/sound-effects">Sound Effects</a></li>
+            <li><a className="site-footer__link" href="/meme-templates">Meme Templates</a></li>
+          </ul>
+        </nav>
 
-          return (
-            <nav key={title} aria-labelledby={headingId}>
-              <h2
-                id={headingId}
-                className="mb-3 font-bold"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {title}
-              </h2>
-              <ul className="m-0 flex list-none flex-col items-center gap-3 p-0 lg:items-start">
-                {links.map(([label, to]) => (
-                  <li key={to}>
-                    <Link
-                      to={to}
-                      className="flex items-center justify-center font-medium no-underline transition-opacity hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 lg:justify-start"
-                      style={linkStyle}
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          )
-        })}
+        <nav aria-labelledby="footer-legal-heading">
+          <h2 id="footer-legal-heading" className="site-footer__heading">Privacy &amp; Legal</h2>
+          <ul className="site-footer__links">
+            <li><a className="site-footer__link" href="/privacy-policy">Privacy Policy</a></li>
+            <li><a className="site-footer__link" href="/terms-and-conditions">Terms of Use</a></li>
+            <li><a className="site-footer__link" href="/dmca-policy">DMCA Policy</a></li>
+            <li><a className="site-footer__link" href="/cookie-policy">Cookie Policy</a></li>
+          </ul>
+        </nav>
+
+        <nav aria-labelledby="footer-company-heading">
+          <h2 id="footer-company-heading" className="site-footer__heading">Company</h2>
+          <ul className="site-footer__links">
+            <li><a className="site-footer__link" href="/about-us">About Us</a></li>
+            <li><a className="site-footer__link" href="/contact-us">Contact Us</a></li>
+            <li><a className="site-footer__link" href="/disclaimer">Platform Disclaimer</a></li>
+          </ul>
+        </nav>
       </div>
 
-      <div
-        className="mx-auto mt-10 max-w-7xl pt-6 text-center text-xs"
-        style={{
-          borderTop: '1px solid var(--border-edge)',
-          color: 'var(--text-tertiary)',
-        }}
-      >
-        <p className="m-0">
+      <div className="site-footer__statutory">
+        <p>
           © 2026 Videsaur. All rights reserved. Sourced pop-culture assets and community
-          historical artifacts are curated and processed strictly inside transformative
-          Fair Use boundaries.
+          cultural elements are indexed and processed strictly within transformative Fair
+          Use boundaries.
         </p>
       </div>
     </footer>
