@@ -1,35 +1,66 @@
 #!/usr/bin/env node
 /**
- * Render published routes with Chromium and add visible, metadata-grounded
- * editing profiles to asset pages. Run after Vite via `npm run build`.
+ * Compile static HTML for every published asset route by string templating,
+ * with no browser and no rendering engine. Run after Vite via `npm run build`.
  *
  * These profiles are editorial guidance, not verified histories of the clips.
  * Metadata alone cannot guarantee unique reporting, search rankings, AdSense
  * approval, ownership, public-domain status, or a fair-use determination.
- * Keep STATIC_ROUTES aligned with the independently deployed server sitemap.
+ *
+ * Because nothing executes the app bundle, the emitted markup is the crawlable
+ * baseline only — it is not React's rendered output. Head metadata, JSON-LD and
+ * the asset profile are authored here; the interactive page still mounts on top
+ * of it for real visitors.
  */
-import { chromium } from 'playwright-core'
-import { createServer } from 'node:http'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import handler from 'serve-handler'
+import { performance } from 'node:perf_hooks'
 import { createClient } from '@supabase/supabase-js'
 import dotenv from 'dotenv'
-import { toMemeSlug, assetPathPrefix } from './src/utils/seo.js'
+import {
+  BASE_URL,
+  SITE_NAME,
+  assetPathPrefix,
+  buildBreadcrumbSchema,
+  buildMediaSchema,
+  metaDescription,
+  toMemeSlug,
+} from './src/utils/seo.js'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 const DIST = resolve(ROOT, 'dist')
 const PROFILE_ID = 'videsaur-asset-data-profile'
-const PAGE_SIZE = 500
+const ROOT_OPEN = '<div id="root">'
 
-const STATIC_ROUTES = [
-  '/', '/trending', '/trending-memes', '/videos', '/gifs', '/templates',
-  '/meme-templates', '/sounds', '/sound-effects', '/ai-sound', '/ai-chat',
-  '/blog', '/about', '/about-us', '/contact', '/contact-us', '/content-policy',
-  '/dmca-policy', '/privacy', '/privacy-policy', '/terms',
-  '/terms-and-conditions', '/disclaimer', '/cookie-policy',
-]
+/** Parallel compile+write workers. Each holds one page string at a time. */
+const CONCURRENCY = Number(process.env.PRERENDER_CONCURRENCY) || 24
+
+/**
+ * Upper bound for the single catalog query. Supabase also applies its own
+ * server-side row cap, so a result that exactly fills this is treated as a
+ * truncated read rather than a complete catalog — see run().
+ */
+const MAX_ROWS = 5000
+
+const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+
+/**
+ * Titles, tags and licence labels are operator-supplied database text being
+ * concatenated into static HTML, so every interpolation is escaped here. The
+ * browser's DOM serializer used to provide this for free.
+ */
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => HTML_ESCAPES[char])
+}
+
+/** Escapes `<` so asset text can never close the surrounding <script> block. */
+function serializeSchema(schema) {
+  return JSON.stringify(schema)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+}
 
 function cleanText(value, fallback = '') {
   return typeof value === 'string' ? value.replace(/\s+/g, ' ').trim() || fallback : fallback
@@ -134,184 +165,221 @@ export function generateAssetProfile(asset = {}) {
   return { title, sections, wordCount }
 }
 
-/** Use the browser's HTML parser and text nodes, never unescaped DB markup. */
-export async function injectAssetProfile(page, asset) {
-  const profile = generateAssetProfile(asset)
-  await page.evaluate(({ profile, profileId }) => {
-    const article = document.querySelector('article[aria-labelledby="meme-title"]')
-    const primaryBlock = article?.firstElementChild
-    if (!primaryBlock?.querySelector('video, audio, img')) {
-      throw new Error('Primary asset media block was not rendered')
-    }
-    document.getElementById(profileId)?.remove()
-    const section = document.createElement('section')
-    section.id = profileId
-    section.setAttribute('aria-labelledby', `${profileId}-heading`)
-    section.className = 'mt-8 rounded-2xl border border-edge bg-panel p-6'
-    const heading = document.createElement('h2')
-    heading.id = `${profileId}-heading`
-    heading.className = 'mb-6 font-display text-xl text-hi'
-    heading.textContent = `${profile.title} — Meme Data Profile`
-    section.append(heading)
-    const grid = document.createElement('div')
-    grid.className = 'grid gap-6'
-    for (const [index, entry] of profile.sections.entries()) {
-      const block = document.createElement('section')
-      const subheading = document.createElement('h3')
-      subheading.id = `${profileId}-section-${index + 1}`
-      subheading.className = 'mb-2 text-base font-semibold text-hi'
-      subheading.textContent = entry.heading
-      block.setAttribute('aria-labelledby', subheading.id)
-      const paragraph = document.createElement('p')
-      paragraph.className = 'text-sm leading-relaxed text-mid'
-      paragraph.textContent = entry.text
-      block.append(subheading, paragraph)
-      grid.append(block)
-    }
-    section.append(grid)
-    // Beneath the complete player/details grid, without disturbing its columns.
-    primaryBlock.after(section)
-  }, { profile, profileId: PROFILE_ID })
-}
-
-async function fetchPublishedRows(supabase, table, column, value) {
-  const rows = []
-  for (let offset = 0; ; offset += PAGE_SIZE) {
-    // '*' supports both mood_tags-only schemas and rows with additional tags.
-    const { data, error } = await supabase.from(table).select('*')
-      .eq(column, value).order('id', { ascending: true })
-      .range(offset, offset + PAGE_SIZE - 1)
-    if (error) throw new Error(`${table} query failed: ${error.message}`)
-    rows.push(...(data ?? []))
-    if (!data || data.length < PAGE_SIZE) return rows
+/**
+ * Splits the Vite shell at the #root boundary so per-route markup can be
+ * swapped in. Rejects a shell that already carries rendered output, which is
+ * what a stale dist left behind by an earlier prerender looks like.
+ */
+function splitTemplate(template) {
+  const titles = (template.match(/<title>/gi) ?? []).length
+  if (titles !== 1) {
+    throw new Error(
+      `dist/index.html contains ${titles} <title> tags, so it is not a clean Vite shell. Run "vite build" first.`,
+    )
   }
+  const open = template.indexOf(ROOT_OPEN)
+  if (open === -1) throw new Error(`Template is missing ${ROOT_OPEN}`)
+  const bodyClose = template.indexOf('</body>', open)
+  if (bodyClose === -1) throw new Error('Template is missing </body>')
+  const rootClose = template.lastIndexOf('</div>', bodyClose)
+  if (rootClose <= open) throw new Error('Could not locate the closing </div> for #root')
+  return { head: template.slice(0, open + ROOT_OPEN.length), tail: template.slice(rootClose) }
 }
 
-async function getDynamicRoutes(supabase) {
-  const [memes, posts] = await Promise.all([
-    fetchPublishedRows(supabase, 'memes', 'is_published', true),
-    fetchPublishedRows(supabase, 'blog_posts', 'status', 'published'),
-  ])
-  return [
-    ...memes.map((asset) => ({
-      route: `${assetPathPrefix(asset)}/${toMemeSlug(asset)}`, asset,
-    })),
-    ...posts.filter((post) => cleanText(post.slug)).map((post) => ({
-      route: `/blog/${encodeURIComponent(post.slug)}`, asset: null,
-    })),
-  ]
+function setMetaTag(html, attr, key, content) {
+  const pattern = new RegExp(`<meta[^>]*\\b${attr}="${key}"[^>]*>`, 'i')
+  if (!pattern.test(html)) throw new Error(`Template is missing <meta ${attr}="${key}">`)
+  return html.replace(pattern, `<meta ${attr}="${key}" content="${escapeHtml(content)}">`)
 }
 
-function routeToFile(route) {
-  const file = resolve(DIST, `.${route}`, 'index.html')
-  if (!file.startsWith(`${DIST}/`)) throw new Error(`Unsafe output route: ${route}`)
-  mkdirSync(dirname(file), { recursive: true })
-  return file
+function renderHead(head, { title, description, canonical, schemas }) {
+  if (!/<title>[\s\S]*?<\/title>/i.test(head)) throw new Error('Template is missing <title>')
+  if (!/<link[^>]*rel="canonical"[^>]*>/i.test(head)) throw new Error('Template is missing rel="canonical"')
+
+  let html = head
+    .replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(title)}</title>`)
+    .replace(/<link[^>]*rel="canonical"[^>]*>/i, `<link rel="canonical" href="${escapeHtml(canonical)}">`)
+
+  html = setMetaTag(html, 'name', 'description', description)
+  html = setMetaTag(html, 'property', 'og:title', title)
+  html = setMetaTag(html, 'property', 'og:description', description)
+  html = setMetaTag(html, 'property', 'og:url', canonical)
+  html = setMetaTag(html, 'name', 'twitter:title', title)
+  html = setMetaTag(html, 'name', 'twitter:description', description)
+
+  const ld = schemas
+    .map((schema) => `<script type="application/ld+json">${serializeSchema(schema)}</script>`)
+    .join('')
+  return html.replace('</head>', `${ld}</head>`)
 }
 
 /**
- * Vercel's build image has no Chromium system libraries and no root to install
- * them, so there we drive the Lambda build that bundles its own. Everywhere
- * else Playwright's locally installed browser is used.
- *
- * `--single-process` is dropped: it suits Puppeteer but starves Playwright,
- * which needs out-of-process renderers and otherwise reports a closed target.
+ * Per-asset crawlable markup. Deliberately replaces the homepage baseline
+ * rather than appending to it: repeating the site manifesto across every asset
+ * route would publish hundreds of near-duplicate pages.
  */
-async function launchBrowser() {
-  if (!process.env.VERCEL) return chromium.launch()
+function renderBody(asset, profile) {
+  const tags = normalizedTags(asset)
+  const width = Number(asset.width_px)
+  const height = Number(asset.height_px)
+  const duration = Number(asset.duration_seconds)
+  const thumbnail = cleanText(asset.thumbnail_url ?? asset.thumb)
 
-  const { default: lambdaChromium } = await import('@sparticuz/chromium')
-  const args = lambdaChromium.args.filter(
-    (arg) => arg !== '--single-process' && !arg.startsWith('--headless'),
-  )
-  return chromium.launch({
-    executablePath: await lambdaChromium.executablePath(),
-    args,
-  })
+  const facts = [
+    ['Category', cleanText(asset.category)],
+    ['Format', cleanText(asset.format)],
+    ['Dimensions', width > 0 && height > 0 ? `${width} × ${height} px` : ''],
+    ['Duration', duration > 0 ? `${duration} seconds` : ''],
+    ['License', cleanText(asset.license)],
+  ].filter(([, value]) => value)
+
+  const factList = facts
+    .map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`)
+    .join('')
+
+  const tagList = tags.length
+    ? `<ul aria-label="Tags">${tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`
+    : ''
+
+  const media = thumbnail
+    ? `<img src="${escapeHtml(thumbnail)}" alt="${escapeHtml(profile.title)}" width="${width > 0 ? width : 640}" height="${height > 0 ? height : 360}" loading="lazy">`
+    : ''
+
+  const profileSections = profile.sections
+    .map(({ heading, text }, index) => {
+      const id = `${PROFILE_ID}-section-${index + 1}`
+      return `<section aria-labelledby="${id}"><h3 id="${id}">${escapeHtml(heading)}</h3><p>${escapeHtml(text)}</p></section>`
+    })
+    .join('')
+
+  return `
+      <main>
+        <nav aria-label="Breadcrumb"><ol><li><a href="/">${escapeHtml(SITE_NAME)}</a></li><li><a href="${escapeHtml(assetPathPrefix(asset))}">${escapeHtml(cleanText(asset.category, 'Assets'))}</a></li><li aria-current="page">${escapeHtml(profile.title)}</li></ol></nav>
+        <article aria-labelledby="meme-title">
+          <h1 id="meme-title">${escapeHtml(profile.title)}</h1>
+          <p>${escapeHtml(metaDescription(asset))}</p>
+          ${media}
+          ${factList ? `<dl>${factList}</dl>` : ''}
+          ${tagList}
+          <section id="${PROFILE_ID}" aria-labelledby="${PROFILE_ID}-heading">
+            <h2 id="${PROFILE_ID}-heading">${escapeHtml(profile.title)} — Meme Data Profile</h2>
+            ${profileSections}
+          </section>
+        </article>
+        <nav aria-label="Asset libraries"><ul><li><a href="/trending-memes">Trending Memes</a></li><li><a href="/gifs">Animated GIFs</a></li><li><a href="/sound-effects">Sound Effects</a></li><li><a href="/meme-templates">Meme Templates</a></li></ul></nav>
+      </main>
+    `
 }
 
-async function startServer(template) {
-  const server = createServer((req, res) => {
-    // Every navigation gets the immutable Vite shell, not a previously baked
-    // route. Otherwise rendering '/' first contaminates subsequent SPA loads.
-    if (req.headers.accept?.includes('text/html')) {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' })
-      res.end(template)
-      return
+/** Slugs are database-derived, so the resolved path is confined to dist/. */
+function resolveRouteFile(route) {
+  const file = resolve(DIST, `.${route}`, 'index.html')
+  if (!file.startsWith(`${DIST}/`)) throw new Error(`Unsafe output route: ${route}`)
+  return file
+}
+
+function compileAssetPage({ head, tail }, asset, route) {
+  const profile = generateAssetProfile(asset)
+  const schemas = [
+    buildMediaSchema(asset, route),
+    buildBreadcrumbSchema([
+      { name: SITE_NAME, url: '/' },
+      { name: cleanText(asset.category, 'Assets'), url: assetPathPrefix(asset) },
+      { name: profile.title },
+    ]),
+  ]
+  const head$ = renderHead(head, {
+    title: `${profile.title} — Free Download | ${SITE_NAME}`,
+    description: metaDescription(asset),
+    canonical: `${BASE_URL}${route}`,
+    schemas,
+  })
+  return head$ + renderBody(asset, profile) + tail
+}
+
+/**
+ * Fixed-size worker pool over `items`. Workers pull from a shared cursor, so a
+ * slow item never blocks the others and only `limit` page strings are live at
+ * once. Rejections are captured per item rather than aborting the pool.
+ */
+async function mapPool(items, limit, worker) {
+  const results = new Array(items.length)
+  let cursor = 0
+
+  const runner = async () => {
+    while (cursor < items.length) {
+      const index = cursor++
+      try {
+        results[index] = { ok: true, value: await worker(items[index], index) }
+      } catch (cause) {
+        results[index] = { ok: false, error: cause }
+      }
     }
-    Promise.resolve(handler(req, res, { public: DIST })).catch((error) => {
-      console.error('[prerender] Static server error:', error.message)
-      if (!res.headersSent) res.writeHead(500)
-      res.end()
-    })
-  })
-  await new Promise((resolvePromise, reject) => {
-    server.once('error', reject)
-    server.listen(0, '127.0.0.1', resolvePromise)
-  })
-  return server
+  }
+
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, runner))
+  return results
 }
 
 export async function run() {
+  const t0 = performance.now()
   dotenv.config({ path: resolve(ROOT, '.env') })
   const url = process.env.VITE_SUPABASE_URL
   const key = process.env.VITE_SUPABASE_ANON_KEY
   if (!url || !key) throw new Error('Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY')
-  const indexFile = join(DIST, 'index.html')
-  if (!existsSync(indexFile)) throw new Error('dist/index.html not found. Run vite build first.')
-  const template = readFileSync(indexFile, 'utf8')
+
+  const parts = splitTemplate(await readFile(join(DIST, 'index.html'), 'utf8'))
+  const tTemplate = performance.now()
+
   // Public anon access deliberately respects publication RLS, never service role.
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
-  const dynamic = await getDynamicRoutes(supabase)
-  const routes = [...new Map([
-    ...STATIC_ROUTES.map((route) => [route, { route, asset: null }]),
-    ...dynamic.map((entry) => [entry.route, entry]),
-  ]).values()]
-  console.log(`[prerender] Rendering ${routes.length} routes, including ${dynamic.filter((entry) => entry.asset).length} asset profiles.`)
-  const server = await startServer(template)
-  const origin = `http://127.0.0.1:${server.address().port}`
-  let browser
-  let passed = 0
-  let failed = 0
-  try {
-    browser = await launchBrowser()
-    // Normal browser identity: the content is not conditional on crawler UA.
-    const context = await browser.newContext({ javaScriptEnabled: true })
-    for (const { route, asset } of routes) {
-      const page = await context.newPage()
-      try {
-        await page.goto(`${origin}${route}`, { waitUntil: 'domcontentloaded', timeout: 30_000 })
-        await page.waitForFunction(() => {
-          const root = document.getElementById('root')
-          return root && root.children.length > 0 && root.querySelector('h1') &&
-            !root.querySelector('[aria-busy="true"]') &&
-            !/^Loading[.\s…]*$/u.test(root.innerText.trim())
-        }, null, { timeout: 30_000 })
-        if (asset) {
-          await page.waitForSelector('article[aria-labelledby="meme-title"]', { timeout: 30_000 })
-          if (new URL(page.url()).pathname !== route) throw new Error('Asset redirected away from its canonical route')
-          await injectAssetProfile(page, asset)
-        }
-        // Browser serialization escapes all generated text and retains SEO markup.
-        writeFileSync(routeToFile(route), await page.content(), 'utf8')
-        passed++
-        console.log(`  ok    ${route}`)
-      } catch (error) {
-        failed++
-        console.error(`  FAIL  ${route} - ${error.message}`)
-      } finally {
-        await page.close()
-      }
-    }
-  } finally {
-    try {
-      if (browser) await browser.close()
-    } finally {
-      await new Promise((resolvePromise, reject) => server.close((error) => error ? reject(error) : resolvePromise()))
-    }
+
+  // Exactly one catalog read. '*' is deliberate: the live schema drifts from
+  // schema.sql, and the JSON-LD builders in src/utils/seo.js read ~20 columns
+  // under several alternative names.
+  const { data, error } = await supabase
+    .from('memes')
+    .select('*')
+    .eq('is_published', true)
+    .order('id', { ascending: true })
+    .range(0, MAX_ROWS - 1)
+  if (error) throw new Error(`memes query failed: ${error.message}`)
+  const tFetch = performance.now()
+
+  const assets = data ?? []
+  if (assets.length >= MAX_ROWS) {
+    throw new Error(`Catalog read returned ${assets.length} rows and is likely truncated; paginate this query.`)
   }
-  console.log(`[prerender] Done: ${passed} pages rendered, ${failed} failed.`)
-  if (failed) throw new Error(`${failed} routes failed to prerender`)
+  if (!assets.length) throw new Error('Catalog read returned no published assets')
+
+  const outcomes = await mapPool(assets, CONCURRENCY, async (asset) => {
+    const route = `${assetPathPrefix(asset)}/${toMemeSlug(asset)}`
+    try {
+      const file = resolveRouteFile(route)
+      const html = compileAssetPage(parts, asset, route)
+      await mkdir(dirname(file), { recursive: true })
+      await writeFile(file, html, 'utf8')
+      return route
+    } catch (cause) {
+      throw new Error(`${route} - ${cause.message}`)
+    }
+  })
+  const tWrite = performance.now()
+
+  const failures = outcomes.filter((outcome) => !outcome.ok)
+  const written = outcomes.length - failures.length
+  const ms = (value) => `${Math.round(value)}ms`
+
+  console.log(
+    `✓ Hyper-Fast In-Memory Engine: Compiled ${written} static content layers in ${ms(tWrite - t0)}\n` +
+      `  template ${ms(tTemplate - t0)} · fetch ${ms(tFetch - tTemplate)} · compile+write ${ms(tWrite - tFetch)}` +
+      ` · ${assets.length} rows · concurrency ${CONCURRENCY}`,
+  )
+
+  if (failures.length) {
+    for (const failure of failures) console.error(`  FAIL  ${failure.error.message}`)
+    throw new Error(`${failures.length} of ${outcomes.length} routes failed to compile`)
+  }
 }
 
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) {
