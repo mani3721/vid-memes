@@ -4,7 +4,6 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import AdSlot from './AdSlot'
-import AdsterraAds from './AdsterraAds'
 import CookieBanner from './CookieBanner'
 
 function ContentFallback() {
@@ -50,7 +49,6 @@ export default function AppShell({ children }) {
               {children}
             </Suspense>
           </div>
-          <AdsterraAds />
           <Footer />
           <CookieBanner />
         </main>

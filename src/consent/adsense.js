@@ -10,7 +10,7 @@ export function loadAdSense(clientId) {
   if (!clientId) return Promise.reject(new Error('Missing AdSense client ID'))
 
   loader = new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[data-adsense-loader]')
+    const existing = document.querySelector('script[data-adsense-loader], script[src*="adsbygoogle"]')
     if (existing) return resolve()
 
     const script = document.createElement('script')
