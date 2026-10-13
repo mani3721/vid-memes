@@ -8,7 +8,7 @@
  * approval, ownership, public-domain status, or a fair-use determination.
  * Keep STATIC_ROUTES aligned with the independently deployed server sitemap.
  */
-import { chromium } from 'playwright'
+import { chromium } from 'playwright-core'
 import { createServer } from 'node:http'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
@@ -209,6 +209,27 @@ function routeToFile(route) {
   return file
 }
 
+/**
+ * Vercel's build image has no Chromium system libraries and no root to install
+ * them, so there we drive the Lambda build that bundles its own. Everywhere
+ * else Playwright's locally installed browser is used.
+ *
+ * `--single-process` is dropped: it suits Puppeteer but starves Playwright,
+ * which needs out-of-process renderers and otherwise reports a closed target.
+ */
+async function launchBrowser() {
+  if (!process.env.VERCEL) return chromium.launch()
+
+  const { default: lambdaChromium } = await import('@sparticuz/chromium')
+  const args = lambdaChromium.args.filter(
+    (arg) => arg !== '--single-process' && !arg.startsWith('--headless'),
+  )
+  return chromium.launch({
+    executablePath: await lambdaChromium.executablePath(),
+    args,
+  })
+}
+
 async function startServer(template) {
   const server = createServer((req, res) => {
     // Every navigation gets the immutable Vite shell, not a previously baked
@@ -253,7 +274,7 @@ export async function run() {
   let passed = 0
   let failed = 0
   try {
-    browser = await chromium.launch()
+    browser = await launchBrowser()
     // Normal browser identity: the content is not conditional on crawler UA.
     const context = await browser.newContext({ javaScriptEnabled: true })
     for (const { route, asset } of routes) {
