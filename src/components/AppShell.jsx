@@ -41,13 +41,16 @@ export default function AppShell({ children }) {
             already clears against whatever content starts the page below it.
           */}
           <div>
-            <AdSlot context="header-banner" />
+            <AdSlot context="header-banner" provider="astra" />
           </div>
 
           <div className="px-4 pb-5 pt-5 sm:px-6">
             <Suspense fallback={<ContentFallback />}>
               {children}
             </Suspense>
+          </div>
+          <div>
+            <AdSlot context="pre-footer" provider="astra" />
           </div>
           <Footer />
           <CookieBanner />

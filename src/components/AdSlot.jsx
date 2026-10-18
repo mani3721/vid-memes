@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { ADSENSE_CLIENT } from '../config/site'
 import { useConsent } from '../consent/consentStore'
 import { fillSlot, loadAdSense } from '../consent/adsense'
+import AstraAd from './AstraAd'
 
 /**
  * Minimum edge-to-edge distance, in CSS pixels, between an ad slot and any
@@ -84,11 +85,11 @@ export function auditPlacement(el, context) {
  * Policy-enforcing ad container.
  *
  * Renders nothing at all unless: the context is allowed, the live placement
- * audit passes, consent has been granted, and a publisher ID is configured.
+ * audit passes and consent has been granted. AdSense also requires a publisher ID.
  * The "Advertisement" label is emitted by this component so no caller can
  * mislabel or omit it.
  */
-export default function AdSlot({ context, className = '' }) {
+export default function AdSlot({ context, className = '', provider = 'adsense' }) {
   const { adsAllowed } = useConsent()
   const [violation, setViolation] = useState(null)
   const [failed, setFailed] = useState(false)
@@ -135,7 +136,8 @@ export default function AdSlot({ context, className = '' }) {
     )
   }
 
-  const blocked = Boolean(violation) || !adsAllowed || !ADSENSE_CLIENT || failed
+  const blocked = Boolean(violation) || !adsAllowed ||
+    (provider === 'adsense' && (!ADSENSE_CLIENT || failed))
 
   return (
     <aside
@@ -155,6 +157,9 @@ export default function AdSlot({ context, className = '' }) {
           <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-mid">
             Advertisement
           </p>
+          {provider === 'astra' ? (
+            <AstraAd format={context === 'header-banner' ? 'banner' : 'native'} />
+          ) : (
           <ins
             ref={mountAd}
             className="adsbygoogle block min-h-24 w-full"
@@ -163,6 +168,7 @@ export default function AdSlot({ context, className = '' }) {
             data-ad-format="auto"
             data-full-width-responsive="true"
           />
+          )}
         </div>
       )}
     </aside>
