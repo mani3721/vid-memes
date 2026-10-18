@@ -89,7 +89,7 @@ export function auditPlacement(el, context) {
  * The "Advertisement" label is emitted by this component so no caller can
  * mislabel or omit it.
  */
-export default function AdSlot({ context, className = '', provider = 'adsense' }) {
+export default function AdSlot({ context, className = '', provider = 'astra', format }) {
   const { adsAllowed } = useConsent()
   const [violation, setViolation] = useState(null)
   const [failed, setFailed] = useState(false)
@@ -106,13 +106,13 @@ export default function AdSlot({ context, className = '', provider = 'adsense' }
     (el) => {
       if (!el) return undefined
 
-      const run = () => setViolation(auditPlacement(el, context))
+      const run = () => setViolation(adsAllowed ? auditPlacement(el, context) : null)
       run()
 
       window.addEventListener('resize', run)
       return () => window.removeEventListener('resize', run)
     },
-    [context],
+    [context, adsAllowed],
   )
 
   /* Loads the tag only once consent is in hand, then fills this one slot. */
@@ -145,7 +145,8 @@ export default function AdSlot({ context, className = '', provider = 'adsense' }
       // Not labelled as an ad when nothing renders — an empty "Advertisement"
       // heading over blank space is itself misleading.
       aria-label={blocked ? undefined : 'Advertisement'}
-      className={blocked ? 'h-0' : `my-40 ${className}`}
+      // Preserve spacing on a rejected placement so subsequent audits can recover.
+      className={!adsAllowed ? 'h-0' : `my-40 ${className}`}
     >
       {blocked ? null : (
         <div className="mx-auto max-w-3xl border-y border-dashed border-edge bg-panel/60 px-4 py-5">
@@ -158,7 +159,7 @@ export default function AdSlot({ context, className = '', provider = 'adsense' }
             Advertisement
           </p>
           {provider === 'astra' ? (
-            <AstraAd format={context === 'header-banner' ? 'banner' : 'native'} />
+            <AstraAd format={format ?? (context === 'sidebar' ? 'skyscraper' : context === 'article' || context === 'feed-gap' ? 'rectangle' : 'banner')} />
           ) : (
           <ins
             ref={mountAd}
