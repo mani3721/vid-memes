@@ -4,7 +4,6 @@ import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
 import AdSlot from './AdSlot'
-import CookieBanner from './CookieBanner'
 
 function ContentFallback() {
   return (
@@ -53,7 +52,6 @@ export default function AppShell({ children }) {
             <AdSlot context="pre-footer" provider="astra" />
           </div>
           <Footer />
-          <CookieBanner />
         </main>
       </div>
     </>

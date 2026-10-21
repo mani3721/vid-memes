@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
 import { ADSENSE_CLIENT } from '../config/site'
-import { useConsent } from '../consent/consentStore'
 import { fillSlot, loadAdSense } from '../consent/adsense'
 import AstraAd from './AstraAd'
 
@@ -85,12 +84,13 @@ export function auditPlacement(el, context) {
  * Policy-enforcing ad container.
  *
  * Renders nothing at all unless: the context is allowed, the live placement
- * audit passes and consent has been granted. AdSense also requires a publisher ID.
+ * audit passes. AdSense also requires a publisher ID.
  * The "Advertisement" label is emitted by this component so no caller can
  * mislabel or omit it.
  */
 export default function AdSlot({ context, className = '', provider = 'astra', format }) {
-  const { adsAllowed } = useConsent()
+  // Ads are enabled for every visitor, independent of any saved cookie choice.
+  const adsAllowed = true
   const [violation, setViolation] = useState(null)
   const [failed, setFailed] = useState(false)
   const insRef = useRef(null)
@@ -115,7 +115,7 @@ export default function AdSlot({ context, className = '', provider = 'astra', fo
     [context, adsAllowed],
   )
 
-  /* Loads the tag only once consent is in hand, then fills this one slot. */
+  /* Loads the AdSense tag once, then fills this one slot. */
   const mountAd = useCallback(
     (el) => {
       if (!el || pushed.current || !adsAllowed || !ADSENSE_CLIENT) return
