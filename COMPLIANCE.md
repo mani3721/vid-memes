@@ -24,6 +24,10 @@ Use this checklist before submitting a Google AdSense application and before eve
       unpublishes the page and drops it from the sitemap without deleting the record
 
 ### Ad Placement
+
+Adsterra scripts, URLs, native banners, and global placements have been removed.
+`AdSlot` supports Google AdSense only; placement safety audits remain in place.
+Run `node --test src/lib/astraAds.test.mjs` to check for reintroduced Adsterra loaders.
 - [x] No ads within or immediately adjacent to MemeCard components (enforced by AdSlot context check)
 - [x] Minimum 150 px gap between any ad and download buttons (`MIN_GAP_PX = 150` in AdSlot.jsx)
 - [x] No ads in carousel/slideshow, sticky overlays, or pop-up modals

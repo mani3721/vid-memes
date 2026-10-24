@@ -1,71 +1,33 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFile } from 'node:fs/promises'
-import { BANNER_UNITS, bannerDocument, selectBannerUnit } from './astraAds.js'
+import { readFile, readdir } from 'node:fs/promises'
 
-const source = (path) => readFile(new URL(path, import.meta.url), 'utf8')
+const root = new URL('../../', import.meta.url)
+const source = (path) => readFile(new URL(path, root), 'utf8')
 
-test('document-wide Adsterra tag loads once at the end of the static head', async () => {
-  const html = await source('../../index.html')
-  const url = 'https://accountut.com/1/676953c0ba8ce919e0b2078e105e7c04'
-  assert.equal(html.split(url).length - 1, 1)
-  assert.ok(html.includes(`<script data-cfasync="false" src="${url}"></script>\n  </head>`))
-  const component = await source('../components/AstraAd.jsx')
-  assert.ok(!component.includes('accountut.com'))
-  assert.ok(!component.includes('mountDocumentScript'))
+async function sourceFiles(directory) {
+  const entries = await readdir(new URL(directory, root), { withFileTypes: true })
+  const files = await Promise.all(entries.map((entry) => {
+    const path = `${directory}/${entry.name}`
+    return entry.isDirectory() ? sourceFiles(path) : /\.(js|jsx)$/.test(entry.name) ? [path] : []
+  }))
+  return files.flat()
+}
+
+test('Adsterra URLs and loaders are absent from HTML and application sources', async () => {
+  const paths = ['index.html', ...await sourceFiles('src')]
+  for (const path of paths) {
+    assert.doesNotMatch(await source(path), /accountut\.com|bellnewyork\.org|astraAds|AstraAd|astraLoaded|provider=["']astra["']/i, path)
+  }
 })
 
-test('native banner loads once in the body outside the React root', async () => {
-  const html = await source('../../index.html')
-  const url = 'https://bellnewyork.org/21/e711522f5deae38d82fdd9441db23d41'
-  const container = 'container-e711522f5deae38d82fdd9441db23d41'
-  assert.equal(html.split(url).length - 1, 1)
-  assert.equal(html.split(`id="${container}"`).length - 1, 1)
-  const snippet = `<script async="async" data-cfasync="false" src="${url}"></script>\n      <div id="${container}"></div>`
-  assert.ok(html.includes(snippet))
-  const bannerStart = html.indexOf(snippet)
-  assert.ok(bannerStart > html.indexOf('<body>'))
-  assert.ok(bannerStart < html.indexOf('</body>'))
-  const rootEnd = html.lastIndexOf('</div>', bannerStart)
-  assert.match(html.slice(rootEnd, bannerStart), /^<\/div>\s*<!--[^]*?-->\s*<section[^>]*>\s*$/)
-})
-
-test('saved cookie choices do not gate ads and no cookie prompt is mounted', async () => {
-  const [slot, shell, main] = await Promise.all([
-    source('../components/AdSlot.jsx'),
-    source('../components/AppShell.jsx'),
-    source('../main.jsx'),
-  ])
-  assert.ok(!slot.includes('useConsent'))
-  assert.ok(slot.includes('const adsAllowed = true'))
+test('Google AdSense, analytics, and application entry point are preserved', async () => {
+  const html = await source('index.html')
+  assert.match(html, /https:\/\/pagead2\.googlesyndication\.com\/pagead\/js\/adsbygoogle\.js/)
+  assert.match(html, /https:\/\/www\.googletagmanager\.com\/gtag\/js/)
+  assert.match(html, /<script type="module" src="\/src\/main\.jsx"><\/script>/)
+  const slot = await source('src/components/AdSlot.jsx')
   assert.ok(slot.includes('auditPlacement(el, context)'))
-  assert.ok(!shell.includes('CookieBanner'))
-  assert.ok(!main.includes('ConsentProvider'))
-})
-
-test('responsive banners use the actual panel width', () => {
-  for (const [width, name] of [[1100, 'leaderboard'], [728, 'leaderboard'], [727, 'banner'], [468, 'banner'], [467, 'mobile'], [320, 'mobile'], [319, 'rectangle'], [300, 'rectangle']]) {
-    assert.equal(selectBannerUnit('banner', width), BANNER_UNITS[name])
-  }
-  assert.equal(selectBannerUnit('banner', 299), null)
-})
-
-test('article and sidebar formats use matching dimensions without overflow', () => {
-  for (const [format, name] of [['rectangle', 'rectangle'], ['skyscraper', 'skyscraper'], ['short-skyscraper', 'shortSkyscraper']]) {
-    const unit = BANNER_UNITS[name]
-    assert.equal(selectBannerUnit(format, unit.width), unit)
-    assert.equal(selectBannerUnit(format, unit.width - 1), null)
-  }
-})
-
-test('all six isolated creatives have valid separate script tags', () => {
-  assert.equal(Object.keys(BANNER_UNITS).length, 6)
-  for (const unit of Object.values(BANNER_UNITS)) {
-    const html = bannerDocument(unit)
-    assert.ok(html.includes(`"key":"${unit.key}"`))
-    assert.ok(html.includes(`"width":${unit.width}`))
-    assert.ok(html.includes(`"height":${unit.height}`))
-    assert.ok(html.includes(`</script><script src="https://bellnewyork.org/22/${unit.key}"></script>`))
-    assert.equal((html.match(/<script/g) ?? []).length, 2)
-  }
+  assert.ok(slot.includes('loadAdSense(ADSENSE_CLIENT)'))
+  assert.ok(slot.includes('!ADSENSE_CLIENT || failed'))
 })

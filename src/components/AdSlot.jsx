@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { ADSENSE_CLIENT } from '../config/site'
 import { fillSlot, loadAdSense } from '../consent/adsense'
-import AstraAd from './AstraAd'
 
 /**
  * Minimum edge-to-edge distance, in CSS pixels, between an ad slot and any
@@ -88,7 +87,7 @@ export function auditPlacement(el, context) {
  * The "Advertisement" label is emitted by this component so no caller can
  * mislabel or omit it.
  */
-export default function AdSlot({ context, className = '', provider = 'astra', format }) {
+export default function AdSlot({ context, className = '' }) {
   // Ads are enabled for every visitor, independent of any saved cookie choice.
   const adsAllowed = true
   const [violation, setViolation] = useState(null)
@@ -136,8 +135,7 @@ export default function AdSlot({ context, className = '', provider = 'astra', fo
     )
   }
 
-  const blocked = Boolean(violation) || !adsAllowed ||
-    (provider === 'adsense' && (!ADSENSE_CLIENT || failed))
+  const blocked = Boolean(violation) || !adsAllowed || !ADSENSE_CLIENT || failed
 
   return (
     <aside
@@ -158,9 +156,6 @@ export default function AdSlot({ context, className = '', provider = 'astra', fo
           <p className="mb-2 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-mid">
             Advertisement
           </p>
-          {provider === 'astra' ? (
-            <AstraAd format={format ?? (context === 'sidebar' ? 'skyscraper' : context === 'article' || context === 'feed-gap' ? 'rectangle' : 'banner')} />
-          ) : (
           <ins
             ref={mountAd}
             className="adsbygoogle block min-h-24 w-full"
@@ -169,7 +164,6 @@ export default function AdSlot({ context, className = '', provider = 'astra', fo
             data-ad-format="auto"
             data-full-width-responsive="true"
           />
-          )}
         </div>
       )}
     </aside>

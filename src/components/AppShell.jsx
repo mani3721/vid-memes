@@ -3,7 +3,6 @@ import { Loader2 } from 'lucide-react'
 import Header from './Header'
 import Sidebar from './Sidebar'
 import Footer from './Footer'
-import AdSlot from './AdSlot'
 
 function ContentFallback() {
   return (
@@ -33,23 +32,10 @@ export default function AppShell({ children }) {
 
         {/* Content — offset left by sidebar width */}
         <main className="min-w-0 flex-1 md:ml-16 lg:ml-65">
-          {/*
-            Own wrapper, no other children — AdSlot's structural sibling check
-            is trivially satisfied this way (see AdSlot.jsx), leaving only the
-            geometric MIN_GAP_PX audit, which the slot's own my-40 margin
-            already clears against whatever content starts the page below it.
-          */}
-          <div>
-            <AdSlot context="header-banner" provider="astra" />
-          </div>
-
           <div className="px-4 pb-5 pt-5 sm:px-6">
             <Suspense fallback={<ContentFallback />}>
               {children}
             </Suspense>
-          </div>
-          <div>
-            <AdSlot context="pre-footer" provider="astra" />
           </div>
           <Footer />
         </main>
