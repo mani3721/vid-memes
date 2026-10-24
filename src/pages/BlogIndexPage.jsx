@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 import SEO from '../components/SEO'
-import AdSlot from '../components/AdSlot'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { useBlogPosts } from '../hooks/useBlog'
 import { BASE_URL, SITE_NAME } from '../utils/seo'
@@ -83,10 +82,6 @@ export default function BlogIndexPage() {
           </ul>
         )}
 
-        {/* Own container: see the note in MemePage about AdSlot's sibling audit. */}
-        <div>
-          <AdSlot context="pre-footer" />
-        </div>
       </div>
     </>
   )

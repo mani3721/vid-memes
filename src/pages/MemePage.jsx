@@ -14,7 +14,6 @@ import {
   templateDescription,
 } from '../utils/seo'
 import SEO from '../components/SEO'
-import AdSlot from '../components/AdSlot'
 import Breadcrumbs from '../components/Breadcrumbs'
 import MemeDescription from '../components/MemeDescription'
 import DownloadButton from '../components/DownloadButton'
@@ -431,36 +430,10 @@ export default function MemePage() {
           </div>
         </article>
 
-        {/*
-          Tried a slot here (between the grid and "About this meme") during
-          this round of AdSense layout work and measured it live: the File
-          Details/download card can end only ~70-80px above this point
-          depending on title length and mood label, well inside MIN_GAP_PX.
-          AdSlot correctly refuses it every time rather than rendering unsafe.
-          There is no reliable "sidebar" position on this page — the existing
-          "article" slot below (after "About this meme" has pushed real
-          distance between this point and the download button) is the first
-          place that's actually safe.
-        */}
-
         {/* About this meme — long-form, structured, unique per asset */}
         <div className="mt-12">
           <MemeDescription asset={asset} fallbackText={fallbackDescription} isAdmin={isAdmin} />
           {moodLabel && <p className="mt-4 text-sm text-lo">Mood: {moodLabel}</p>}
-        </div>
-
-        {/*
-          In-flow ad slot between "About This Meme" and "You Might Also Like".
-
-          Wrapped in its own container on purpose. AdSlot refuses to render if a
-          *direct sibling* contains a [data-ad-unsafe] control, and every
-          section here is a sibling of the <article> that holds the download
-          button. Its own wrapper gives it no siblings to trip that check, so
-          the precise 150px geometric check governs instead — and AdSlot's my-40
-          (160px) margin is what satisfies it.
-        */}
-        <div>
-          <AdSlot context="article" />
         </div>
 
         <section aria-labelledby="related-heading" className="mt-12">
@@ -500,19 +473,6 @@ export default function MemePage() {
           </dl>
         </section>
 
-        {/*
-          Second in-flow slot, after the FAQ. The brief asked for one "below
-          About This Meme" and one "between About This Meme and You Might Also
-          Like" — the same position twice — so the second is placed here, at the
-          end of the content, which is the other natural in-flow position and
-          the one AdSlot already models as "pre-footer".
-
-          Both slots are ordinary block elements in the document flow: no
-          sticky, no floating, no interstitial.
-        */}
-        <div>
-          <AdSlot context="pre-footer" />
-        </div>
       </div>
     </>
   )

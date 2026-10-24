@@ -1,6 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom'
 import SEO from '../components/SEO'
-import AdSlot from '../components/AdSlot'
 import Breadcrumbs from '../components/Breadcrumbs'
 import RichContent from '../components/RichContent'
 import { useBlogPost } from '../hooks/useBlog'
@@ -94,11 +93,6 @@ export default function BlogPostPage() {
 
           <RichContent source={post.body} className="mt-8" />
         </article>
-
-        {/* In-flow slot after the article body. */}
-        <div>
-          <AdSlot context="article" />
-        </div>
       </div>
     </>
   )

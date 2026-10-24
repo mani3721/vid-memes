@@ -38,22 +38,32 @@ Run `node --test src/lib/astraAds.test.mjs` to check for reintroduced Adsterra l
 
 #### Where the slots are
 
-| Page | Position | Context |
+**No page renders an `<AdSlot>`.** Every in-flow slot has been removed ahead of
+the AdSense resubmission, so the review crawler finds no manually placed ad unit
+anywhere on the site:
+
+| Page | Position that was removed | Context |
 | --- | --- | --- |
 | MemePage | Between "About This Meme" and "You Might Also Like" | `article` |
 | MemePage | After the FAQ, before the footer | `pre-footer` |
 | BlogPostPage | After the article body | `article` |
 | BlogIndexPage | After the post list | `pre-footer` |
+| CategoryPage | After the category guide | `feed-gap` |
+| BrowseFeed (homepage) | Between the feed and trending sounds | `feed-gap` |
 
-Every slot is an ordinary block element in the document flow. None is sticky,
-floating, or interstitial.
+`BrowseFeed` also serves the `*` catch-all route, so no unmatched URL renders an
+ad either.
 
-The homepage (`BrowseFeed`) carries **no ad slot**. The `feed-gap` slot that sat
-between the masonry feed and the trending sounds strip has been removed, along
-with its wrapper `<div>` and the now-unused `AdSlot` import. `BrowseFeed` also
-serves the `*` catch-all route, so no unmatched URL renders an ad either.
-`CategoryPage` retains its own `feed-gap` slot; that is a different route group
-and was left untouched.
+The AdSense loader itself is still in `index.html`, and
+`<meta name="google-adsense-account">` still declares the publisher ID — that is
+what AdSense verifies site ownership against, so removing it would break the
+review. What is gone is every placement of a unit.
+
+`AdSlot.jsx`, `consent/adsense.js`, and `ADSENSE_CLIENT` are intentionally kept.
+They are unreferenced by any page right now, but they carry the placement audit
+(`auditPlacement`, `MIN_GAP_PX`) that any future slot must pass. Re-add a slot by
+importing `AdSlot` and wrapping it in its own `<div>` — see the next section for
+why the wrapper matters.
 
 #### The isolated download zone on MemePage
 
@@ -92,6 +102,9 @@ download button, so an unwrapped slot would trip the structural check and render
 nothing. Giving each slot its own wrapper leaves it with no siblings to test,
 and the 150 px geometric check then governs — satisfied by AdSlot's own `my-40`
 (160 px) margin.
+
+This rule still applies to any slot re-added later, even though no slot is
+mounted today.
 
 This is fail-safe in the right direction: if a layout change ever brings a
 download button within 150 px, the audit blocks the ad rather than serving a
