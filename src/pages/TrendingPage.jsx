@@ -7,6 +7,7 @@ import PageHeading from '../components/PageHeading'
 import TrendingCard from '../components/TrendingCard'
 import RankingList from '../components/RankingList'
 import TodayRankingWidget from '../components/TodayRankingWidget'
+import CategoryGuide from '../components/CategoryGuide'
 
 const GRID_COUNT = 8
 const RANK_COUNT = 20
@@ -125,6 +126,7 @@ export default function TrendingPage() {
             </section>
           </div>
         )}
+        <CategoryGuide category="trending" />
       </div>
     </>
   )

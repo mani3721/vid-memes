@@ -34,6 +34,78 @@ function MetaChip({ label }) {
   )
 }
 
+/**
+ * Reserved vertical space for the future sidebar ad unit, in pixels.
+ *
+ * 250 is a 300x250 medium rectangle, the unit that actually fits a 320px
+ * column. The box is committed to the layout at first paint and never
+ * resizes, so an ad arriving late — or not at all — cannot push the download
+ * control up or down. That is the whole point: a button that moves while an
+ * async script settles is how accidental clicks happen, and it is also a
+ * direct CLS hit on the page's most-used control.
+ */
+const AD_RESERVE_PX = 250
+
+/**
+ * Fixed height of the isolated download block, in pixels.
+ *
+ * Measured, not guessed: 24px top padding + 16px heading row + 16px heading
+ * margin + two 48px controls + the 12px gap between them + 24px bottom
+ * padding = 188. Rounded to 190 so a font fallback swapping in a taller
+ * face cannot overflow the envelope.
+ *
+ * Fixing it means the block's height is identical before and after the hero
+ * media loads, so the button underneath never moves.
+ */
+const CONTROL_ZONE_MIN_PX = 190
+
+/**
+ * The ad environment, held open but not yet filled.
+ *
+ * Rendered inside its own wrapper div so the structural half of AdSlot's
+ * audit would pass if a live <AdSlot> ever replaces it: auditPlacement()
+ * refuses any slot whose *direct sibling* contains a [data-ad-unsafe]
+ * control, and a lone child has no siblings to test.
+ *
+ * Read the note on #isolated-download-control-zone before swapping in a real
+ * unit — this position clears the brief's 25-30px separation but not
+ * AdSlot's own 150px geometric rule.
+ *
+ * The dashed "Advertisement Slot" treatment is development-only. In
+ * production the same box renders as inert reserved space: identical
+ * geometry, so what you lay out in dev is what ships, but no reviewer ever
+ * meets a box labelled "Advertisement" with no advertisement in it.
+ */
+function AdReservation() {
+  if (!import.meta.env.DEV) {
+    return (
+      <div
+        aria-hidden
+        data-ad-reservation="sidebar"
+        style={{ height: AD_RESERVE_PX }}
+        className="w-full"
+      />
+    )
+  }
+
+  return (
+    <div
+      data-ad-reservation="sidebar"
+      style={{ height: AD_RESERVE_PX }}
+      className="grid w-full place-items-center rounded-2xl border border-dashed border-edge bg-panel/40 px-4 text-center"
+    >
+      <div>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-mid">
+          Advertisement Slot
+        </p>
+        <p className="mt-1.5 text-[11px] leading-relaxed text-lo">
+          300×250 reserved · dev preview only
+        </p>
+      </div>
+    </div>
+  )
+}
+
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 export default function MemePage() {
@@ -250,26 +322,18 @@ export default function MemePage() {
 
               {/*
                 The download and share triggers used to sit here, as a pair of
-                circles directly beneath the H1. They now live at the bottom of
-                the File Details card below — see the note there.
+                circles directly beneath the H1, and then inside the File
+                Details card below. They now live alone in
+                #isolated-download-control-zone at the foot of this column.
               */}
 
               {/* Open to guests — see components/ReactionBar.jsx */}
               <ReactionBar memeId={asset.id} reactions={asset.reactions} />
 
               {/*
-                mt-8 (32px) on top of the column's gap-4 (16px) gives 48px of
-                clear space above this card.
-
-                Worth knowing before an ad goes in that gap: AdSlot will refuse
-                it in this position. This card contains the download button, and
-                auditPlacement rejects any slot whose *direct sibling* contains
-                a [data-ad-unsafe] control — a rule about DOM structure, which no
-                amount of margin satisfies. Its geometric rule also wants
-                MIN_GAP_PX (150px), not 30. The pattern that does work is the one
-                used further down this page: put <AdSlot> in its own wrapper div
-                outside this column, and let its own my-40 (160px) supply the
-                distance.
+                File Details is now description only. Nothing clickable lives
+                in this card, so the ad reservation directly beneath it has no
+                control to sit next to — structurally or geometrically.
               */}
               <div className="mt-8 overflow-hidden rounded-2xl border border-edge bg-panel">
                 <div className="p-4">
@@ -289,15 +353,63 @@ export default function MemePage() {
                     ))}
                   </dl>
                 </div>
+              </div>
 
-                {/*
-                  Actions live inside the card that describes the file, so the
-                  download is attached to the thing it downloads rather than
-                  floating under the headline. Stacked full-width and 48px tall
-                  each, with a gap between them — two 40px circles side by side
-                  was the shape that produced accidental taps.
-                */}
-                <div className="flex flex-col gap-2 border-t border-edge p-4">
+              {/*
+                The ad environment, simulated now so the download control is
+                laid out against its real neighbour rather than against empty
+                space. Own wrapper: see the note on AdReservation.
+              */}
+              <div className="mt-8">
+                <AdReservation />
+              </div>
+
+              {/*
+                THE ISOLATED DOWNLOAD CONTROL ZONE
+                ----------------------------------
+                The page's primary action, alone in its own block, with no ad,
+                no thumbnail and no navigation inside its bounds.
+
+                On the separation distance: the brief for this change asked for
+                25-30px. That is the floor, and mt-40 (160px) clears it — but
+                160px is the number that matters, because this repo enforces its
+                own stricter rule. AdSlot.MIN_GAP_PX is 150, and auditPlacement()
+                measures it live against every [data-ad-unsafe] node on the
+                page. Had this been built to 32px (mt-8), a real <AdSlot> in the
+                reservation above would have measured the gap, failed, and
+                silently rendered nothing — the layout would look right and
+                carry no ad. 160px is what makes the slot above actually
+                fillable.
+
+                Known gap to close before this position goes live: the audit is
+                radial (Math.hypot), so it also measures the diagonal to the
+                media hero in the left grid column, which sits well inside
+                150px. The hero is not currently marked [data-ad-unsafe] so the
+                audit passes, but confirm the measured distance with the real
+                unit mounted before enabling it. The two in-flow slots further
+                down the page are unaffected and remain the proven positions.
+
+                min-height is fixed and independent of its contents: the two
+                48px buttons, the 12px gap between them, the label line, and the
+                padding envelope are all committed at first paint. Nothing in
+                here waits on a network response, so the button cannot travel
+                under the user's finger while the page settles.
+              */}
+              <section
+                id="isolated-download-control-zone"
+                aria-labelledby="download-zone-heading"
+                style={{ minHeight: CONTROL_ZONE_MIN_PX }}
+                className="mt-40 flex flex-col justify-center rounded-2xl border border-edge bg-panel px-4 py-6"
+              >
+                <h2
+                  id="download-zone-heading"
+                  className="mb-4 text-xs font-semibold uppercase tracking-widest text-mid"
+                >
+                  Download This File
+                </h2>
+
+                {/* space-y-3 (12px) between the two full-width controls. */}
+                <div className="space-y-3">
                   <DownloadButton
                     label={`Download ${asset.title} ${asset.format}`}
                     href={asset.publicUrl}
@@ -313,7 +425,7 @@ export default function MemePage() {
                     text="Share Meme Asset Link"
                   />
                 </div>
-              </div>
+              </section>
 
             </div>
           </div>

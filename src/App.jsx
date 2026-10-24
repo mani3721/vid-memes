@@ -64,6 +64,7 @@ function Studio() {
         <Route path="/trending-memes" element={<TrendingPage />} />
         <Route path="/videos"         element={<CategoryPage category="videos"    />} />
         <Route path="/gifs"           element={<CategoryPage category="gifs"      />} />
+        <Route path="/animated-gifs"  element={<CategoryPage category="gifs"      />} />
         {/* Third-party KLIPY content, not the Supabase library — its own page
             rather than a CategoryPage variant. */}
         <Route path="/stickers"       element={<StickersPage />} />
@@ -88,6 +89,8 @@ function Studio() {
         <Route path="/privacy"        element={<PrivacyPage />} />
         <Route path="/privacy-policy" element={<PrivacyPage />} />
         <Route path="/terms"          element={<TermsPage />} />
+        <Route path="/terms-of-use"   element={<TermsPage />} />
+        <Route path="/platform-disclaimer" element={<DisclaimerPage />} />
         <Route path="/terms-and-conditions" element={<TermsPage />} />
         <Route path="/content-policy" element={<DmcaPage />} />
         <Route path="/dmca-policy"    element={<DmcaPage />} />

@@ -6,6 +6,7 @@ import AdSlot from '../components/AdSlot'
 import MasonryFeed from '../components/MasonryFeed'
 import MoodPicker from '../components/MoodPicker'
 import EmptyGridState from '../components/EmptyGridState'
+import CategoryGuide from '../components/CategoryGuide'
 import SoundCard from '../components/SoundCard'
 import { useStudio } from '../store/studioStore'
 
@@ -112,6 +113,8 @@ export default function CategoryPage({ category }) {
             )}
           </>
         )}
+
+        <CategoryGuide category={category} />
 
         {/* Own wrapper — see AdSlot.jsx for why this trivially clears the
             structural sibling check regardless of what's inside the grid. */}

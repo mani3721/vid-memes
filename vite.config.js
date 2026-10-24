@@ -1,6 +1,33 @@
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'vite'
+import { createServer, defineConfig } from 'vite'
+import { writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
+
+// Render existing page components rather than maintaining duplicate legal copy.
+function staticPagesPlugin() {
+  let config
+  return {
+    name: 'static-page-content',
+    apply: 'build',
+    configResolved(value) { config = value },
+    async closeBundle() {
+      const server = await createServer({
+        configFile: false,
+        root: config.root,
+        plugins: [react()],
+        server: { middlewareMode: true, watch: null, hmr: false },
+        appType: 'custom',
+      })
+      try {
+        const { renderPages } = await server.ssrLoadModule('/src/prerender-pages.jsx')
+        await writeFile(resolve(config.root, config.build.outDir, 'prerender-pages.json'), JSON.stringify(renderPages()), 'utf8')
+      } finally {
+        await server.close()
+      }
+    },
+  }
+}
 
 // Converts Vite's injected blocking CSS link into a non-render-blocking preload.
 // The onload swap applies the stylesheet after parse without stalling the initial paint.
@@ -53,7 +80,8 @@ function fontPreloadPlugin() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), asyncCssPlugin(), fontPreloadPlugin()],
+  base: '/',
+  plugins: [react(), tailwindcss(), asyncCssPlugin(), fontPreloadPlugin(), staticPagesPlugin()],
   build: {
     assetsInlineLimit: 8192,
     rollupOptions: {

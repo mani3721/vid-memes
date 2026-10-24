@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build && node prerender.mjs",
     "prerender": "node prerender.mjs",
+    "audit": "node audit-build.mjs",
+    "verify": "npm run build && npm run audit",
     "lint": "eslint .",
     "preview": "vite preview"
   },

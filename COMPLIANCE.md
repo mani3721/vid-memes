@@ -48,6 +48,31 @@ Run `node --test src/lib/astraAds.test.mjs` to check for reintroduced Adsterra l
 Every slot is an ordinary block element in the document flow. None is sticky,
 floating, or interstitial.
 
+#### The isolated download zone on MemePage
+
+The detail page's download and share controls live alone in
+`#isolated-download-control-zone`, at the foot of the right-hand column. No ad,
+thumbnail, or navigation renders inside its bounds.
+
+- `mt-40` (160px) separates it from the `AdReservation` box above it. The
+  minimum asked for was 25-30px; 160px is used because `MIN_GAP_PX` is 150 and
+  a 32px gap would make the slot above permanently unfillable — `auditPlacement()`
+  would measure it, fail, and render nothing.
+- `AdReservation` holds a fixed 250px box (a 300x250 medium rectangle) and the
+  zone itself holds a fixed 190px envelope, so neither moves when the hero media
+  or an async script settles. This is the CLS guarantee for the page's primary
+  control.
+- `AdReservation` is **reserved space, not a live slot.** It renders the dashed
+  "Advertisement Slot" label in dev only; in production it is an inert sized
+  div. Before replacing it with a real `<AdSlot context="sidebar">`, measure the
+  audit with the unit mounted: `rectGap()` is radial, so it also measures the
+  diagonal to the media hero in the left grid column, which is inside 150px. The
+  hero is not marked `[data-ad-unsafe]` today, so the audit passes — confirm that
+  is still true and still correct before going live.
+
+The File Details card above now carries description text only; it holds no
+clickable control at all.
+
 #### Why each slot sits in its own wrapper `<div>`
 
 `auditPlacement()` runs two checks. The geometric one — nothing marked
@@ -128,7 +153,58 @@ violation. The worst case is a missing ad, never a policy breach.
 
 ---
 
-## 4. AdSense Application Prerequisites
+## 4. Build Pipeline & Local Pre-Submission Audit
+
+### The chain
+
+`package.json` runs three stages in order; any failure stops the chain:
+
+```
+vite build        → dist/ + dist/prerender-pages.json (rendered React page content)
+node prerender.mjs → 23 structural pages + 481 asset pages injected into dist/
+node audit-build.mjs → verifies dist/ is crawlable (run separately, or via npm run verify)
+```
+
+| Script | Does |
+| --- | --- |
+| `npm run build` | Vite compile, then prerender. This is what Vercel runs. |
+| `npm run prerender` | Re-runs injection only. Idempotent — restores from `.prerender-template.html`. |
+| `npm run audit` | Reads `dist/`, exits non-zero on failure. Changes nothing. |
+| `npm run verify` | `build` then `audit`. Use before every resubmission. |
+
+`audit` is deliberately **not** chained into `build`. Vercel builds without Supabase
+credentials would skip asset pages, and a chained audit would fail the deploy over a
+local-only check.
+
+### What the audit proves — and what it does not
+
+It reads `dist/` only. A green run means the built bundle is crawlable. It says
+nothing about what the live origin serves — routing, redirects, and CDN behaviour
+are verified in Search Console (section 5).
+
+Per page it checks: word count of body text, exactly one non-empty `<title>`,
+an `<h1>`, a canonical link, at least one `/assets/` reference, and no relative
+`./assets/` paths. Plus: unique titles across core routes, the
+`videsaur-asset-data-profile` container on every asset page, and the exact
+`ads.txt` publisher record.
+
+Two thresholds, because they answer different questions:
+
+- `MIN_WORDS_*` — "did prerendering happen?" An unrendered shell is ~0 words. **Fails the build.**
+- `THIN_CONTENT_WORDS` (250) — "would a reviewer call this thin?" **Warns only**, since a contact form is legitimately short.
+
+The **prerender marker check is the load-bearing one.** `index.html` already ships
+~885 words of homepage manifesto as a crawlable baseline, so word count alone cannot
+distinguish a correct `/about` from a stale shell copied into `dist/about/` — both
+look content-rich. Only the `<!-- videsaur-prerendered -->` marker proves
+route-specific content was substituted.
+
+Current state: 12 core routes, 481 asset pages, thinnest core page `/contact` at
+140 words (advisory), thinnest asset page 565 words.
+
+---
+
+## 5. AdSense Application Prerequisites
 
 Complete all items above, then:
 
@@ -143,7 +219,7 @@ Complete all items above, then:
 
 ---
 
-## 5. Ongoing Compliance (Post-Approval)
+## 6. Ongoing Compliance (Post-Approval)
 
 - [ ] Review AdSense policy updates quarterly
 - [ ] Process all DMCA notices within 48 hours
@@ -151,6 +227,9 @@ Complete all items above, then:
 - [ ] After adding a new static route, add it to `STATIC_PAGES` in
       `server/lib/sitemap/config.js` — static routes are code, not data, so the
       sitemap cannot discover them on its own
+- [ ] After adding a new static route, also add it to `CORE_ROUTES` in
+      `audit-build.mjs` and to `prerender.mjs` — otherwise the route ships
+      unprerendered and unaudited
 - [ ] Monitor AdSense account for policy violations in the AdSense dashboard
 
 ---

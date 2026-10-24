@@ -1,4 +1,4 @@
-# Videsaur — https://videsaur.co.in/robots.txt
+# Videsaur — https://www.videsaur.co.in/robots.txt
 
 User-agent: *
 Allow: /
@@ -39,4 +39,4 @@ Allow: /
 
 # Sitemap index — generated live from the catalogue, lists one sub-sitemap per
 # content type plus the static pages. See server/routes/sitemap.js.
-Sitemap: https://videsaur.co.in/sitemap.xml
+Sitemap: https://www.videsaur.co.in/sitemap.xml
