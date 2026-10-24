@@ -43,6 +43,13 @@ const CONCURRENCY = Number(process.env.PRERENDER_CONCURRENCY) || 24
  */
 const MAX_ROWS = 5000
 
+/**
+ * Columns the category hub link index needs. Deliberately narrow: the hub list
+ * renders a title, a format label and a URL, so there is no reason to pull the
+ * full ~20-column row that the asset compiler requires.
+ */
+export const INDEX_COLUMNS = 'id,title,format,category,download_count'
+
 const HTML_ESCAPES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
 
 /**
@@ -321,35 +328,57 @@ async function mapPool(items, limit, worker) {
   return results
 }
 
-export async function run() {
-  const t0 = performance.now()
+/**
+ * Single published-catalog read, shared by the asset compiler and the category
+ * hub link index.
+ *
+ * `optional: true` is for callers that enhance a page rather than produce it —
+ * the hub index degrades to zero links, keeping credential-less builds (Vercel
+ * previews, `PRERENDER_ASSETS=0`, contributors without a .env) working instead
+ * of aborting. The asset compiler leaves it false: a build that silently emits
+ * no asset pages is a far worse outcome than a failed build.
+ */
+export async function getPublishedAssets({ columns = '*', order = [['id', true]], limit = MAX_ROWS, optional = false } = {}) {
   dotenv.config({ path: resolve(ROOT, '.env') })
   const url = process.env.VITE_SUPABASE_URL
   const key = process.env.VITE_SUPABASE_ANON_KEY
-  if (!url || !key) throw new Error('Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY')
-
-  const parts = splitTemplate(await readFile(join(DIST, 'index.html'), 'utf8'))
-  const tTemplate = performance.now()
+  if (!url || !key) {
+    if (optional) return []
+    throw new Error('Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY')
+  }
 
   // Public anon access deliberately respects publication RLS, never service role.
   const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } })
+  let query = supabase.from('memes').select(columns).eq('is_published', true)
+  for (const [column, ascending] of order) query = query.order(column, { ascending })
 
-  // Exactly one catalog read. '*' is deliberate: the live schema drifts from
-  // schema.sql, and the JSON-LD builders in src/utils/seo.js read ~20 columns
-  // under several alternative names.
-  const { data, error } = await supabase
-    .from('memes')
-    .select('*')
-    .eq('is_published', true)
-    .order('id', { ascending: true })
-    .range(0, MAX_ROWS - 1)
-  if (error) throw new Error(`memes query failed: ${error.message}`)
-  const tFetch = performance.now()
+  const { data, error } = await query.range(0, limit - 1)
+  if (error) {
+    if (optional) {
+      console.warn(`[prerender] Catalog read failed (${error.message}); hub link index omitted.`)
+      return []
+    }
+    throw new Error(`memes query failed: ${error.message}`)
+  }
 
   const assets = data ?? []
-  if (assets.length >= MAX_ROWS) {
-    throw new Error(`Catalog read returned ${assets.length} rows and is likely truncated; paginate this query.`)
+  if (assets.length >= limit) {
+    const message = `Catalog read returned ${assets.length} rows and is likely truncated; paginate this query.`
+    if (!optional) throw new Error(message)
+    console.warn(`[prerender] ${message}`)
   }
+  return assets
+}
+
+export async function run() {
+  const t0 = performance.now()
+  const parts = splitTemplate(await readFile(join(DIST, 'index.html'), 'utf8'))
+  const tTemplate = performance.now()
+
+  // '*' is deliberate: the live schema drifts from schema.sql, and the JSON-LD
+  // builders in src/utils/seo.js read ~20 columns under several alternative names.
+  const assets = await getPublishedAssets()
+  const tFetch = performance.now()
   if (!assets.length) throw new Error('Catalog read returned no published assets')
 
   const outcomes = await mapPool(assets, CONCURRENCY, async (asset) => {

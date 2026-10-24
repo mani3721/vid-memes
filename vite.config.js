@@ -12,6 +12,18 @@ function staticPagesPlugin() {
     apply: 'build',
     configResolved(value) { config = value },
     async closeBundle() {
+      // Category hubs embed a crawlable link index into the ~480 asset pages.
+      // Optional by design: a build without Supabase credentials still emits
+      // every structural page, just without the link index.
+      const { getPublishedAssets, INDEX_COLUMNS } = await import('./prerender-assets.mjs')
+      const catalog = await getPublishedAssets({
+        columns: INDEX_COLUMNS,
+        // Most-downloaded first, id as a tiebreak so the 24 chosen per hub are
+        // stable between builds rather than reshuffling on equal counts.
+        order: [['download_count', false], ['id', true]],
+        optional: true,
+      })
+
       const server = await createServer({
         configFile: false,
         root: config.root,
@@ -21,7 +33,7 @@ function staticPagesPlugin() {
       })
       try {
         const { renderPages } = await server.ssrLoadModule('/src/prerender-pages.jsx')
-        await writeFile(resolve(config.root, config.build.outDir, 'prerender-pages.json'), JSON.stringify(renderPages()), 'utf8')
+        await writeFile(resolve(config.root, config.build.outDir, 'prerender-pages.json'), JSON.stringify(renderPages(catalog)), 'utf8')
       } finally {
         await server.close()
       }

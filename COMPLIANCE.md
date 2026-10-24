@@ -219,8 +219,28 @@ distinguish a correct `/about` from a stale shell copied into `dist/about/` — 
 look content-rich. Only the `<!-- videsaur-prerendered -->` marker proves
 route-specific content was substituted.
 
-Current state: 12 core routes, 481 asset pages, thinnest core page `/contact` at
+Current state: 12 core routes, 482 asset pages, thinnest core page `/contact` at
 140 words (advisory), thinnest asset page 565 words.
+
+### Category hub link index
+
+The four hubs (`/trending-memes`, `/animated-gifs`, `/sound-effects`,
+`/meme-templates`, plus their aliases) each embed up to 24 crawlable links to
+asset profiles below the editorial guide. Before this, a crawler arriving from
+the homepage found guide prose and four sibling hub links but **no route into the
+482 asset pages** — they were discoverable only through `sitemap-memes.xml`.
+
+- Data comes from one `getPublishedAssets()` read in `vite.config.js`, ordered by
+  `download_count` with `id` as a tiebreak so the chosen 24 are stable between builds.
+- `optional: true` means a build without Supabase credentials emits the hubs
+  without the index rather than failing (hubs drop to ~400 words).
+- `HUB_FILTERS` in `src/prerender-pages.jsx` maps guide keys to DB categories;
+  `templates` → `images`, and `trending` is cross-category.
+- Links use `toMemeUrl()`, so sounds correctly resolve to `/sound/...` and the
+  href matches the target page's own canonical.
+
+`/animated-gifs` lists 11 links, not 24 — that is the entire published `gifs`
+category, not a bug.
 
 ---
 
