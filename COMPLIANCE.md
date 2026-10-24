@@ -48,6 +48,13 @@ Run `node --test src/lib/astraAds.test.mjs` to check for reintroduced Adsterra l
 Every slot is an ordinary block element in the document flow. None is sticky,
 floating, or interstitial.
 
+The homepage (`BrowseFeed`) carries **no ad slot**. The `feed-gap` slot that sat
+between the masonry feed and the trending sounds strip has been removed, along
+with its wrapper `<div>` and the now-unused `AdSlot` import. `BrowseFeed` also
+serves the `*` catch-all route, so no unmatched URL renders an ad either.
+`CategoryPage` retains its own `feed-gap` slot; that is a different route group
+and was left untouched.
+
 #### The isolated download zone on MemePage
 
 The detail page's download and share controls live alone in

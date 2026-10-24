@@ -4,7 +4,6 @@ import { useStudio } from '../store/studioStore'
 import { useMixedFeed } from '../hooks/useMemes'
 import { WEBSITE_SCHEMA, FAQ_SCHEMA } from '../utils/seo'
 import SEO from './SEO'
-import AdSlot from './AdSlot'
 import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import TrendingSoundsFeed from './TrendingSoundsFeed'
@@ -112,12 +111,6 @@ export default function BrowseFeed() {
             />
           )}
         </section>
-
-        {/* Own wrapper — see AdSlot.jsx for why this trivially clears the
-            structural sibling check regardless of what's inside the feed. */}
-        <div>
-          <AdSlot context="feed-gap" />
-        </div>
 
         {/* Trending Sound Effects strip */}
         <TrendingSoundsFeed />
