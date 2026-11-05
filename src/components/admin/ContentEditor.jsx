@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
-  AlertCircle, ChevronLeft, ChevronRight, Loader2, Pencil, RefreshCw, Search, Sparkles, Trash2, X,
+  AlertCircle, ChevronLeft, ChevronRight, Download, Loader2, Pencil, RefreshCw, Search, Sparkles, Trash2, X,
 } from 'lucide-react'
 import { useDebounce } from '../../hooks/useDebounce'
 import { CONTENT_STATUSES } from '../../utils/contentSections'
-import { bulkEditContent, deleteMeme, generateDescription, listContent, saveContent } from '../../lib/adminApi'
+import {
+  bulkEditContent, deleteMeme, downloadContentZip, generateDescription, listContent, saveContent,
+} from '../../lib/adminApi'
 import StatusBadge from './StatusBadge'
 import ContentEditForm from './ContentEditForm'
 
 const CATEGORIES = ['videos', 'gifs', 'images', 'sounds']
 const PAGE_SIZE = 25
+/** Mirrors MAX_ZIP_ITEMS on the server so the button can explain itself before a round-trip. */
+const MAX_ZIP_ITEMS = 500
 
 /** The brief's target length, used to colour the per-row completeness figure. */
 const TARGET_WORDS = 400
@@ -30,6 +34,7 @@ export default function ContentEditor() {
   const [deletingId, setDeletingId] = useState(null)
   const [bulkBusy, setBulkBusy] = useState(false)
   const [blogProgress, setBlogProgress] = useState(null) // { done, total, errors }
+  const [downloading, setDownloading] = useState(null)   // null | 'selected' | 'all'
 
   const [reloadToken, setReloadToken] = useState(0)
 
@@ -141,6 +146,41 @@ export default function ContentEditor() {
     reload()
   }
 
+  /** 'selected' zips the checked rows; 'all' zips every row matching the current filters. */
+  async function handleDownload(mode) {
+    if (downloading) return
+    const count = mode === 'all' ? data.total : selected.size
+    if (count === 0) return
+    if (count > MAX_ZIP_ITEMS) {
+      setError(`${count} items selected — a ZIP download is limited to ${MAX_ZIP_ITEMS}. Narrow the filters first.`)
+      return
+    }
+    if (mode === 'all' && !window.confirm(`Download all ${count} matching item${count === 1 ? '' : 's'} as a ZIP?`)) return
+
+    setDownloading(mode)
+    setError(null)
+    try {
+      await downloadContentZip(
+        mode === 'all'
+          ? {
+              all: true,
+              filters: {
+                q: debouncedQuery,
+                category: filters.category,
+                status: filters.status,
+                needsDescription: filters.needsDescription,
+                missingDescription: filters.missingDescription,
+              },
+            }
+          : { ids: [...selected] },
+      )
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDownloading(null)
+    }
+  }
+
   async function handleDelete(row) {
     if (!window.confirm(`Permanently delete "${row.title}"? This cannot be undone.`)) return
     setDeletingId(row.id)
@@ -218,6 +258,18 @@ export default function ContentEditor() {
           Flagged for description work
         </label>
         <span className="ml-auto">{data.total} item{data.total === 1 ? '' : 's'}</span>
+        <button
+          type="button"
+          disabled={!!downloading || data.total === 0}
+          onClick={() => handleDownload('all')}
+          title={data.total > MAX_ZIP_ITEMS ? `Limited to ${MAX_ZIP_ITEMS} items — narrow the filters` : undefined}
+          className="flex items-center gap-1.5 rounded-full bg-panel-hover px-3 py-1 font-semibold text-hi hover:bg-panel disabled:opacity-50"
+        >
+          {downloading === 'all'
+            ? <Loader2 className="size-3 animate-spin" />
+            : <Download className="size-3" />}
+          {downloading === 'all' ? 'Preparing ZIP…' : `Download all (${data.total})`}
+        </button>
       </div>
 
       {error && (
@@ -242,6 +294,18 @@ export default function ContentEditor() {
             >
               <Sparkles className="size-3" />
               Write Blog ({selected.size})
+            </button>
+
+            <button
+              type="button"
+              disabled={!!downloading || !!blogProgress}
+              onClick={() => handleDownload('selected')}
+              className="flex items-center gap-1.5 rounded-full bg-panel px-3 py-1 text-xs font-semibold text-hi hover:bg-panel-hover disabled:opacity-50"
+            >
+              {downloading === 'selected'
+                ? <Loader2 className="size-3 animate-spin" />
+                : <Download className="size-3" />}
+              {downloading === 'selected' ? 'Preparing ZIP…' : `Download (${selected.size})`}
             </button>
 
             <span className="mx-1 text-lo" aria-hidden>|</span>

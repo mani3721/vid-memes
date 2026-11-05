@@ -53,6 +53,38 @@ export const bulkEditContent = (body) => request('/api/admin/content/bulk', { me
 export const deleteMeme = (id) => request(`/api/admin/content/${id}`, { method: 'DELETE' })
 export const generateDescription = (id) => request(`/api/admin/content/${id}/generate`, { method: 'POST' })
 
+/**
+ * Downloads a ZIP of assets and hands it to the browser.
+ * @param {{ ids?: string[], all?: boolean, filters?: object }} body
+ * @throws {Error} with the server's message when the request is rejected.
+ */
+export async function downloadContentZip(body) {
+  const res = await fetch(`${API_BASE}/api/admin/content/download`, {
+    method: 'POST',
+    headers: await authHeaders(),
+    body: JSON.stringify(body),
+  })
+
+  if (!res.ok) {
+    const payload = await res.json().catch(() => null)
+    throw new Error(payload?.error ?? `Download failed (${res.status})`)
+  }
+
+  const disposition = res.headers.get('Content-Disposition') ?? ''
+  const filename = /filename="([^"]+)"/.exec(disposition)?.[1] ?? 'videsaur-admin.zip'
+
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  // Revoke on the next tick — some browsers cancel the download if revoked synchronously.
+  setTimeout(() => URL.revokeObjectURL(url), 0)
+}
+
 // ── Moderation queue (existing endpoints) ────────────────────────────────────
 
 export const listPending = () => request('/api/admin/pending')
