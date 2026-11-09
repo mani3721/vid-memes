@@ -97,7 +97,7 @@ export async function run() {
   }
   const mode = process.env.PRERENDER_ASSETS ?? 'auto'
   if (!['auto', '0', '1'].includes(mode)) throw new Error('PRERENDER_ASSETS must be auto, 0, or 1')
-  const hasCatalog = process.env.VITE_SUPABASE_URL && process.env.VITE_SUPABASE_ANON_KEY
+  const hasCatalog = process.env.VITE_APPWRITE_ENDPOINT && process.env.VITE_APPWRITE_PROJECT_ID && process.env.VITE_APPWRITE_DATABASE_ID
   if (mode === '1' || (mode === 'auto' && hasCatalog)) {
     // The asset compiler must read the original Vite shell, not a rendered home.
     await writeFile(resolve(DIST, 'index.html'), template, 'utf8')
