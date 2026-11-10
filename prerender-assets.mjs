@@ -40,6 +40,7 @@ const CONCURRENCY = Number(process.env.PRERENDER_CONCURRENCY) || 24
  * server-side row cap, so a result that exactly fills this is treated as a
  * truncated read rather than a complete catalog — see run().
  */
+
 const MAX_ROWS = 5000
 
 /**
