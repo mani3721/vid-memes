@@ -98,7 +98,15 @@ export async function run() {
   const mode = process.env.PRERENDER_ASSETS ?? 'auto'
   if (!['auto', '0', '1'].includes(mode)) throw new Error('PRERENDER_ASSETS must be auto, 0, or 1')
   const hasCatalog = process.env.VITE_APPWRITE_ENDPOINT && process.env.VITE_APPWRITE_PROJECT_ID && process.env.VITE_APPWRITE_DATABASE_ID
-  if (mode === '1' || (mode === 'auto' && hasCatalog)) {
+  // The Appwrite memes table is not publicly readable, so the catalog read
+  // needs a build-only key. In auto mode a missing key skips per-meme pages
+  // (with a loud warning) instead of failing the whole deploy.
+  // PRERENDER_ASSETS=1 still forces the read and fails without a key.
+  const hasBuildKey = Boolean((process.env.APPWRITE_BUILD_API_KEY || '').trim())
+  if (mode === 'auto' && hasCatalog && !hasBuildKey) {
+    console.warn('[prerender] WARNING: APPWRITE_BUILD_API_KEY is not set in this build environment; individual meme pages were NOT prerendered. Add it in Vercel (Production + Preview) and redeploy.')
+  }
+  if (mode === '1' || (mode === 'auto' && hasCatalog && hasBuildKey)) {
     // The asset compiler must read the original Vite shell, not a rendered home.
     await writeFile(resolve(DIST, 'index.html'), template, 'utf8')
     const { run: renderAssets } = await import('./prerender-assets.mjs')
