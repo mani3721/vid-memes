@@ -1,11 +1,31 @@
 import { useEffect, useRef, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
 
 const PAGE_SIZE = 24
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 /**
- * Map Supabase snake_case columns to the camelCase shape the rest of the app
+ * Meme reads go through the API server (server/routes/memes.js), which reads
+ * Appwrite with its server key and enforces is_published. Resolves to
+ * { data, count, error } so the call sites keep their old Supabase shape.
+ */
+function fetchMemes(params) {
+  const qs = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null || v === '') continue
+    qs.set(k, Array.isArray(v) ? v.join(',') : String(v))
+  }
+  return fetch(`${API_BASE}/api/memes?${qs}`)
+    .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+    .then((j) => ({ data: j.memes ?? [], count: j.total ?? 0, error: null }))
+    .catch((err) => ({ data: null, count: 0, error: err }))
+}
+
+function getJson(path) {
+  return fetch(`${API_BASE}${path}`).then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+}
+
+/**
+ * Map snake_case columns to the camelCase shape the rest of the app
  * expects (MemeCard, AssetCard, BrowseFeed, etc.).
  */
 function normalize(m) {
@@ -56,16 +76,7 @@ export function useTrendingMemes({ limit = PAGE_SIZE, excludeCategory } = {}) {
     let cancelled = false
     setLoading(true)
     setError(null)
-    const from = (page - 1) * limit
-    const to = from + limit - 1
-    let q = supabase
-      .from('memes')
-      .select('*', { count: 'exact' })
-      .eq('is_published', true)
-      .order('is_hot', { ascending: false })
-      .order('download_count', { ascending: false })
-      .range(from, to)
-    if (excludeCategory) q = q.neq('category', excludeCategory)
+    const q = fetchMemes({ sort: 'hot', limit, offset: (page - 1) * limit, excludeCategory })
 
     q.then(({ data, error: err, count }) => {
       if (cancelled) return
@@ -115,24 +126,15 @@ export function useCategoryMemes({ category, mood, query, excludeCategory, limit
     let cancelled = false
     setLoading(true)
     setError(null)
-    const from = (page - 1) * limit
-    const to = from + limit - 1
-
-    let q = supabase
-      .from('memes')
-      .select('*', { count: 'exact' })
-      .eq('is_published', true)
-      .order('is_hot', { ascending: false })
-      .order('download_count', { ascending: false })
-      .range(from, to)
-
-    if (category) q = q.eq('category', category)
-    if (excludeCategory) {
-      const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
-      cats.forEach((c) => { q = q.neq('category', c) })
-    }
-    if (mood) q = q.contains('mood_tags', [mood])
-    if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
+    const q = fetchMemes({
+      sort: 'hot',
+      limit,
+      offset: (page - 1) * limit,
+      category,
+      excludeCategory,
+      mood,
+      q: query?.trim(),
+    })
 
     q.then(({ data, error: err, count }) => {
       if (cancelled) return
@@ -184,102 +186,60 @@ export function useMixedFeed({ mood, query, excludeCategory, sort = 'mixed' } = 
     setError(null)
 
     const from = (page - 1) * PAGE_SIZE
-    const to   = from + PAGE_SIZE - 1
-
-    function applyFilters(q) {
-      if (mood) q = q.contains('mood_tags', [mood])
-      if (query?.trim()) q = q.ilike('title', `%${query.trim()}%`)
-      if (excludeCategory) {
-        const cats = Array.isArray(excludeCategory) ? excludeCategory : [excludeCategory]
-        cats.forEach((c) => { q = q.neq('category', c) })
-      }
-      return q
-    }
+    const filters = { mood, q: query?.trim(), excludeCategory }
 
     // ── Simple single-query modes ──────────────────────────────────────────
-    if (sort === 'recent') {
-      applyFilters(
-        supabase.from('memes').select('*', { count: 'exact' })
-          .eq('is_published', true)
-          .order('created_at', { ascending: false })
-          .range(from, to)
-      ).then(({ data, error: err, count }) => {
-        if (cancelled) return
-        if (err) { setError(err.message); setLoading(false); return }
-        setMemes((data ?? []).map(normalize))
-        setTotalPages(Math.ceil((count ?? 0) / PAGE_SIZE) || 1)
-        setLoading(false)
-      })
-      return () => { cancelled = true }
-    }
-
-    if (sort === 'popular' || sort === 'hot') {
-      applyFilters(
-        supabase.from('memes').select('*', { count: 'exact' })
-          .eq('is_published', true)
-          .order('is_hot', { ascending: false })
-          .order('download_count', { ascending: false })
-          .range(from, to)
-      ).then(({ data, error: err, count }) => {
-        if (cancelled) return
-        if (err) { setError(err.message); setLoading(false); return }
-        setMemes((data ?? []).map(normalize))
-        setTotalPages(Math.ceil((count ?? 0) / PAGE_SIZE) || 1)
-        setLoading(false)
-      })
+    if (sort === 'recent' || sort === 'popular' || sort === 'hot') {
+      fetchMemes({ ...filters, sort: sort === 'recent' ? 'recent' : 'hot', limit: PAGE_SIZE, offset: from })
+        .then(({ data, error: err, count }) => {
+          if (cancelled) return
+          if (err) { setError(err.message); setLoading(false); return }
+          setMemes((data ?? []).map(normalize))
+          setTotalPages(Math.ceil((count ?? 0) / PAGE_SIZE) || 1)
+          setLoading(false)
+        })
       return () => { cancelled = true }
     }
 
     // ── Mixed mode: recent first, popular backfill ─────────────────────────
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-    applyFilters(
-      supabase.from('memes').select('*', { count: 'exact' })
-        .eq('is_published', true)
-        .gte('created_at', sevenDaysAgo)
-        .order('created_at', { ascending: false })
-        .range(from, to)
-    ).then(({ data: rData, error: rErr, count: rCount }) => {
-      if (cancelled) return
-      if (rErr) { setError(rErr.message); setLoading(false); return }
-
-      const recentItems = (rData ?? []).map(normalize)
-      const totalRecent = rCount ?? 0
-      const recentPages = Math.ceil(totalRecent / PAGE_SIZE) || 1
-      const need        = PAGE_SIZE - recentItems.length
-
-      if (need <= 0) {
-        setMemes(recentItems)
-        setTotalPages(recentPages + 1)
-        setLoading(false)
-        return
-      }
-
-      const recentShownSoFar   = Math.min(totalRecent, from)
-      const backfillUsedBefore = Math.max(0, (page - 1) * PAGE_SIZE - recentShownSoFar)
-      const popularFrom        = backfillUsedBefore
-      const recentIds          = new Set(recentItems.map((m) => m.id))
-
-      applyFilters(
-        supabase.from('memes').select('*', { count: 'exact' })
-          .eq('is_published', true)
-          .order('is_hot', { ascending: false })
-          .order('download_count', { ascending: false })
-          .range(popularFrom, popularFrom + need + 4)
-      ).then(({ data: pData, error: pErr, count: pCount }) => {
+    fetchMemes({ ...filters, sort: 'recent', since: sevenDaysAgo, limit: PAGE_SIZE, offset: from })
+      .then(({ data: rData, error: rErr, count: rCount }) => {
         if (cancelled) return
-        if (pErr) { setError(pErr.message); setLoading(false); return }
+        if (rErr) { setError(rErr.message); setLoading(false); return }
 
-        const uniquePopular = (pData ?? [])
-          .map(normalize)
-          .filter((m) => !recentIds.has(m.id))
-          .slice(0, need)
+        const recentItems = (rData ?? []).map(normalize)
+        const totalRecent = rCount ?? 0
+        const recentPages = Math.ceil(totalRecent / PAGE_SIZE) || 1
+        const need        = PAGE_SIZE - recentItems.length
 
-        setMemes([...recentItems, ...uniquePopular])
-        setTotalPages(recentPages + (Math.ceil((pCount ?? 0) / PAGE_SIZE) || 1))
-        setLoading(false)
+        if (need <= 0) {
+          setMemes(recentItems)
+          setTotalPages(recentPages + 1)
+          setLoading(false)
+          return
+        }
+
+        const recentShownSoFar   = Math.min(totalRecent, from)
+        const backfillUsedBefore = Math.max(0, (page - 1) * PAGE_SIZE - recentShownSoFar)
+        const recentIds          = new Set(recentItems.map((m) => m.id))
+
+        fetchMemes({ ...filters, sort: 'hot', limit: need + 5, offset: backfillUsedBefore })
+          .then(({ data: pData, error: pErr, count: pCount }) => {
+            if (cancelled) return
+            if (pErr) { setError(pErr.message); setLoading(false); return }
+
+            const uniquePopular = (pData ?? [])
+              .map(normalize)
+              .filter((m) => !recentIds.has(m.id))
+              .slice(0, need)
+
+            setMemes([...recentItems, ...uniquePopular])
+            setTotalPages(recentPages + (Math.ceil((pCount ?? 0) / PAGE_SIZE) || 1))
+            setLoading(false)
+          })
       })
-    })
 
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -299,12 +259,9 @@ export function useMemesByIds(ids) {
   useEffect(() => {
     if (!ids || ids.length === 0) { setMemes([]); return }
     setLoading(true)
-    supabase
-      .from('memes')
-      .select('*')
-      .in('id', ids)
-      .eq('is_published', true)
-      .then(({ data }) => setMemes((data ?? []).map(normalize)))
+    getJson(`/api/memes/by-ids?ids=${encodeURIComponent(ids.slice(0, 100).join(','))}`)
+      .then(({ memes: rows }) => setMemes((rows ?? []).map(normalize)))
+      .catch(() => setMemes([]))
       .finally(() => setLoading(false))
   }, [key])
 
@@ -383,34 +340,11 @@ export function useSimilarMemes({ category, moodTags = [], excludeId, limit = 14
     if (!category || !excludeId) return
     setLoading(true)
 
-    async function fetch() {
-      const base = supabase
-        .from('memes')
-        .select('*')
-        .eq('is_published', true)
-        .eq('category', category)
-        .neq('id', excludeId)
-        .order('download_count', { ascending: false })
+    const qs = new URLSearchParams({ category, limit: String(limit) })
+    if (moodTags.length > 0) qs.set('moods', moodTags.join(','))
 
-      // Prefer memes that share at least one mood tag
-      let rows = []
-      if (moodTags.length > 0) {
-        const { data } = await base.overlaps('mood_tags', moodTags).limit(limit)
-        rows = (data ?? []).map(normalize)
-      }
-
-      // Fill remainder with any category match
-      if (rows.length < 6) {
-        const used = new Set(rows.map((r) => r.id))
-        const { data } = await base.limit(limit)
-        const extra = (data ?? []).map(normalize).filter((r) => !used.has(r.id))
-        rows = [...rows, ...extra].slice(0, limit)
-      }
-
-      setMemes(rows)
-    }
-
-    fetch()
+    getJson(`/api/memes/${encodeURIComponent(excludeId)}/similar?${qs}`)
+      .then(({ memes: rows }) => setMemes((rows ?? []).map(normalize)))
       .catch(() => {})
       .finally(() => setLoading(false))
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -430,16 +364,10 @@ export function useMemeById(id) {
   useEffect(() => {
     if (!id) return
     setLoading(true)
-    supabase
-      .from('memes')
-      .select('*')
-      .eq('id', id)
-      .eq('is_published', true)
-      .single()
-      .then(({ data, error: err }) => {
-        if (err) setError(err.message)
-        else setMeme(data ? normalize(data) : null)
-      })
+    setError(null)
+    getJson(`/api/memes/${encodeURIComponent(id)}`)
+      .then(({ meme: row }) => setMeme(row ? normalize(row) : null))
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [id])
 

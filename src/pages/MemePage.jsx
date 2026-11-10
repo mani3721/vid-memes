@@ -129,9 +129,8 @@ export default function MemePage() {
     const key = `videsaur_view_${id}`
     if (sessionStorage.getItem(key)) return
     sessionStorage.setItem(key, '1')
-    supabase
-      .rpc('increment_view_count', { meme_id: id })
-      .then(({ error: err }) => { if (err) console.warn('[view]', err.message) })
+    fetch(`${API_BASE}/api/memes/${encodeURIComponent(id)}/view`, { method: 'POST' })
+      .catch((err) => console.warn('[view]', err.message))
   }, [id])
 
   async function saveTitle() {

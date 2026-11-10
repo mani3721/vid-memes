@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { supabase } from '../lib/supabaseClient'
 import { useTrendingMemes } from '../hooks/useMemes'
 import SEO from '../components/SEO'
 import PageHeading from '../components/PageHeading'
@@ -11,17 +10,17 @@ import CategoryGuide from '../components/CategoryGuide'
 
 const GRID_COUNT = 8
 const RANK_COUNT = 20
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 export default function TrendingPage() {
   const { memes, loading } = useTrendingMemes({ limit: RANK_COUNT, excludeCategory: 'sounds' })
   const [totalCount, setTotalCount] = useState(null)
 
   useEffect(() => {
-    supabase
-      .from('memes')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_published', true)
-      .then(({ count }) => setTotalCount(count))
+    fetch(`${API_BASE}/api/memes/count`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j) setTotalCount(j.count) })
+      .catch(() => {})
   }, [])
 
   const gridMemes = memes.slice(0, GRID_COUNT)

@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
 
 /**
- * Public blog reads.
- *
- * Queries Supabase directly with the anon key, the same way useMemes does. The
- * RLS policy on blog_posts exposes only `status = 'published'`, so drafts and
- * removed posts cannot leak even though the filter is also stated here.
+ * Public blog reads, through the API server (server/routes/blog.js), which
+ * reads Appwrite and returns only `status = 'published'` posts.
  */
 
-const LIST_COLUMNS = 'id, slug, title, excerpt, cover_url, published_at'
+const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
+
+function getJson(path) {
+  return fetch(`${API_BASE}${path}`).then((r) => {
+    if (r.status === 404) return {}
+    return r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))
+  })
+}
 
 export function useBlogPosts() {
   const [posts, setPosts] = useState([])
@@ -19,17 +22,10 @@ export function useBlogPosts() {
   useEffect(() => {
     let active = true
 
-    supabase
-      .from('blog_posts')
-      .select(LIST_COLUMNS)
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .then(({ data, error: err }) => {
-        if (!active) return
-        if (err) setError(err.message)
-        else setPosts(data ?? [])
-        setLoading(false)
-      })
+    getJson('/api/blog')
+      .then(({ posts: rows }) => { if (active) setPosts(rows ?? []) })
+      .catch((err) => { if (active) setError(err.message) })
+      .finally(() => { if (active) setLoading(false) })
 
     return () => { active = false }
   }, [])
@@ -46,18 +42,10 @@ export function useBlogPost(slug) {
     if (!slug) return undefined
     let active = true
 
-    supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .maybeSingle()
-      .then(({ data, error: err }) => {
-        if (!active) return
-        if (err) setError(err.message)
-        else setPost(data ?? null)
-        setLoading(false)
-      })
+    getJson(`/api/blog/${encodeURIComponent(slug)}`)
+      .then(({ post: row }) => { if (active) setPost(row ?? null) })
+      .catch((err) => { if (active) setError(err.message) })
+      .finally(() => { if (active) setLoading(false) })
 
     return () => { active = false }
   }, [slug])
