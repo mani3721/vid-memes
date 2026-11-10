@@ -343,7 +343,8 @@ const PAGE_SIZE = 100
  */
 async function readAppwriteCatalog({ endpoint, project, database, columns, order, limit }) {
   const headers = { 'X-Appwrite-Project': project }
-  if (process.env.APPWRITE_BUILD_API_KEY) headers['X-Appwrite-Key'] = process.env.APPWRITE_BUILD_API_KEY
+  const buildKey = (process.env.APPWRITE_BUILD_API_KEY || '').trim()
+  if (buildKey) headers['X-Appwrite-Key'] = buildKey
 
   const base = [{ method: 'equal', attribute: 'is_published', values: [true] }]
   if (columns !== '*') {
@@ -364,7 +365,15 @@ async function readAppwriteCatalog({ endpoint, project, database, columns, order
 
     const res = await fetch(url, { headers })
     const body = await res.json().catch(() => ({}))
-    if (!res.ok) throw new Error(`Appwrite ${res.status}: ${body.message || res.statusText}`)
+    if (!res.ok) {
+      // Never log the key itself — only whether one was sent.
+      const hint = res.status === 401
+        ? buildKey
+          ? ' (APPWRITE_BUILD_API_KEY was sent but rejected: check it is a valid key for this project with the rows.read scope)'
+          : ' (APPWRITE_BUILD_API_KEY is not set in this build environment: add it in Vercel for the Production/Preview environment and redeploy)'
+        : ''
+      throw new Error(`Appwrite ${res.status} ${body.type || ''}: ${body.message || res.statusText}${hint}`)
+    }
 
     const page = body.rows ?? []
     for (const row of page) {

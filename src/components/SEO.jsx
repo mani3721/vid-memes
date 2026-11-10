@@ -21,6 +21,8 @@ const DEFAULT_OG_IMAGE = `${BASE_URL}/og-default.png`
 export default function SEO({
   /** Page-level part only — site name appended automatically */
   title,
+  /** Complete title used verbatim (no site-name suffix). Overrides `title`. */
+  exactTitle,
   description = DEFAULT_DESCRIPTION,
   keywords = DEFAULT_KEYWORDS,
   /** Path from root, e.g. "/meme/cat-slams-laptop-a1" */
@@ -36,9 +38,11 @@ export default function SEO({
    */
   noindex = false,
 }) {
-  const fullTitle = title
-    ? `${title} | ${SITE_NAME}`
-    : `${SITE_NAME} — Free Meme Videos, GIFs, Templates & Sound Effects`
+  const fullTitle = exactTitle
+    ? exactTitle
+    : title
+      ? `${title} | ${SITE_NAME}`
+      : `${SITE_NAME} — Free Meme Videos, GIFs, Templates & Sound Effects`
 
   const canonicalUrl = `${BASE_URL}${canonicalPath}`
 

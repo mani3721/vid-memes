@@ -30,8 +30,8 @@ export default function BrowseFeed() {
   return (
     <>
       <SEO
-        title="Memes Download: Free Meme Videos, GIFs &amp; Templates"
-        description="Download free meme videos, GIFs, blank templates, and sound effects. No watermark, HD quality, updated daily. Perfect for creators, Reels, Shorts, and WhatsApp Status."
+        exactTitle="Meme Download: Free Meme Videos, GIFs, Templates & Sound Effects — Videsaur"
+        description="Download free meme videos, GIFs, templates, and sound effects on Videsaur. Explore our collection for your next viral creation today!"
         keywords="meme download, meme video download, free meme download, meme templates, meme sound effects, no watermark memes, funny memes download, gif memes download"
         canonicalPath="/"
         schemas={[WEBSITE_SCHEMA, FAQ_SCHEMA]}
