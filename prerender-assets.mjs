@@ -343,7 +343,9 @@ const PAGE_SIZE = 100
  */
 async function readAppwriteCatalog({ endpoint, project, database, columns, order, limit }) {
   const headers = { 'X-Appwrite-Project': project }
-  const buildKey = (process.env.APPWRITE_BUILD_API_KEY || '').trim()
+  // Accept the dedicated build key, or fall back to the existing APPWRITE_API_KEY.
+  // Neither is VITE_-prefixed, so they never reach the browser bundle.
+  const buildKey = (process.env.APPWRITE_BUILD_API_KEY || process.env.APPWRITE_API_KEY || '').trim()
   if (buildKey) headers['X-Appwrite-Key'] = buildKey
 
   const base = [{ method: 'equal', attribute: 'is_published', values: [true] }]

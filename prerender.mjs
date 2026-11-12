@@ -102,7 +102,7 @@ export async function run() {
   // needs a build-only key. In auto mode a missing key skips per-meme pages
   // (with a loud warning) instead of failing the whole deploy.
   // PRERENDER_ASSETS=1 still forces the read and fails without a key.
-  const hasBuildKey = Boolean((process.env.APPWRITE_BUILD_API_KEY || '').trim())
+  const hasBuildKey = Boolean((process.env.APPWRITE_BUILD_API_KEY || process.env.APPWRITE_API_KEY || '').trim())
   if (mode === 'auto' && hasCatalog && !hasBuildKey) {
     console.warn('[prerender] WARNING: APPWRITE_BUILD_API_KEY is not set in this build environment; individual meme pages were NOT prerendered. Add it in Vercel (Production + Preview) and redeploy.')
   }

@@ -2,13 +2,27 @@ import { Client, Account } from 'appwrite'
 
 const endpoint = import.meta.env.VITE_APPWRITE_ENDPOINT
 const projectId = import.meta.env.VITE_APPWRITE_PROJECT_ID
+export const projectName = import.meta.env.VITE_APPWRITE_PROJECT_NAME ?? ''
 
 if (!endpoint || !projectId) {
-  console.warn('[appwrite] VITE_APPWRITE_ENDPOINT or VITE_APPWRITE_PROJECT_ID not set — sign-in will fail.')
+  throw new Error(
+    '[appwrite] Missing VITE_APPWRITE_ENDPOINT / VITE_APPWRITE_PROJECT_ID. Set them in client/.env (or Vercel env).'
+  )
 }
 
-export const client = new Client().setEndpoint(endpoint ?? 'https://cloud.appwrite.io/v1').setProject(projectId ?? '')
+export const client = new Client().setEndpoint(endpoint).setProject(projectId)
 export const account = new Account(client)
+
+/** Ping Appwrite once at startup to confirm the SDK setup. */
+let pinged = false
+export function pingAppwrite() {
+  if (pinged || typeof window === 'undefined') return
+  pinged = true
+  client
+    .ping()
+    .then(() => console.info('[appwrite] ping OK —', projectName || projectId, endpoint))
+    .catch((err) => console.warn('[appwrite] ping failed:', err?.message ?? err))
+}
 
 export const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
