@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { apiFetch } from '../lib/appwriteClient'
 import { useAuth } from '../lib/authContext'
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
 /** How often the badge re-checks the server. */
 const POLL_MS = 60_000
@@ -14,27 +12,8 @@ export const NOTIFICATION_FILTERS = [
   { id: 'system', label: 'System' },
 ]
 
-async function authFetch(path, { method = 'GET', body, signal } = {}) {
-  // Re-read the session per call rather than closing over a token: a tab can
-  // sit open long enough for the access token to rotate, and a stale closure
-  // would start 401-ing silently.
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session?.access_token) throw new Error('Not signed in')
-
-  const res = await fetch(`${API_BASE}${path}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${session.access_token}`,
-      'Content-Type': 'application/json',
-    },
-    body: body === undefined ? undefined : JSON.stringify(body),
-    signal,
-  })
-
-  const payload = await res.json().catch(() => null)
-  if (!res.ok) throw new Error(payload?.error ?? `Request failed (${res.status})`)
-  return payload
-}
+// apiFetch fetches a fresh Appwrite JWT when the cached one nears expiry.
+const authFetch = (path, opts) => apiFetch(path, opts)
 
 /**
  * Unread badge count, polled.

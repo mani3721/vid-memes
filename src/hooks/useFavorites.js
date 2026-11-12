@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { apiFetch } from '../lib/appwriteClient'
 
 const LOCAL_KEY = 'videsaur_fav_ids'
 
@@ -51,16 +51,15 @@ export function useFavorites(userId) {
       return
     }
 
-    // Authenticated: load from Supabase
+    // Authenticated: load from the API (Appwrite)
     setLoading(true)
-    supabase
-      .from('favorites')
-      .select('meme_id')
-      .eq('user_id', userId)
-      .then(({ data, error }) => {
-        if (cancelled) return
-        if (!error && data) setIds(new Set(data.map((f) => f.meme_id)))
-        setLoading(false)
+    apiFetch('/api/favorites')
+      .then(({ ids: list }) => {
+        if (!cancelled) setIds(new Set(list ?? []))
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoading(false)
       })
 
     return () => { cancelled = true }
@@ -82,12 +81,13 @@ export function useFavorites(userId) {
 
       if (!userId) return // guest: localStorage already updated above
 
-      // Authenticated: sync to Supabase
-      const { error } = wasFav
-        ? await supabase.from('favorites').delete().eq('user_id', userId).eq('meme_id', memeId)
-        : await supabase.from('favorites').insert({ user_id: userId, meme_id: memeId })
+      // Authenticated: sync to the API
+      const ok = await (wasFav
+        ? apiFetch(`/api/favorites/${encodeURIComponent(memeId)}`, { method: 'DELETE' })
+        : apiFetch('/api/favorites', { method: 'POST', body: { memeId } })
+      ).then(() => true, () => false)
 
-      if (error) {
+      if (!ok) {
         setIds((prev) => {
           const next = new Set(prev)
           wasFav ? next.add(memeId) : next.delete(memeId)

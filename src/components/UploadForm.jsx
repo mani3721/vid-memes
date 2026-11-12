@@ -6,6 +6,7 @@ import {
 import { Link } from 'react-router-dom'
 import SEO from './SEO'
 import { useAuth } from '../lib/authContext'
+import { getJwt } from '../lib/appwriteClient'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3001'
 
@@ -65,7 +66,7 @@ function makeEntry(file) {
 }
 
 export default function UploadForm() {
-  const { user, session, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [entries, setEntries] = useState([])
   const [sharedMoods, setSharedMoods] = useState([])
   const [sharedLicense, setSharedLicense] = useState('CC0')
@@ -132,9 +133,10 @@ export default function UploadForm() {
         resolve()
       })
       xhr.open('POST', `${API_BASE}/api/upload`)
-      if (session?.access_token)
-        xhr.setRequestHeader('Authorization', `Bearer ${session.access_token}`)
-      xhr.send(fd)
+      getJwt().then((jwt) => {
+        if (jwt) xhr.setRequestHeader('Authorization', `Bearer ${jwt}`)
+        xhr.send(fd)
+      })
     })
   }
 

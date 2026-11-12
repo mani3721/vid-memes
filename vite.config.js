@@ -13,7 +13,7 @@ function staticPagesPlugin() {
     configResolved(value) { config = value },
     async closeBundle() {
       // Category hubs embed a crawlable link index into the ~480 asset pages.
-      // Optional by design: a build without Supabase credentials still emits
+      // Optional by design: a build without Appwrite credentials still emits
       // every structural page, just without the link index.
       const { getPublishedAssets, INDEX_COLUMNS } = await import('./prerender-assets.mjs')
       const catalog = await getPublishedAssets({
@@ -105,7 +105,7 @@ export default defineConfig({
           if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router-dom/')) {
             return 'vendor-react'
           }
-          if (id.includes('/@supabase/')) return 'vendor-supabase'
+          if (id.includes('/appwrite/')) return 'vendor-appwrite'
           if (id.includes('/lucide-react/')) return 'vendor-icons'
           if (id.includes('/@tiptap/')) return 'vendor-editor'
           return undefined

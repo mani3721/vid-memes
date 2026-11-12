@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Navigate, useLocation } from 'react-router-dom'
 import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
-import { supabase } from '../lib/supabaseClient'
+import { getJwt } from '../lib/appwriteClient'
 import { useAuth } from '../lib/authContext'
 import { Pencil, Check, X, Loader2 as EditLoader } from 'lucide-react'
 import {
@@ -138,8 +138,7 @@ export default function MemePage() {
     if (!title || title === (displayTitle ?? asset?.title)) { setEditingTitle(null); return }
     setTitleSaving(true)
     try {
-      const { data: { session: freshSession } } = await supabase.auth.getSession()
-      const token = freshSession?.access_token
+      const token = await getJwt()
       if (!token) return
       const res = await fetch(`${API_BASE}/api/admin/rename/${asset.id}`, {
         method: 'PATCH',

@@ -1,53 +1,35 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { supabase } from '../lib/supabaseClient'
+import { apiFetch } from '../lib/appwriteClient'
+import { AUTH_EVENT } from '../lib/authContext'
 import { ConsentContext, STORAGE_KEY } from './consentStore'
-
-const CONSENT_VERSION = 'v1'
 
 /**
  * Consent gate for advertising and analytics cookies.
  *
  * localStorage is always the source of truth for rendering — no round-trip delay.
- * When the user is authenticated, decisions are additionally synced to the
- * user_consent table in Supabase as a fire-and-forget background write.
+ * When the user is signed in, decisions are additionally synced to the
+ * user_consent table (Appwrite, via /api/me/consent) as a background write.
  *
  * ConsentProvider lives outside AuthProvider in the component tree, so it
- * subscribes to Supabase auth state directly rather than via useAuth().
+ * listens for the auth event AuthProvider dispatches instead of useAuth().
  */
 export function ConsentProvider({ children }) {
   const [choice, setChoice] = useLocalStorage(STORAGE_KEY, null)
   const [userId, setUserId] = useState(null)
 
-  // Track Supabase auth state independently (outside AuthProvider scope)
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id ?? null)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserId(session?.user?.id ?? null)
-    })
-    return () => subscription.unsubscribe()
+    const onAuth = (e) => setUserId(e.detail?.userId ?? null)
+    window.addEventListener(AUTH_EVENT, onAuth)
+    return () => window.removeEventListener(AUTH_EVENT, onAuth)
   }, [])
 
-  /** Fire-and-forget Supabase sync — never blocks the UI. */
+  /** Fire-and-forget sync — never blocks the UI. */
   const persistToDb = useCallback(
     (status) => {
       if (!userId) return
-      supabase
-        .from('user_consent')
-        .upsert(
-          {
-            user_id: userId,
-            consent_status: status,
-            consent_version: CONSENT_VERSION,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: 'user_id' },
-        )
-        .then(({ error }) => {
-          if (error) console.warn('[consent] Supabase sync failed:', error.message)
-        })
+      apiFetch('/api/me/consent', { method: 'PUT', body: { status } })
+        .catch((err) => console.warn('[consent] sync failed:', err.message))
     },
     [userId],
   )

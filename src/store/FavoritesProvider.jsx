@@ -45,7 +45,7 @@ export function FavoritesProvider({ children }) {
     mergedFor.current = user.id
 
     let cancelled = false
-    migrateFavorites(user.id).then(() => {
+    migrateFavorites().then(() => {
       if (!cancelled) reload()
     })
     return () => { cancelled = true }
