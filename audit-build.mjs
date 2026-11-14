@@ -204,7 +204,7 @@ async function listAssetRoutes() {
 async function auditAssetRoutes() {
   const routes = await listAssetRoutes()
   if (!routes.length) {
-    fail('asset pages', `no subfolders under dist/${ASSET_DIRS.join('/ or dist/')}/ — did the build run with PRERENDER_ASSETS=0 or without Appwrite credentials?`)
+    fail('asset pages', `no subfolders under dist/${ASSET_DIRS.join('/ or dist/')}/ — did the build run with PRERENDER_ASSETS=0 or without D1 credentials?`)
     return
   }
   let lowest = Infinity

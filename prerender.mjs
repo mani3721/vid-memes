@@ -97,16 +97,14 @@ export async function run() {
   }
   const mode = process.env.PRERENDER_ASSETS ?? 'auto'
   if (!['auto', '0', '1'].includes(mode)) throw new Error('PRERENDER_ASSETS must be auto, 0, or 1')
-  const hasCatalog = process.env.VITE_APPWRITE_ENDPOINT && process.env.VITE_APPWRITE_PROJECT_ID && process.env.VITE_APPWRITE_DATABASE_ID
-  // The Appwrite memes table is not publicly readable, so the catalog read
-  // needs a build-only key. In auto mode a missing key skips per-meme pages
-  // (with a loud warning) instead of failing the whole deploy.
-  // PRERENDER_ASSETS=1 still forces the read and fails without a key.
-  const hasBuildKey = Boolean((process.env.APPWRITE_BUILD_API_KEY || process.env.APPWRITE_API_KEY || '').trim())
-  if (mode === 'auto' && hasCatalog && !hasBuildKey) {
-    console.warn('[prerender] WARNING: APPWRITE_BUILD_API_KEY is not set in this build environment; individual meme pages were NOT prerendered. Add it in Vercel (Production + Preview) and redeploy.')
+  // The catalog lives in Cloudflare D1 and needs build-only credentials. In
+  // auto mode, missing credentials skip per-meme pages (with a loud warning)
+  // instead of failing the whole deploy. PRERENDER_ASSETS=1 forces the read.
+  const hasBuildKey = ['CLOUDFLARE_ACCOUNT_ID', 'D1_DATABASE_ID', 'CLOUDFLARE_API_TOKEN'].every((k) => (process.env[k] || '').trim())
+  if (mode === 'auto' && !hasBuildKey) {
+    console.warn('[prerender] WARNING: CLOUDFLARE_ACCOUNT_ID / D1_DATABASE_ID / CLOUDFLARE_API_TOKEN are not set in this build environment; individual meme pages were NOT prerendered. Add them in Vercel (Production + Preview) and redeploy.')
   }
-  if (mode === '1' || (mode === 'auto' && hasCatalog && hasBuildKey)) {
+  if (mode === '1' || (mode === 'auto' && hasBuildKey)) {
     // The asset compiler must read the original Vite shell, not a rendered home.
     await writeFile(resolve(DIST, 'index.html'), template, 'utf8')
     const { run: renderAssets } = await import('./prerender-assets.mjs')
