@@ -53,7 +53,7 @@ function Home() {
   return <><SEO
     exactTitle="Meme Download: Free Meme Videos, GIFs, Templates & Sound Effects — Videsaur"
     description="Download free meme videos, GIFs, templates, and sound effects on Videsaur. Explore our collection for your next viral creation today!"
-  /></>
+  /><main><h1>Free Meme Videos, GIFs, Templates &amp; Sound Effects</h1></main></>
 }
 
 function Navigation() {
