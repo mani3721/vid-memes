@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useLocalStorage } from './useLocalStorage'
-import { apiFetch } from '../lib/appwriteClient'
+import { apiFetch } from '../lib/apiClient'
 
 const LOCAL_KEY = 'videsaur.consent.v1'
 

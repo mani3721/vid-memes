@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { apiFetch, API_BASE } from '../lib/appwriteClient'
+import { apiFetch, API_BASE } from '../lib/apiClient'
 
 function sortByAddedAt(items) {
   return [...items].sort((a, b) => new Date(b.added_at) - new Date(a.added_at))

@@ -1,6 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { ID, OAuthProvider } from 'appwrite'
-import { account, apiFetch, clearJwt } from './appwriteClient'
+import { apiFetch, clearJwt } from './apiClient'
 
 const AuthContext = createContext(null)
 
@@ -17,12 +16,8 @@ export function AuthProvider({ children }) {
 
   const refresh = useCallback(async () => {
     clearJwt()
-    let u = null
-    try {
-      u = toUser(await account.get())
-    } catch {
-      u = null
-    }
+    // No auth provider: everyone is a guest.
+    const u = toUser(null)
     setUser(u)
     window.dispatchEvent(new CustomEvent(AUTH_EVENT, { detail: { userId: u?.id ?? null } }))
 
@@ -43,32 +38,12 @@ export function AuthProvider({ children }) {
     Promise.resolve().then(refresh)
   }, [refresh])
 
-  async function signIn(email, password) {
-    await account.createEmailPasswordSession({ email, password })
-    await refresh()
-  }
-
-  async function signUp(email, password) {
-    await account.create({ userId: ID.unique(), email, password })
-    await account.createEmailPasswordSession({ email, password })
-    await refresh()
-  }
-
-  async function signInWithGoogle() {
-    // Redirects away; the session exists when the browser comes back.
-    account.createOAuth2Session({
-      provider: OAuthProvider.Google,
-      success: window.location.origin,
-      failure: `${window.location.origin}/?auth=failed`,
-    })
-  }
+  const disabled = () => Promise.reject(new Error('Sign-in is currently disabled.'))
+  const signIn = disabled
+  const signUp = disabled
+  const signInWithGoogle = disabled
 
   async function signOut() {
-    try {
-      await account.deleteSession({ sessionId: 'current' })
-    } catch {
-      // Already signed out.
-    }
     await refresh()
   }
 

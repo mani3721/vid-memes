@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Navigate, useLocation } from 'react-router-dom'
 import { MOODS } from '../data/assets'
 import { useMemeById, useSimilarMemes } from '../hooks/useMemes'
-import { getJwt } from '../lib/appwriteClient'
+import { getJwt } from '../lib/apiClient'
 import { useAuth } from '../lib/authContext'
 import { Pencil, Check, X, Loader2 as EditLoader } from 'lucide-react'
 import {

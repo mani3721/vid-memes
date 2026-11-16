@@ -1,4 +1,4 @@
-import { apiFetch } from './appwriteClient'
+import { apiFetch } from './apiClient'
 
 const LEGACY_KEY = 'videsaur_fav_ids'
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { apiFetch } from '../lib/appwriteClient'
+import { apiFetch } from '../lib/apiClient'
 
 /**
  * Read-only hook for a user's download history (via /api/me/download-history).

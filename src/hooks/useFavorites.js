@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { apiFetch } from '../lib/appwriteClient'
+import { apiFetch } from '../lib/apiClient'
 
 const LOCAL_KEY = 'videsaur_fav_ids'
 

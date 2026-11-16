@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { apiFetch } from '../lib/appwriteClient'
+import { apiFetch } from '../lib/apiClient'
 import { useAuth } from '../lib/authContext'
 
 /** How often the badge re-checks the server. */

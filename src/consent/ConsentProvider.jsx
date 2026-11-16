@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { apiFetch } from '../lib/appwriteClient'
+import { apiFetch } from '../lib/apiClient'
 import { AUTH_EVENT } from '../lib/authContext'
 import { ConsentContext, STORAGE_KEY } from './consentStore'
 

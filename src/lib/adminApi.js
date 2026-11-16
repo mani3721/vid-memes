@@ -5,7 +5,7 @@
  * can sit on the dashboard long enough for the access token to rotate, and a
  * stale closure would start 401-ing halfway through a bulk edit.
  */
-import { API_BASE, getJwt } from './appwriteClient'
+import { API_BASE, getJwt } from './apiClient'
 
 async function authHeaders() {
   const jwt = await getJwt()
