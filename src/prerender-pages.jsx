@@ -10,7 +10,6 @@ import TermsPage from './pages/TermsPage'
 import DmcaPage from './pages/DmcaPage'
 import CookiePolicyPage from './pages/CookiePolicyPage'
 import DisclaimerPage from './pages/DisclaimerPage'
-import HomeContentDepth from './components/HomeContentDepth'
 import CategoryGuide from './components/CategoryGuide'
 import SEO from './components/SEO'
 import { CATEGORY_GUIDES } from './data/categoryGuides'
@@ -54,7 +53,7 @@ function Home() {
   return <><SEO
     exactTitle="Meme Download: Free Meme Videos, GIFs, Templates & Sound Effects — Videsaur"
     description="Download free meme videos, GIFs, templates, and sound effects on Videsaur. Explore our collection for your next viral creation today!"
-  /><main><h1>Videsaur Digital Media Archive and Creative Utility Database</h1><HomeContentDepth /></main></>
+  /></>
 }
 
 function Navigation() {

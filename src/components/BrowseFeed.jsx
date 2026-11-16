@@ -8,7 +8,6 @@ import MasonryFeed from './MasonryFeed'
 import TodayRankingWidget from './TodayRankingWidget'
 import TrendingSoundsFeed from './TrendingSoundsFeed'
 import PageHeading from './PageHeading'
-import HomeContentDepth from './HomeContentDepth'
 
 const HOME_EXCLUDE = ['sounds', 'images', 'gifs']
 
@@ -114,8 +113,6 @@ export default function BrowseFeed() {
 
         {/* Trending Sound Effects strip */}
         <TrendingSoundsFeed />
-
-        <HomeContentDepth />
       </div>
     </>
   )
