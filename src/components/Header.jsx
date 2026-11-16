@@ -6,6 +6,7 @@ import { useAuth } from '../lib/authContext'
 import Logo from './Logo'
 import ThemeToggle from './ThemeToggle'
 import ClimateThemeToggle from './ClimateThemeToggle'
+import ChristmasTheme from './ChristmasTheme'
 import NotificationBell from './NotificationBell'
 import { useRecentSearches } from '../hooks/useRecentSearches'
 
@@ -245,6 +246,7 @@ export default function Header({ onOpenSidebar }) {
         {/* Renders nothing for guests — see NotificationBell. */}
         <NotificationBell />
 
+        <ChristmasTheme />
         <ClimateThemeToggle />
         <ThemeToggle />
 

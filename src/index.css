@@ -490,3 +490,47 @@ html.dark[data-climate-theme='cool'] {
   .rich-content { font-size: 1.0625rem; }
   .rich-content h2 { font-size: 1.75rem; }
 }
+
+/* ── Christmas theme (toggled via .christmas on <html>) ─────────── */
+.xmas-snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 60;
+}
+.xmas-flake {
+  position: absolute;
+  top: -12px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+  animation-name: xmas-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes xmas-fall {
+  to { transform: translate3d(var(--drift, 0), 105vh, 0); }
+}
+.xmas-lights {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 51;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, #ef4444 0 24px, #22c55e 24px 48px, #facc15 48px 72px, #3b82f6 72px 96px);
+  animation: xmas-twinkle 1.6s ease-in-out infinite alternate;
+}
+@keyframes xmas-twinkle {
+  from { filter: brightness(0.7); }
+  to { filter: brightness(1.4); }
+}
+.xmas-spin { animation: xmas-rotate 6s linear infinite; }
+@keyframes xmas-rotate { to { transform: rotate(360deg); } }
+html.christmas header { box-shadow: inset 0 -2px 0 rgba(239, 68, 68, 0.35); }
+@media (prefers-reduced-motion: reduce) {
+  .xmas-flake, .xmas-lights, .xmas-spin { animation: none; }
+  .xmas-snow { display: none; }
+}
